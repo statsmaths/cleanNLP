@@ -1,15 +1,18 @@
 Package: cleanNLP
 Type: Package
-Title: Annotators and a tidy data model for natural language processing
+Title: A Tidy Data Model for Natural Language Processing
 Version: 1.0
-Date: 2016-10-14
+Date: 2016-10-16
 Author: Taylor B. Arnold
 Maintainer: Taylor B. Arnold <taylor.arnold@acm.org>
-Description: Parses text.
+Description: Provides a set of fast tools for converting a textual corpus into a set of normalized tables. The underlying natural language processing pipeline utilizes the Stanford's CoreNLP library. Exposed annotation tasks include tokenization, part of speech tagging, named entity recognition, entity linking, sentiment analysis, dependency parsing, coreference resolution, and information extraction. Several datasets containing token unigram, part of speech tag, and dependency type frequencies are also included to assist with analyses. Currently supports parsing text in English, French, German, Spanish, and Chinese.
+Depends:
+    dplyr,
+    magrittr,
+    R (>= 2.10)
 Imports:
-    rJava,
-    dplyr
-Depends: readr
+    readr,
+    rJava
 SystemRequirements: Java (>= 7.0); Stanford CoreNLP <http://nlp.stanford.edu/
     software/corenlp.shtml> (>= 3.5.2)
 License: GPL-3

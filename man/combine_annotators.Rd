@@ -9,7 +9,21 @@ combine_annotators(...)
 \arguments{
 \item{...}{annotation objects to combine}
 }
+\value{
+a single annotation object containing all of the input documents
+}
 \description{
-Combine a set of annotations
+Takes an arbitrary set of annotations and efficiently combines them into
+a single object. All document ids are reset so that they are contiguous integers
+starting at zero.
+}
+\examples{
+\dontrun{
+annotation <- combine_annotators(anno01, anno02, anno03)
+}
+
+}
+\author{
+Taylor B. Arnold, \email{taylor.arnold@acm.org}
 }
 

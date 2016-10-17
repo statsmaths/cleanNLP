@@ -4,13 +4,38 @@
 \alias{init_clean_nlp}
 \title{Initialize the cleanNLP java object}
 \usage{
-init_clean_nlp()
+init_clean_nlp(lib_location = NULL, mem = "4g")
+}
+\arguments{
+\item{lib_location}{a string giving the location of the CoreNLP java
+files. This should point to a directory which
+contains, for example the file "stanford-corenlp-*.jar",
+where "*" is the version number. If missing, the function
+will try to find the library in the environment variable
+CORENLP_HOME, and otherwise will fail.}
+
+\item{mem}{a string giving the amount of memory to be assigned to the rJava
+engine. For example, "6g" assigned 6 gigabytes of memory. At least
+2 gigabytes are recommended at a minimum for running the CoreNLP
+package. On a 32bit machine, where this is not possible, setting
+"1800m" may also work. This option will only have an effect the first
+time \code{initCoreNLP} is called, and also will not have an effect if
+the java engine is already started by a seperate process.}
 }
 \description{
 This must be run prior to calling any other cleanNLP
 functions. Options that control the behavior of the
-pipeline must be set using \code{\link{set_cleanNLP}}.
-You may reset the options and call this function multiple
-times in order to specify a different set of parameter.
+pipeline must be set using one of: \code{\link{set_properties}},
+\code{\link{set_annotators}}, or \code{\link{set_language}}.
+Options may be reset during a given R session; in order to take effect,
+make a new call to this function.
+}
+\examples{
+\dontrun{
+init_clean_nlp()
+}
+}
+\author{
+Taylor B. Arnold, \email{taylor.arnold@acm.org}
 }
 

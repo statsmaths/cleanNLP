@@ -2,14 +2,45 @@
 % Please edit documentation in R/accessors.R
 \name{get_document}
 \alias{get_document}
-\title{Access document metadata from an annotation object}
+\title{Access document meta data from an annotation object}
 \usage{
 get_document(annotation)
 }
 \arguments{
 \item{annotation}{an annotation object}
 }
+\value{
+Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}
+ containing one row for every document in the corpus.
+
+ The returned data frame includes at least the following columns:
+
+\itemize{
+ \item{"id"}{ - integer. Id of the source document.}
+ \item{"time"}{ - date time. The time at which the parser was run on the text.}
+ \item{"version"}{ - character. Version of the CoreNLP library used to parse the text.}
+ \item{"language"}{ - character. Language of the text, in ISO 639-1 format.}
+ \item{"uri"}{ - character. Description of the raw text location. Set to \code{NA} if parsed from in-memory character vector.}
+}
+
+ Other application specific columns may be included as additional variables.
+}
 \description{
-Access document metadata from an annotation object
+Access document meta data from an annotation object
+}
+\examples{
+data(obama)
+
+get_document(obama)
+
+
+}
+\author{
+Taylor B. Arnold, \email{taylor.arnold@acm.org}
+}
+\references{
+Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bethard, and
+  David McClosky. 2014. \href{http://nlp.stanford.edu/pubs/StanfordCoreNlp2014.pdf}{The Stanford CoreNLP Natural Language Processing Toolkit}.
+  In: \emph{Proceedings of the 52nd Annual Meeting of the Association for Computational Linguistics: System Demonstrations, pp. 55-60.}
 }
 

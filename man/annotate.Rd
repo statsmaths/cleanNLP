@@ -25,7 +25,28 @@ file names.}
 
 \item{doc_id_offset}{integer. The first document id to use. Defaults to 0.}
 }
+\value{
+if \code{load} is true, an object of class \code{annotation}. Otherwise, a character
+  vector giving the output location of the files.
+}
 \description{
-Run the annotation pipeline on a set of documents
+Runs the clean_nlp annotators over a given corpus of text. The details
+for which annotators to run and how to run them are specified by using
+one of: \code{\link{set_properties}}, \code{\link{set_annotators}}, or
+\code{\link{set_language}} (the latter being the most user-friendly).
+}
+\examples{
+\dontrun{
+annotation <- annotate("path/to/corpus/directory")
+}
+
+}
+\author{
+Taylor B. Arnold, \email{taylor.arnold@acm.org}
+}
+\references{
+Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bethard, and
+  David McClosky. 2014. \href{http://nlp.stanford.edu/pubs/StanfordCoreNlp2014.pdf}{The Stanford CoreNLP Natural Language Processing Toolkit}.
+  In: \emph{Proceedings of the 52nd Annual Meeting of the Association for Computational Linguistics: System Demonstrations, pp. 55-60.}
 }
 

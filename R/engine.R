@@ -4,82 +4,12 @@ volatiles = new.env(parent=emptyenv())
 #'
 #' This must be run prior to calling any other cleanNLP
 #' functions. Options that control the behavior of the
-#' pipeline must be set using \code{\link{set_cleanNLP}}.
-#' You may reset the options and call this function multiple
-#' times in order to specify a different set of parameter.
+#' pipeline must be set using one of: \code{\link{set_properties}},
+#' \code{\link{set_annotators}}, or \code{\link{set_language}}.
+#' Options may be reset during a given R session; in order to take effect,
+#' make a new call to this function.
 #'
-#' @importFrom  rJava .jinit .jaddClassPath .jcall .jnew .jfield .jcast
-#' @export
-init_clean_nlp <- function() {
-
-  # Parse default parameters
-  fp <- file.path(system.file("extdata",package="coreNLP"), "preferences.rds")
-  if (file.exists(fp)) {
-    preferences <- readr::read_rds(fp)
-  } else {
-    warning("Using default parameters. Run setCleanNLP() to override.")
-    preferences <- list(type = "english_fast",
-      libLoc = paste0(system.file("extdata",package="cleanNLP"), "/stanford-corenlp-full-2015-12-09"),
-      mem = "4g")
-  }
-  type <- preferences$type
-  libLoc <- preferences$libLoc
-  mem <- preferences$mem
-
-  # Find location of the CoreNLP Libraries
-  if (!file.exists(libLoc)) {
-    stop("Please run downloadCleanNLP() in order to install required jar files.")
-  } else {
-    path <- Sys.glob(paste0(libLoc,"/*.jar"))
-  }
-
-  # Start java engine, if not already done, and add to classpath
-  options(java.parameters = paste0("-Xmx", mem))
-  rJava::.jinit()
-  rJava::.jaddClassPath(file.path(system.file("extdata",package="cleanNLP"), "cleanNLP-0.1.jar"))
-  rJava::.jaddClassPath(path)
-
-  # Determine if the corenlp files have been loaded correctly
-  len <- length(grep("stanford-corenlp-", basename(rJava::.jclassPath())))
-  if (len == 0L)
-    stop("The coreNLP jar files are were not found in libLoc.")
-  if (len < 4L)
-    warning("The set of coreNLP jar files may be incomplete. Proceed with caution")
-
-  if (!is.null(volatiles$cNLP))
-    rJava::.jcall(volatiles$cNLP, "V", "clearAnnotatorPool")
-
-  prop <- rJava::.jnew("java.util.Properties")
-  prop <- set_properties(prop, type)
-
-  # (quietly) load the NLP pipeline
-  err <- rJava::.jfield("java/lang/System", , "err")
-  rJava::.jcall("java/lang/System", "V", "setErr", .jnew("java/io/PrintStream",
-          rJava::.jcast(rJava::.jnew("java/io/ByteArrayOutputStream"),"java/io/OutputStream")))
-  volatiles$cNLP <- rJava::.jnew("edu.stanford.nlp.pipeline.StanfordCoreNLP", prop)
-  rJava::.jcall("java/lang/System", "V", "setErr", err)
-
-  invisible(preferences)
-}
-
-set_properties <- function(prop, type) {
-  if (type == "english") {
-    prop$setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, mention, dcoref, natlog, openie, sentiment")
-  }
-  if (type == "english_fast") {
-    prop$setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse")
-  }
-  if (type == "english_very_fast") {
-    prop$setProperty("annotators", "tokenize, ssplit, pos, lemma")
-  }
-
-  prop
-}
-
-#' Store properties used when initalizing the CoreNLP pipeline
-#'
-#' @param type           type of model to load. See details for options.
-#' @param libLoc         a string giving the location of the CoreNLP java
+#' @param lib_location   a string giving the location of the CoreNLP java
 #'                       files. This should point to a directory which
 #'                       contains, for example the file "stanford-corenlp-*.jar",
 #'                       where "*" is the version number. If missing, the function
@@ -92,18 +22,190 @@ set_properties <- function(prop, type) {
 #'                       "1800m" may also work. This option will only have an effect the first
 #'                       time \code{initCoreNLP} is called, and also will not have an effect if
 #'                       the java engine is already started by a seperate process.
-#' @importFrom  readr write_rds
+#'
+#' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
+#'@examples
+#'\dontrun{
+#'init_clean_nlp()
+#'}
+#' @importFrom  rJava .jinit .jaddClassPath .jcall .jnew .jfield .jcast
 #' @export
-set_cleanNLP <- function(type = c("english", "english_fast", "english_very_fast", "arabic", "chinese", "french", "german", "spanish"),
-      libLoc = NULL, mem = "4g") {
+init_clean_nlp <- function(lib_location = NULL, mem = "4g") {
 
-  type <- match.arg(type)
-  preferences <- list(type = type, libLoc = libLoc, mem = mem)
-  readr::write_rds(preferences, file.path(system.file("extdata",package="coreNLP"), "preferences.rds"))
+  # parse input
+  if (is.null(lib_location))
+    lib_location <- file.path(system.file("extdata",package="cleanNLP"), "/stanford-corenlp-full-2015-12-09")
 
+  # Parse default parameters
+  fp <- file.path(system.file("extdata",package="cleanNLP"), "properties.rds")
+  if (!file.exists(fp)) {
+    warning("running set_language(\"en\") to generate properties file.")
+    set_language("en")
+  }
+  properties <- readr::read_rds(fp)
+  keys <- names(properties)
+  values <- as.character(properties)
+
+  # Find location of the CoreNLP Libraries
+  if (!file.exists(lib_location)) {
+    stop("Please run download_clean_nlp() in order to install required jar files.")
+  } else {
+    path <- Sys.glob(paste0(lib_location, "/*.jar"))
+  }
+
+  # Start java engine, if not already done, and add to classpath
+  options(java.parameters = paste0("-Xmx", mem))
+  rJava::.jinit()
+  rJava::.jaddClassPath(file.path(system.file("extdata", package = "cleanNLP"), "cleanNLP-0.1.jar"))
+  rJava::.jaddClassPath(path)
+
+  # Determine if the corenlp files have been loaded correctly
+  len <- length(grep("stanford-corenlp-", basename(rJava::.jclassPath())))
+  if (len == 0L)
+    stop("The coreNLP jar files are were not found in lib_location.")
+  if (len < 4L)
+    warning("The set of coreNLP jar files may be incomplete. Proceed with caution")
+
+  if (!is.null(volatiles$cNLP))
+    rJava::.jcall(volatiles$cNLP, "V", "clearAnnotatorPool")
+
+  prop <- rJava::.jnew("java.util.Properties")
+  for (i in 1:length(keys))
+    .set_property_java(keys[i], values[i])
+
+  # (quietly) load the NLP pipeline
+  err <- rJava::.jfield("java/lang/System", , "err")
+  rJava::.jcall("java/lang/System", "V", "setErr", .jnew("java/io/PrintStream",
+          rJava::.jcast(rJava::.jnew("java/io/ByteArrayOutputStream"), "java/io/OutputStream")))
+  volatiles$cNLP <- rJava::.jnew("edu.stanford.nlp.pipeline.StanfordCoreNLP", prop)
+  rJava::.jcall("java/lang/System", "V", "setErr", err)
+
+  invisible(properties)
+}
+
+.set_property_java <- function(prop, key, value) {
+  prop$setProperty(key, value)
+}
+
+#' Set properties for the coreNLP pipeline
+#'
+#' This function allows for directly setting properties to be passed on to the
+#' Stanford CoreNLP pipeline. This will generally be of interest to experienced
+#' users who are already familiar with the general pipeline. See the function
+#' \code{\link{set_language}} for a more user-friendly approach.
+#'
+#' @param keys     a character vector of keys giving the names of the properties to set
+#' @param values   a character vector the same length of keys giving the values to set
+#'                 each respective property to
+#' @param clear    should the set of properties be cleared before setting these values
+#'
+#' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
+#'@examples
+#'\dontrun{
+#'set_properties("annotators", "segment, ssplit, tokenize, pos")
+#'}
+#'
+#' @importFrom  readr read_rds write_rds
+#' @export
+set_properties <- function(keys, values, clear = FALSE) {
+  if (length(keys) != length(values))
+    stop(sprintf("length of keys (%d) does not match length of values (%d)", length(keys), length(values)))
+  if (!inherits(keys, "character"))
+    stop("keys must be a character vector")
+  if (!inherits(values, "character"))
+    stop("values must be a character vector")
+
+  # read current parameter file
+  if (!append) {
+    prop <- readr::read_rds(file.path(system.file("extdata",package="cleanNLP"), "properties.rds"))
+  } else prop <- list()
+
+  # insert new keys and values
+  for (i in 1:length(keys))
+    prop[[keys[i]]] <- values[i]
+
+  # save new parameter file
+  readr::write_rds(prop, file.path(system.file("extdata",package="cleanNLP"), "properties.rds"))
+}
+
+#' Wrapper to set particular annotators
+#'
+#' This function calls \code{\link{set_properties}}, setting the correct set of
+#' annotators that will be used in the pipeline. This function makes sure that
+#' for whichever annotators are choose, all required prerequisites are also included.
+#' Generally, this function will be of most use for parsing English. See the function
+#' \code{\link{set_language}} for a more user-friendly approach.
+#'
+#' @param annotators   a character vector describing the desired annotators;
+#'                     should be a subset of: "segment", "tokenize", "ssplit", "pos", "lemma",
+#'                     "ner", "parse", "mention", "dcoref", "natlog", "openie",
+#'                     and "sentiment"
+#'
+#' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
+#' @examples
+#'\dontrun{
+#'set_annotators(c("segment", "tokenize", "ssplit", "pos", "lemma"))
+#'}
+#'
+#' @importFrom  readr read_rds write_rds
+#' @export
+set_annotators <- function(annotators = NULL) {
+  annotator_list <- c("segment", "tokenize", "ssplit", "pos", "lemma", "ner", "parse",
+                      "mention", "dcoref", "natlog", "openie", "sentiment")
+  annotators <- match.arg(arg = annotators, choices = annotator_list, several.ok = TRUE)
+  set_properties("annotators", paste0(annotators, collapse = ","))
+  invisible(NULL)
+}
+
+#' Wrapper to set properties for a particular language
+#'
+#' This function calls \code{\link{set_properties}}, setting all of the correct
+#' properties to parse the given language. This is the most user-friendly entry
+#' point for setting properties. The functions \code{\link{set_annotators}} and
+#' \code{\link{set_properties}}
+#'
+#' @param language   a character vector describing the desired language;
+#'                     should be one of: "en", "cn", "ar", "de", "fr", or "es"
+#'
+#' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
+#' @examples
+#'\dontrun{
+#'set_language("en")
+#'}
+#'
+#' @export
+set_language <- function(language) {
+  language_list <- c("en", "cn", "ar", "de", "fr", "es")
+  language <- match.arg(arg = language, choices = language_list)
+
+  if (language == "en") {
+    #set_properties("annotators", annotators, TRUE)
+  }
+  if (language == "cn") {
+
+  }
+  if (language == "ar") {
+
+  }
+  if (language == "de") {
+
+  }
+  if (language == "fr") {
+
+  }
+  if (language == "es") {
+
+  }
+
+  invisible(NULL)
 }
 
 #' Run the annotation pipeline on a set of documents
+#'
+#' Runs the clean_nlp annotators over a given corpus of text. The details
+#' for which annotators to run and how to run them are specified by using
+#' one of: \code{\link{set_properties}}, \code{\link{set_annotators}}, or
+#' \code{\link{set_language}} (the latter being the most user-friendly).
 #'
 #' @param input          either a vector of file names to parse, or a character vector
 #'                       with one document in each element. Specify the latter with the
@@ -117,6 +219,22 @@ set_cleanNLP <- function(type = c("english", "english_fast", "english_very_fast"
 #'                       file names.
 #' @param doc_id_offset  integer. The first document id to use. Defaults to 0.
 #'
+#' @return if \code{load} is true, an object of class \code{annotation}. Otherwise, a character
+#'   vector giving the output location of the files.
+#'
+#' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
+#'
+#' @references
+#'
+#'   Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bethard, and
+#'   David McClosky. 2014. \href{http://nlp.stanford.edu/pubs/StanfordCoreNlp2014.pdf}{The Stanford CoreNLP Natural Language Processing Toolkit}.
+#'   In: \emph{Proceedings of the 52nd Annual Meeting of the Association for Computational Linguistics: System Demonstrations, pp. 55-60.}
+#'
+#' @examples
+#'\dontrun{
+#'annotation <- annotate("path/to/corpus/directory")
+#'}
+#'
 #' @importFrom  rJava .jcall .jnew
 #' @export
 annotate <- function(input, output_dir = NULL, load = TRUE, keep = TRUE,
@@ -128,8 +246,10 @@ annotate <- function(input, output_dir = NULL, load = TRUE, keep = TRUE,
   if (is.null(output_dir))
     output_dir <- tempdir()
 
-  if (!dir.exists(output_dir <- file.path(Sys.glob(output_dir), "")))
-    dir.create(dir.create("~/Desktop", FALSE, TRUE))
+  if (!dir.exists(output_dir))
+    dir.create(dir.create(output_dir, FALSE, TRUE))
+
+  output_dir <- file.path(Sys.glob(output_dir), "")
 
   if (length(doc_id_offset <- as.integer(doc_id_offset)) > 1L)
     warning("Only using first value of doc_id_offset")
@@ -146,8 +266,7 @@ annotate <- function(input, output_dir = NULL, load = TRUE, keep = TRUE,
 
   # remove the output, if desired
   if (!keep) {
-    for (this in c("annotation", "coreference", "dependency", "document", "entity",
-      "sentiment", "token", "triple")) {
+    for (this in c("coreference", "dependency", "document", "entity", "sentiment", "token", "triple")) {
       if (file.exists(fp <- file.path(output_dir, sprintf("%s.csv", this)))) file.remove(fp)
     }
   }
@@ -157,41 +276,65 @@ annotate <- function(input, output_dir = NULL, load = TRUE, keep = TRUE,
 
 #' Read annotation files from disk
 #'
+#' Loads an annotation that has been stored as a set of csv files in a local directory.
+#' This is typically created by a call to \code{\link{annotate}} or \code{\link{write_annotation}}.
+#'
 #' @param input_dir  path to the directory where the files are stored
 #'
-#' @importFrom  readr read_csv
+#' @return an object of class \code{annotation}
+#'
+#' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
+#' @examples
+#'\dontrun{
+#'annotation <- read_annotation("path/to/annotation")
+#'}
+#'
+#' @importFrom  readr read_csv read_rds
 #' @export
 read_annotation <- function(input_dir) {
 
-  anno <- structure(list(
-      annotation = readr::read_csv(file.path(input_dir, "annotation.csv"), col_types = "ic"),
-      coreference = readr::read_csv(file.path(input_dir, "coreference.csv"), col_types = "iiiccccciiii"),
-      dependency = readr::read_csv(file.path(input_dir, "dependency.csv"), col_types = "iiiiicc"),
-      document = readr::read_csv(file.path(input_dir, "document.csv"), col_types = "iTccc"),
-      entity = readr::read_csv(file.path(input_dir, "entity.csv"), col_types = "iiiicc"),
-      sentiment = readr::read_csv(file.path(input_dir, "sentiment.csv"), col_types = "iiiddddd"),
-      token = readr::read_csv(file.path(input_dir, "token.csv"), col_types = "iiicccccii"),
-      triple = readr::read_csv(file.path(input_dir, "triple.csv"), col_types = "icccdiiiiiiiiiii")
+  if (file.exists(file.path(input_dir, "document.csv"))) {
+
+    anno <- structure(list(
+        coreference = readr::read_csv(file.path(input_dir, "coreference.csv"), col_types = "iiiccccciiii"),
+        dependency = readr::read_csv(file.path(input_dir, "dependency.csv"), col_types = "iiiiicc"),
+        document = readr::read_csv(file.path(input_dir, "document.csv"), col_types = "iTccc"),
+        entity = readr::read_csv(file.path(input_dir, "entity.csv"), col_types = "iiiiccc"),
+        sentiment = readr::read_csv(file.path(input_dir, "sentiment.csv"), col_types = "iiiddddd"),
+        token = readr::read_csv(file.path(input_dir, "token.csv"), col_types = "iiicccccii"),
+        triple = readr::read_csv(file.path(input_dir, "triple.csv"), col_types = "icccdiiiiiiiiiii")
       ), class = "annotation")
 
-  attributes(anno)$num_docs <- nrow(anno$document)
-  attributes(anno)$annotators <- sort(unique(anno$annotation$annotator))
+  } else {
+
+    stop(sprintf("Cannot find the file \"%s.csv\"", file.path(input_dir, "document")))
+
+  }
 
   anno
 }
 
 #' Write annotation files to disk
 #'
+#' Takes an annotation object and stores it as a set of files in a local directory.
+#' These are stored as plain-text csv files with column headers. To save as a compressed
+#' format, instead directly call the function \code{\link{saveRDS}}.
+#'
 #' @param annotation  annotation file being stored
 #' @param output_dir  path to the directory where the files will be saved
 #'
+#' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
+#' @examples
+#'\dontrun{
+#'write_annotation(annotation, "/path/to/annotation")
+#'}
+#'
 #' @importFrom  readr write_csv
 #' @export
-save_annotation <- function(annotation, output_dir) {
+write_annotation <- function(annotation, output_dir) {
   if (!dir.exists(output_dir))
     dir.create(output_dir, FALSE, TRUE)
 
-  readr::write_csv(annotation$annotation, file.path(output_dir, "annotation.csv"))
   readr::write_csv(annotation$coreference, file.path(output_dir, "coreference.csv"))
   readr::write_csv(annotation$dependency, file.path(output_dir, "dependency.csv"))
   readr::write_csv(annotation$document, file.path(output_dir, "document.csv"))
@@ -200,12 +343,24 @@ save_annotation <- function(annotation, output_dir) {
   readr::write_csv(annotation$token, file.path(output_dir, "token.csv"))
   readr::write_csv(annotation$triple, file.path(output_dir, "triple.csv"))
 
+  invisible(NULL)
 }
 
 #' Reset document ids
 #'
+#' Given an annotation object, this function changes all of the document ids so
+#' that they are all contiguous integers, starting at the parameter \code{start_id}.
+#'
 #' @param annotation   annotation object to reset the IDs of
 #' @param start_id     the starting document id. Defaults to 0.
+#'
+#' @return an annotation object with document ids updated across all tables.
+#'
+#' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
+#' @examples
+#'\dontrun{
+#'doc_id_reset(annotation, 10)
+#'}
 #'
 #' @export
 doc_id_reset <- function(annotation, start_id = 0L) {
@@ -226,7 +381,19 @@ doc_id_reset <- function(annotation, start_id = 0L) {
 
 #' Combine a set of annotations
 #'
+#' Takes an arbitrary set of annotations and efficiently combines them into
+#' a single object. All document ids are reset so that they are contiguous integers
+#' starting at zero.
+#'
 #' @param ...   annotation objects to combine
+#'
+#' @return a single annotation object containing all of the input documents
+#'
+#' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
+#' @examples
+#'\dontrun{
+#'annotation <- combine_annotators(anno01, anno02, anno03)
+#'}
 #'
 #' @importFrom  dplyr bind_rows
 #' @export
@@ -242,7 +409,6 @@ combine_annotators <- function(...) {
   temp <- mapply(function(anno, os) doc_id_reset(anno, os), list(...), offset, SIMPLIFY = FALSE)
 
   anno <- structure(list(
-       annotation = dplyr::bind_rows(lapply(temp, getElement, "annotation")),
        coreference = dplyr::bind_rows(lapply(temp, getElement, "coreference")),
        dependency = dplyr::bind_rows(lapply(temp, getElement, "dependency")),
        document = dplyr::bind_rows(lapply(temp, getElement, "document")),
@@ -260,9 +426,10 @@ combine_annotators <- function(...) {
 #' @param x    an annotation object
 #' @param ...  other arguments. Currently unused.
 #'
+#' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
 #' @method print annotation
 #' @export
-print.annotation = function(x, ...) {
+print.annotation <- function(x, ...) {
   cat("\nA CleanNLP Annotation:\n")
   cat("  num. documents:", nrow(x$document), "\n")
   cat("\n")

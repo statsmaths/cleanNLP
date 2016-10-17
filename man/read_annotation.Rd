@@ -9,7 +9,20 @@ read_annotation(input_dir)
 \arguments{
 \item{input_dir}{path to the directory where the files are stored}
 }
+\value{
+an object of class \code{annotation}
+}
 \description{
-Read annotation files from disk
+Loads an annotation that has been stored as a set of csv files in a local directory.
+This is typically created by a call to \code{\link{annotate}} or \code{\link{write_annotation}}.
+}
+\examples{
+\dontrun{
+annotation <- read_annotation("path/to/annotation")
+}
+
+}
+\author{
+Taylor B. Arnold, \email{taylor.arnold@acm.org}
 }
 

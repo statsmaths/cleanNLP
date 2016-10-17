@@ -11,7 +11,20 @@ doc_id_reset(annotation, start_id = 0L)
 
 \item{start_id}{the starting document id. Defaults to 0.}
 }
+\value{
+an annotation object with document ids updated across all tables.
+}
 \description{
-Reset document ids
+Given an annotation object, this function changes all of the document ids so
+that they are all contiguous integers, starting at the parameter \code{start_id}.
+}
+\examples{
+\dontrun{
+doc_id_reset(annotation, 10)
+}
+
+}
+\author{
+Taylor B. Arnold, \email{taylor.arnold@acm.org}
 }
 

@@ -9,7 +9,62 @@ get_entity(annotation)
 \arguments{
 \item{annotation}{an annotation object}
 }
+\value{
+Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}
+ containing one row for every named entity mention in the corpus.
+
+ The returned data frame includes the following columns:
+
+\itemize{
+ \item{"id"}{ - integer. Id of the source document.}
+ \item{"sid"}{ - integer. Sentence id of the entity mention.}
+ \item{"tid"}{ - integer. Token id at the start of the entity mention.}
+ \item{"tid_end"}{ - integer. Token id at the end of the entity mention.}
+ \item{"entity_type"}{ - character. When using default models, one of "LOCATION", "PERSON", "ORGANIZATION", "MONEY", "PERCENT", "DATE", "TIME".}
+ \item{"entity"}{ - character. Raw words of the named entity in the text.}
+ \item{"entity_normalized"}{ - character. Normalized version of the entity.}
+}
+}
 \description{
-Access named entities from an annotation object
+Named entity recognition attempts to find the mentions of various categories
+within the corpus of text. Common example include proper references to location
+(e.g., "Boston", or "England") or people (e.g., "Winston Churchill"), as well as
+specific dates (e.g., "tomorrow", or "September 19th") times, or numbers.
+}
+\examples{
+data(obama)
+
+# what are the most common entity types used in the addresses?
+get_entity(obama) \%>\%
+ use_series(entity_type) \%>\%
+ table()
+
+# what are the most common locations mentioned?
+get_entity(obama) \%>\%
+  filter(entity_type == "LOCATION") \%>\%
+  use_series(entity) \%>\%
+  table() \%>\%
+  sort(decreasing = TRUE) \%>\%
+  head(n = 25)
+
+# what are the most common organizations mentioned?
+get_entity(obama) \%>\%
+  filter(entity_type == "ORGANIZATION") \%>\%
+  use_series(entity) \%>\%
+  table() \%>\%
+  sort(decreasing = TRUE) \%>\%
+  head(n = 25)
+
+}
+\author{
+Taylor B. Arnold, \email{taylor.arnold@acm.org}
+}
+\references{
+Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bethard, and
+  David McClosky. 2014. \href{http://nlp.stanford.edu/pubs/StanfordCoreNlp2014.pdf}{The Stanford CoreNLP Natural Language Processing Toolkit}.
+  In: \emph{Proceedings of the 52nd Annual Meeting of the Association for Computational Linguistics: System Demonstrations, pp. 55-60.}
+
+  Jenny Rose Finkel, Trond Grenager, and Christopher Manning. 2005. Incorporating Non-local Information into Information Extraction Systems by
+  Gibbs Sampling. In: \emph{Proceedings of the 43nd Annual Meeting of the Association for Computational Linguistics (ACL 2005), pp. 363-370.}
 }
 
