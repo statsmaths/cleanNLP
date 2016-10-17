@@ -4,11 +4,15 @@
 \alias{set_language}
 \title{Wrapper to set properties for a particular language}
 \usage{
-set_language(language)
+set_language(language, fast = FALSE)
 }
 \arguments{
 \item{language}{a character vector describing the desired language;
-should be one of: "en", "cn", "ar", "de", "fr", or "es"}
+should be one of: "ar", "de", "en", "es", "fr", or "zh".}
+
+\item{fast}{boolean. Should options be selected to only use fast annotation
+algorithms? Generally, this results in only constructing the
+token and document tables.}
 }
 \description{
 This function calls \code{\link{set_properties}}, setting all of the correct

@@ -117,7 +117,7 @@ set_properties <- function(keys, values, clear = FALSE) {
 
   # read current parameter file
   if (!append) {
-    prop <- readr::read_rds(file.path(system.file("extdata",package="cleanNLP"), "properties.rds"))
+    prop <- readr::read_rds(file.path(system.file("extdata", package="cleanNLP"), "properties.rds"))
   } else prop <- list()
 
   # insert new keys and values
@@ -125,7 +125,7 @@ set_properties <- function(keys, values, clear = FALSE) {
     prop[[keys[i]]] <- values[i]
 
   # save new parameter file
-  readr::write_rds(prop, file.path(system.file("extdata",package="cleanNLP"), "properties.rds"))
+  readr::write_rds(prop, file.path(system.file("extdata", package="cleanNLP"), "properties.rds"))
 }
 
 #' Wrapper to set particular annotators
@@ -151,8 +151,19 @@ set_properties <- function(keys, values, clear = FALSE) {
 #' @export
 set_annotators <- function(annotators = NULL) {
   annotator_list <- c("segment", "tokenize", "ssplit", "pos", "lemma", "ner", "parse",
-                      "mention", "dcoref", "natlog", "openie", "sentiment")
+                      "depparse", "mention", "dcoref", "natlog", "openie", "sentiment")
   annotators <- match.arg(arg = annotators, choices = annotator_list, several.ok = TRUE)
+
+  # check for consistency:
+  if ("pos" %in% annotators) annotators <- c(annotators, c("tokenize", "ssplit"))
+  if ("lemma" %in% annotators) annotators <- c(annotators, c("tokenize", "ssplit", "pos"))
+  if ("ner" %in% annotators) annotators <- c(annotators, c("tokenize", "ssplit", "pos", "lemma"))
+  if ("parse" %in% annotators) annotators <- c(annotators, c("tokenize", "ssplit"))
+  if ("depparse" %in% annotators) annotators <- c(annotators, c("tokenize", "ssplit", "pos"))
+  if ("dcoref" %in% annotators) annotators <- c(annotators, c("tokenize", "ssplit", "pos", "lemma", "ner", "parse"))
+  if ("relation" %in% annotators) annotators <- c(annotators, c("tokenize", "ssplit", "pos", "lemma", "ner", "depparse"))
+  if ("natlog" %in% annotators) annotators <- c(annotators, c("tokenize", "ssplit", "pos", "lemma", "depparse"))
+
   set_properties("annotators", paste0(annotators, collapse = ","))
   invisible(NULL)
 }
@@ -165,7 +176,10 @@ set_annotators <- function(annotators = NULL) {
 #' \code{\link{set_properties}}
 #'
 #' @param language   a character vector describing the desired language;
-#'                     should be one of: "en", "cn", "ar", "de", "fr", or "es"
+#'                     should be one of: "ar", "de", "en", "es", "fr", or "zh".
+#' @param fast       boolean. Should options be selected to only use fast annotation
+#'                     algorithms? Generally, this results in only constructing the
+#'                     token and document tables.
 #'
 #' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
 #' @examples
@@ -174,27 +188,112 @@ set_annotators <- function(annotators = NULL) {
 #'}
 #'
 #' @export
-set_language <- function(language) {
+set_language <- function(language, fast = FALSE) {
   language_list <- c("en", "cn", "ar", "de", "fr", "es")
   language <- match.arg(arg = language, choices = language_list)
 
-  if (language == "en") {
-    #set_properties("annotators", annotators, TRUE)
+  if (language == "ar" & fast) {
+    set_properties("annotators", "segment, ssplit, pos")
+    set_properties("customAnnotatorClass.segment", "edu.stanford.nlp.pipeline.ArabicSegmenterAnnotator")
+    set_properties("segment.model", "edu/stanford/nlp/models/segmenter/arabic/arabic-segmenter-atb+bn+arztrain.ser.gz")
+    set_properties("ssplit.boundaryTokenRegex", "[.]|[!?]+|[!\u061F]+")
+    set_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/arabic/arabic.tagger")
   }
-  if (language == "cn") {
-
+  if (language == "ar" & !fast) {
+    set_properties("annotators", "segment, ssplit, pos, parse")
+    set_properties("customAnnotatorClass.segment", "edu.stanford.nlp.pipeline.ArabicSegmenterAnnotator")
+    set_properties("segment.model", "edu/stanford/nlp/models/segmenter/arabic/arabic-segmenter-atb+bn+arztrain.ser.gz")
+    set_properties("ssplit.boundaryTokenRegex", "[.]|[!?]+|[!\u061F]+")
+    set_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/arabic/arabic.tagger")
+    set_properties("parse.model", "edu/stanford/nlp/models/lexparser/arabicFactored.ser.gz")
   }
-  if (language == "ar") {
-
+  if (language == "de" & fast) {
+    set_properties("annotators", "tokenize, ssplit, pos")
+    set_properties("tokenize.language", "de")
+    set_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger")
   }
-  if (language == "de") {
-
+  if (language == "de" & !fast) {
+    set_properties("annotators", "tokenize, ssplit, pos, ner, parse")
+    set_properties("tokenize.language", "de")
+    set_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger")
+    set_properties("ner.model", "edu/stanford/nlp/models/ner/german.hgc_175m_600.crf.ser.gz")
+    set_properties("ner.applyNumericClassifiers", "false")
+    set_properties("ner.useSUTime", "false")
+    set_properties("parse.model", "edu/stanford/nlp/models/lexparser/germanFactored.ser.gz")
   }
-  if (language == "fr") {
-
+  if (language == "en" & fast) {
+    set_properties("annotators", "segment, tokenize, ssplit, pos, lemma")
   }
-  if (language == "es") {
+  if (language == "en" & !fast) {
+    set_properties("annotators", "segment, tokenize, ssplit, pos, lemma, ner, parse, mention, dcoref, natlog, openie, sentiment")
+  }
+  if (language == "es" & fast) {
+    set_properties("annotators", "tokenize, ssplit, pos")
+    set_properties("tokenize.language", "es")
+    set_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger")
+  }
+  if (language == "es" & !fast) {
+    set_properties("annotators", "tokenize, ssplit, pos, ner, parse")
+    set_properties("tokenize.language", "es")
+    set_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger")
+    set_properties("ner.model", "edu/stanford/nlp/models/ner/spanish.ancora.distsim.s512.crf.ser.gz")
+    set_properties("ner.applyNumericClassifiers", "false")
+    set_properties("ner.useSUTime", "false")
+    set_properties("parse.model", "edu/stanford/nlp/models/lexparser/spanishPCFG.ser.gz")
+  }
+  if (language == "fr" & fast) {
+    set_properties("annotators", "tokenize, ssplit, pos")
+    set_properties("tokenize.language", "fr")
+    set_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/french/french.tagger")
+  }
+  if (language == "fr" & !fast) {
+    set_properties("annotators", "tokenize, ssplit, pos, parse")
+    set_properties("tokenize.language", "fr")
+    set_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/french/french.tagger")
+    set_properties("parse.model", "edu/stanford/nlp/models/lexparser/frenchFactored.ser.gz")
+  }
+  if (language == "zh") {
+    set_properties("annotators", "segment, ssplit, pos, lemma, ner, parse, mention, coref")
 
+    # segment
+    set_properties("customAnnotatorClass.segment", "edu.stanford.nlp.pipeline.ChineseSegmenterAnnotator")
+    set_properties("segment.model", "edu/stanford/nlp/models/segmenter/chinese/ctb.gz")
+    set_properties("segment.sighanCorporaDict", "edu/stanford/nlp/models/segmenter/chinese")
+    set_properties("segment.serDictionary", "edu/stanford/nlp/models/segmenter/chinese/dict-chris6.ser.gz")
+    set_properties("segment.sighanPostProcessing", "true")
+
+    # sentence split
+    set_properties("ssplit.boundaryTokenRegex", "[.]|[!?]+|[\u3002]|[\uFF01\uFF1F]+")
+
+    # part of speech
+    set_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/chinese-distsim/chinese-distsim.tagger")
+
+    # ner
+    set_properties("ner.model", "edu/stanford/nlp/models/ner/chinese.misc.distsim.crf.ser.gz")
+    set_properties("ner.applyNumericClassifiers", "false")
+    set_properties("ner.useSUTime", "false")
+
+    # parse
+    set_properties("parse.model", "edu/stanford/nlp/models/lexparser/chineseFactored.ser.gz")
+
+    # depparse
+    set_properties("depparse.model", "edu/stanford/nlp/models/parser/nndep/PTB_CoNLL_params.txt.gz")
+    set_properties("depparse.language", "chinese")
+
+    # coref
+    set_properties("coref.sieves", "ChineseHeadMatch, ExactStringMatch, PreciseConstructs, StrictHeadMatch1, StrictHeadMatch2, StrictHeadMatch3, StrictHeadMatch4, PronounMatch")
+    set_properties("coref.input.type", "raw")
+    set_properties("coref.postprocessing", "true")
+    set_properties("coref.calculateFeatureImportance", "false")
+    set_properties("coref.useConstituencyTree", "true")
+    set_properties("coref.useSemantics", "false")
+    set_properties("coref.md.type", "RULE")
+    set_properties("coref.mode", "hybrid")
+    set_properties("coref.path.word2vec", "")
+    set_properties("coref.language", "zh")
+    set_properties("coref.print.md.log", "false")
+    set_properties("coref.defaultPronounAgreement", "true")
+    set_properties("coref.zh.dict", "edu/stanford/nlp/models/dcoref/zh-attributes.txt.gz")
   }
 
   invisible(NULL)
