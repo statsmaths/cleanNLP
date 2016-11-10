@@ -8,7 +8,6 @@ import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.ling.*;
 import edu.stanford.nlp.semgraph.*;
 import edu.stanford.nlp.trees.GrammaticalRelation;
-import edu.stanford.nlp.hcoref.data.CorefChain;
 
 public class CSVNamedEntityDocumentWriter {
 
@@ -58,7 +57,7 @@ public class CSVNamedEntityDocumentWriter {
 
     // flush last entity in case it ends the sentence
     if (!entity.equals("")) {
-      sb.append(String.format("%s,%d,%d,%d,%s,%s%n", docID, sid, tid, tidEnd, entity, entityNorm));
+      sb.append(String.format("%s,%d,%d,%d,%s,\"%s\",\"%s\"%n", docID, sid, tid, tidEnd, entityType, entity, entityNorm));
     }
 
 

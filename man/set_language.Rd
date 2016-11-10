@@ -2,23 +2,59 @@
 % Please edit documentation in R/engine.R
 \name{set_language}
 \alias{set_language}
-\title{Wrapper to set properties for a particular language}
+\title{Easy interface for setting up the pipeline}
 \usage{
-set_language(language, fast = FALSE)
+set_language(language, speed = 2)
 }
 \arguments{
 \item{language}{a character vector describing the desired language;
 should be one of: "ar", "de", "en", "es", "fr", or "zh".}
 
-\item{fast}{boolean. Should options be selected to only use fast annotation
-algorithms? Generally, this results in only constructing the
-token and document tables.}
+\item{speed}{integer code. Sets which annotators should be loaded, based on
+on how long they take to load and run. Speed 0 is the fastest,
+and speed 8 is the slowest. See Details for a full description
+of the levels}
 }
 \description{
 This function calls \code{\link{set_properties}}, setting all of the correct
-properties to parse the given language. This is the most user-friendly entry
-point for setting properties. The functions \code{\link{set_annotators}} and
-\code{\link{set_properties}}
+properties to parse the given language and given speed. This is the most
+user-friendly entry point for setting properties. The function
+\code{\link{set_properties}} provides more fine grained control.
+See Details for more information about the speed codes
+}
+\details{
+Currently available speed codes are integers from 0 to 8. Setting speed above 2
+         has no additional effect on the German and Spanish models. Setting above 1 has
+         no effect on the French model. The available speed codes are:
+\itemize{
+ \item{"0"}{ runs just the tokenizer, sentence splitter, and part of speech tagger. Extremely fast.}
+ \item{"1"}{ includes the dependency parsers and, for English, the sentiment tagger. Often 20-30x
+             slower than speed 0.}
+ \item{"2"}{ adds the named entity annotator to the parser and sentiment tagger (when available).
+             For English models, it also includes the mentions and natlog annotators. Usually no
+             more than twice as slow as speed 1.}
+ \item{"3"}{ adds the WikiDict annotator on top of the speed 2 annotators. This take a while to
+             load (often upwards of 5 minutes), but once loaded is only about 50\% slower than speed 2.}
+ \item{"4"}{ adds the OpenIE triples annotator on top of the speed 2 annotators. Generally takes about
+             twice as long as speed 2.}
+ \item{"5"}{ add the coreference resolution annotator to the speed 2 annotators. Depending on the corpus,
+             this takes about 2-4x longer than the speed 2 annotators}
+ \item{"6"}{ adds both the WikiDict and coreference resolution annotator to the speed 2 annotators. The
+             speed difference compared to speed 5 is marginal, other than the increased start-up time.}
+ \item{"7"}{ adds both the OpenIE triples and coreference annotators to the speed 2 annotators. Can sometimes
+             take several times longer than running them separately depending on your system resources.}
+ \item{"8"}{ add the WikiDict, OpenIE triples, and coreference annotators to the speed 2 annotators. The
+             speed is usually similar to speed 7, as long as you have enough memory allocated to store the
+             WikiDict tables and still have plenty of space for the OpenIE triples (14GB+).}
+}
+
+For most users, speeds 0, 2, 5, and 6 will likely be the most useful. We suggest starting at speed 2
+and down grading to 0 if your corpus is particularly large, or upgrading the 5 or 6 if you can sacrifice
+the slowdown. If your text is not formal written text (i.e., tweets or text messages), the speed 0
+annotator should still work well but anything beyond that may be difficult. Semi-formal text such as e-mails
+or transcribed speech are generally okay to run for all of the levels, though you may get errors above speed
+3 if the parser cannot figure out how to parse odd sections of text (the corefence and OpenIE triples annotators
+need the parser to order to run correctly).
 }
 \examples{
 \dontrun{

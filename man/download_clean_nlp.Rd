@@ -4,29 +4,35 @@
 \alias{download_clean_nlp}
 \title{Download java files needed for cleanNLP}
 \usage{
-download_clean_nlp(output_loc, type = c("base", "chinese", "english",
-  "french", "german", "spanish"))
+download_clean_nlp(type = c("default", "base", "en", "fr", "de", "es"),
+  output_loc, url = NULL, url_core = TRUE)
 }
 \arguments{
+\item{type}{type of files to download. The base backage is always required.
+Other jars include model files for French, German,
+and Spanish. These can be installed in addition to the
+base package. By default, the function downloads the base
+package and English model files.}
+
 \item{output_loc}{a string showing where the files are to be downloaded.
 If missing, will try to download files into the directory
 where the package was original installed.}
 
-\item{type}{type of files to download. The base backage, installed by
-default, is required. Other jars include chinese, german,
-and spanish. These can be installed in addition to the
-base package.}
+\item{url}{the url to try to download components from. Setting to NULL
+uses the default location on the Stanford NLP server, but
+you can set this manually by using this option. It also allows
+for local files, but note that the path must include the prefix
+\code{file://}. For details, see \code{\link{download.file}}.}
+
+\item{url_core}{if \code{url} is not null, this flag indicates whehter the path
+given to url points to the core nlp files (which are zipped) or
+to model files (which are unzipped).}
 }
 \description{
 The cleanNLP package does not supply the raw java files
 provided by the Stanford NLP Group as they are quite large.
 This function downloads the libraries automatically, by default into
 the directory where the package was installed.
-}
-\details{
-In order to manually download files, simply unzip them and
-specify their location in your call to \code{\link{init_clean_nlp}}
-using the \code{lib_location} parameter.
 }
 \examples{
 \dontrun{

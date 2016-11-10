@@ -5,69 +5,100 @@
 #' This function downloads the libraries automatically, by default into
 #' the directory where the package was installed.
 #'
-#' In order to manually download files, simply unzip them and
-#' specify their location in your call to \code{\link{init_clean_nlp}}
-#' using the \code{lib_location} parameter.
-#'
 #' @importFrom           utils download.file unzip
+#' @importFrom           RCurl curlPerform CFILE close
+#' @param type           type of files to download. The base backage is always required.
+#'                       Other jars include model files for French, German,
+#'                       and Spanish. These can be installed in addition to the
+#'                       base package. By default, the function downloads the base
+#'                       package and English model files.
 #' @param output_loc     a string showing where the files are to be downloaded.
 #'                       If missing, will try to download files into the directory
 #'                       where the package was original installed.
-#' @param type           type of files to download. The base backage, installed by
-#'                       default, is required. Other jars include chinese, german,
-#'                       and spanish. These can be installed in addition to the
-#'                       base package.
+#' @param url            the url to try to download components from. Setting to NULL
+#'                       uses the default location on the Stanford NLP server, but
+#'                       you can set this manually by using this option. It also allows
+#'                       for local files, but note that the path must include the prefix
+#'                       \code{file://}. For details, see \code{\link{download.file}}.
+#' @param url_core       if \code{url} is not null, this flag indicates whehter the path
+#'                       given to url points to the core nlp files (which are zipped) or
+#'                       to model files (which are unzipped).
+#'
 #'@examples
 #'\dontrun{
 #'download_clean_nlp()
 #'download_clean_nlp(type="spanish")
 #'}
 #' @export
-download_clean_nlp = function(output_loc,
-    type=c("base","chinese","english", "french", "german", "spanish")) {
+download_clean_nlp = function(type = c("default", "base", "en", "fr", "de", "es"),
+    output_loc, url = NULL, url_core = TRUE) {
 
+  # set defaults and determine where files should be saved
   baseURL <- "http://nlp.stanford.edu/software/"
-  coreFile <- "/stanford-corenlp-full-2015-12-09"
-
-  type = match.arg(type)
+  coreFile <- "/stanford-corenlp-full-2016-10-31"
   if (missing(output_loc)) {
-    output_loc = system.file("extdata", package="cleanNLP")
+    output_loc <- system.file("extdata", package="cleanNLP")
     if (file.access(output_loc, "6") == -1)
       stop("You do not have read+write access to location where the",
            "cleanNLP package is installed! You must specify an output",
            "location with output_loc.")
   }
 
-  if (type == "base") {
-    ret <- download.file(paste0(baseURL,coreFile,".zip"), destfile = file.path(output_loc, paste0(coreFile, ".zip")))
+  # if url is given, simply download the specified files as required
+  if (!is.null(url)) {
+    if (url_core) {
+      ret <- download.file(url, destfile = file.path(output_loc, paste0(coreFile, ".zip")))
+      if (ret != 0) stop("Download error!")
+
+      unzip(file.path(output_loc, paste0(coreFile, ".zip")), exdir = output_loc)
+      file.remove(file.path(output_loc, paste0(coreFile, ".zip")))
+      return(0L)
+    } else {
+      fname <- basename(url)
+      download.file(url, destfile = file.path(output_loc, coreFile, fname))
+    }
+  }
+
+  # otherwise, determine what file types should be downloaded
+  type <- match.arg(type)
+
+  if (type %in% c("default", "base")) {
+    f <- RCurl::CFILE(file.path(output_loc, paste0(coreFile, ".zip")), mode="wb")
+    ret <- RCurl::curlPerform(url = paste0(baseURL, coreFile, ".zip"), writedata = f@ref, noprogress=FALSE)
+    RCurl::close(f)
     if (ret != 0) stop("Download error!")
 
     unzip(file.path(output_loc, paste0(coreFile, ".zip")), exdir = output_loc)
     file.remove(file.path(output_loc, paste0(coreFile, ".zip")))
-    return(0L)
+    ret <- 0L
   }
 
   if (!file.exists(file.path(output_loc)))
     stop("Must download base files to this location first! Set type='base'.")
 
-  if (type == "chinese")
-    download.file(paste0(baseURL, "/stanford-chinese-corenlp-2016-01-19-models.jar"),
-      destfile = file.path(output_loc, coreFile, "/stanford-chinese-corenlp-2016-01-19-models.jar"))
+  if (type %in% c("default", "en")) {
+    f <- RCurl::CFILE(file.path(output_loc, coreFile, "/stanford-english-corenlp-2016-10-31-models.jar"), mode="wb")
+    ret <- RCurl::curlPerform(url = paste0(baseURL, "/stanford-english-corenlp-2016-10-31-models.jar"), writedata = f@ref, noprogress=FALSE)
+    RCurl::close(f)
+  }
 
-  if (type == "english")
-    download.file(paste0(baseURL, "/stanford-english-corenlp-2016-01-10-models.jar"),
-      destfile=file.path(output_loc, coreFile, "/stanford-english-corenlp-2016-01-10-models.jar"))
+  if (type %in% c("fr")) {
+    f <- RCurl::CFILE(file.path(output_loc, coreFile, "/stanford-french-corenlp-2016-10-31-models.jar"), mode="wb")
+    ret <- RCurl::curlPerform(url = paste0(baseURL, "/stanford-french-corenlp-2016-10-31-models.jar"), writedata = f@ref, noprogress=FALSE)
+    RCurl::close(f)
+  }
 
-  if (type == "french")
-    download.file(paste0(baseURL, "/stanford-french-corenlp-2016-01-14-models.jar"),
-      destfile=file.path(output_loc, coreFile, "/stanford-french-corenlp-2016-01-14-models.jar"))
+  if (type %in% c("de")) {
+    f <- RCurl::CFILE(file.path(output_loc, coreFile, "/stanford-german-corenlp-2016-10-31-models.jar"), mode="wb")
+    ret <- RCurl::curlPerform(url = paste0(baseURL, "/stanford-german-corenlp-2016-10-31-models.jar"), writedata = f@ref, noprogress=FALSE)
+    RCurl::close(f)
+  }
 
-  if (type == "german")
-    download.file(paste0(baseURL, "/stanford-german-corenlp-2016-01-19-models.jar"),
-      destfile=file.path(output_loc, coreFile, "/stanford-german-corenlp-2016-01-19-models.jar"))
+  if (type %in% c("es")) {
+    f <- RCurl::CFILE(file.path(output_loc, coreFile, "/stanford-spanish-corenlp-2016-10-31-models.jar"), mode="wb")
+    ret <- RCurl::curlPerform(url = paste0(baseURL, "/stanford-spanish-corenlp-2016-10-31-models.jar"), writedata = f@ref, noprogress=FALSE)
+    RCurl::close(f)
+  }
 
-  if (type == "spanish")
-    download.file(paste0(baseURL, "/stanford-spanish-corenlp-2015-10-14-models.jar"),
-      destfile=file.path(output_loc, coreFile, "/stanford-spanish-corenlp-2015-10-14-models.jar"))
-
+  ret
 }

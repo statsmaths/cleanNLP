@@ -11,11 +11,25 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <dependencies>
-    <dependency>
+<!--     <dependency>
         <groupId>edu.stanford.nlp</groupId>
         <artifactId>stanford-corenlp</artifactId>
-        <version>3.6.0</version>
-    </dependency>
+        <version>3.7.0</version>
+    </dependency> -->
+  <dependency>
+      <groupId>edu.stanford.nlp</groupId>
+      <artifactId>stanford-corenlp</artifactId>
+      <version>3.7.0</version>
+      <scope>system</scope>
+      <systemPath>/Users/taylor/Documents/stanford-corenlp-full-2016-10-31/stanford-corenlp-3.7.0.jar</systemPath>
+  </dependency>
+  <dependency>
+      <groupId>org.ejml</groupId>
+      <artifactId>ejml</artifactId>
+      <version>0.23</version>
+      <scope>system</scope>
+      <systemPath>/Users/taylor/Documents/stanford-corenlp-full-2016-10-31/ejml-0.23.jar</systemPath>
+  </dependency>
   </dependencies>
   <build>
     <plugins>

@@ -7,7 +7,7 @@
 #' To quickly start using the \pkg{cleanNLP} package, first download the CoreNLP
 #' jar files using the function \code{\link{download_clean_nlp}}. Properties can then
 #' be set to change the behavior of the pipeline using the function \code{\link{set_language}}.
-#' There are also \code{\link{set_annotators}} and \code{\link{set_properties}}, which
+#' There is also \code{\link{set_properties}}, which
 #' provide lower-level mechanisms for setting pipeline properties. The output of all of
 #' these functions are cached between R sessions and only need to be run once.
 #'
@@ -21,7 +21,7 @@
 #' \code{\link{get_triple}}. See their documentation for further details.
 #'
 #' If loading annotation that have previously been saved to disk, these can be pulled back into R
-#' using \code{\link{write_annotation}}. This does not required downloading the java jar files or
+#' using \code{\link{read_annotation}}. This does not require downloading the java jar files or
 #' initializing the annotation pipeline.
 #'
 #' @examples
@@ -30,7 +30,7 @@
 #' # download files and set properties of the annotation engine (only need to do this once)
 #' download_clean_nlp()
 #' set_properties()
-#' set_language("en")
+#' set_language("en", speed = 2)
 #'
 #' # load the annotation engine (only do once per session)
 #' init_clean_nlp()

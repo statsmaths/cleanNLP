@@ -25,6 +25,7 @@ Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}
  \item{"upos"}{ - character. Universal part of speech code.}
  \item{"pos"}{ - character. Language-specific part of speech code; uses the Penn Treebank codes.}
  \item{"speaker"}{ - character. Identity of the speaker, with \code{PER0} denoting the narratorial voice.}
+ \item{"wiki"}{ - character. Link to Wikipedia entity.}
  \item{"cid"}{ - integer. Character offset at the start of the word in the original document.}
  \item{"cid_end"}{ - integer. Character offset pointing one past the character at the end of the word.}
 }

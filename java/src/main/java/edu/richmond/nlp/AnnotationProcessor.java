@@ -23,21 +23,21 @@ public final class AnnotationProcessor {
 
   TimeZone tz = TimeZone.getTimeZone("UTC");
   DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-  String output_path;
-  String language;
-  int idOffset;
+  String output_path = "";
+  String language = "";
+  int idOffset = 0;
 
-  public AnnotationProcessor(String output_path) {
-    this(output_path, "en", 0);
-  }
+  public AnnotationProcessor() {}
 
-  public AnnotationProcessor(String output_path, String language) {
-    this(output_path, language, 0);
-  }
-
-  public AnnotationProcessor(String output_path, String language, int idOffset) {
+  public void setOutputPath(String output_path) {
     this.output_path = output_path;
+  }
+
+  public void setLanguage(String language) {
     this.language = language;
+  }
+
+  public void setIdOffset(int idOffset) {
     this.idOffset = idOffset;
   }
 

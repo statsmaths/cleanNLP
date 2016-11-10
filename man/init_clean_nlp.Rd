@@ -4,7 +4,7 @@
 \alias{init_clean_nlp}
 \title{Initialize the cleanNLP java object}
 \usage{
-init_clean_nlp(lib_location = NULL, mem = "4g")
+init_clean_nlp(lib_location = NULL, mem = "12g", verbose = TRUE)
 }
 \arguments{
 \item{lib_location}{a string giving the location of the CoreNLP java
@@ -20,15 +20,17 @@ engine. For example, "6g" assigned 6 gigabytes of memory. At least
 package. On a 32bit machine, where this is not possible, setting
 "1800m" may also work. This option will only have an effect the first
 time \code{initCoreNLP} is called, and also will not have an effect if
-the java engine is already started by a seperate process.}
+the java engine is already started by a separate process.}
+
+\item{verbose}{boolean. Should messages from the pipeline be written to the console or
+suppressed?}
 }
 \description{
 This must be run prior to calling any other cleanNLP
 functions. Options that control the behavior of the
-pipeline must be set using one of: \code{\link{set_properties}},
-\code{\link{set_annotators}}, or \code{\link{set_language}}.
-Options may be reset during a given R session; in order to take effect,
-make a new call to this function.
+pipeline must be set using one of: \code{\link{set_language}} or
+\code{\link{set_properties}}. Options may be reset during a given R session;
+in order to take effect, make a new call to this function.
 }
 \examples{
 \dontrun{

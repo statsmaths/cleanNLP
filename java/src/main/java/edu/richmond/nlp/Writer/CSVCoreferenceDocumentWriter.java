@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.Collection;
 import java.util.Map;
 
+import edu.stanford.nlp.coref.CorefCoreAnnotations;
+import edu.stanford.nlp.coref.data.CorefChain;
 import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.ling.*;
 import edu.stanford.nlp.semgraph.*;
 import edu.stanford.nlp.trees.GrammaticalRelation;
-import edu.stanford.nlp.hcoref.data.CorefChain;
-import edu.stanford.nlp.hcoref.CorefCoreAnnotations;
 import edu.stanford.nlp.pipeline.Annotation;
 
 public class CSVCoreferenceDocumentWriter {

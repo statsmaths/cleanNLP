@@ -19,11 +19,11 @@ public class CSVDependencyDocumentWriter {
   public String print(CoreMap sentence) {
 
     StringBuilder sb = new StringBuilder();
-    SemanticGraph basicDependencies = sentence.get(SemanticGraphCoreAnnotations.BasicDependenciesAnnotation.class);
+    SemanticGraph enhancedDependencies = sentence.get(SemanticGraphCoreAnnotations.EnhancedPlusPlusDependenciesAnnotation.class);
 
-    if (basicDependencies != null) {
+    if (enhancedDependencies != null) {
       // Need to add the root ourselves
-      for (IndexedWord root : basicDependencies.getRoots()) {
+      for (IndexedWord root : enhancedDependencies.getRoots()) {
         String rel = GrammaticalRelation.ROOT.getLongName();
         rel = rel.replaceAll("\\s+", ""); // future proofing
 
@@ -31,7 +31,7 @@ public class CSVDependencyDocumentWriter {
                                 0, root.sentIndex(), root.index(), rel, rel));
       }
 
-      for (SemanticGraphEdge edge : basicDependencies.edgeListSorted()) {
+      for (SemanticGraphEdge edge : enhancedDependencies.edgeListSorted()) {
         GrammaticalRelation reln = edge.getRelation();
         String relnName = reln == null ? "" : reln.toString();
         String relnNameBasic = relnName.split(":",-1)[0];
