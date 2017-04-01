@@ -268,7 +268,7 @@ straightforward, but this has caused problems on some machines, particularly
 with macOS. For help, see the GitHub issues tracker. Once these system
 requirements are met, we can install the ".jar" files with
 
-```{r, eval = FALSE}
+```{r}
 download_core_nlp()
 ```
 
@@ -286,10 +286,10 @@ set_java_properties(speed = 2L)
 We once again call `init_clean_nlp`, this time specifying that we want
 the "java" version to by initialized:
 
-```{r, eval = FALSE}
+```{r}
 init_clean_nlp(type = "java", )
 ```
-```{r, echo = FALSE}
+```{r}
 lib_loc <- "~/local/core_nlp_files/stanford-corenlp-full-2016-10-31"
 init_clean_nlp(type = "coreNLP", lib_location = lib_loc)
 ```
