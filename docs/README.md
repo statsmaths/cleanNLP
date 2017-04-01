@@ -95,7 +95,7 @@ get_token(obj)
 ## # ... with 54 more rows, and 1 more variables: cid_end <int>
 ```
 
-The output from the "get_*" tables are (mostly) pre-calculted. All of the hard
+The output from the "get_*" tables are (mostly) pre-calculated. All of the hard
 work is done in the `annotate` function. Notice that most of the features in the
 tokens table are filled in. Creating these requires further set-up, which we will
 discuss next.
