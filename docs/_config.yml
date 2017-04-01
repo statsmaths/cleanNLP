@@ -1,1 +1,3 @@
 theme: jekyll-theme-minimal
+title: A Tidy Data Model for Natural Language Processing
+description: Provides a set of fast tools for converting a textual corpus into a set of normalized tables.
