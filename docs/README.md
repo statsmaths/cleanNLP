@@ -80,19 +80,19 @@ get_token(obj)
 ```
 ```
 ## # A tibble: 64 × 11
-##       id   sid   tid    word lemma  upos   pos speaker  wiki   cid cid_end
-##    <int> <int> <int>   <chr> <chr> <chr> <chr>   <chr> <chr> <int>   <int>
-## 1      0     1     0    ROOT  <NA>  <NA>  <NA>    <NA>  <NA>    NA      NA
-## 2      0     1     1     The  <NA>  <NA>  <NA>    <NA>  <NA>    NA      NA
-## 3      0     1     2 regular  <NA>  <NA>  <NA>    <NA>  <NA>    NA      NA
-## 4      0     1     3   early  <NA>  <NA>  <NA>    <NA>  <NA>    NA      NA
-## 5      0     1     4 morning  <NA>  <NA>  <NA>    <NA>  <NA>    NA      NA
-## 6      0     1     5    yell  <NA>  <NA>  <NA>    <NA>  <NA>    NA      NA
-## 7      0     1     6      of  <NA>  <NA>  <NA>    <NA>  <NA>    NA      NA
-## 8      0     1     7  horror  <NA>  <NA>  <NA>    <NA>  <NA>    NA      NA
-## 9      0     1     8     was  <NA>  <NA>  <NA>    <NA>  <NA>    NA      NA
-## 10     0     1     9     the  <NA>  <NA>  <NA>    <NA>  <NA>    NA      NA
-## # ... with 54 more rows
+##       id   sid   tid    word lemma  upos   pos speaker  wiki   cid
+##    <int> <int> <int>   <chr> <chr> <chr> <chr>   <chr> <chr> <int>
+## 1      0     1     0    ROOT  <NA>  <NA>  <NA>    <NA>  <NA>    NA
+## 2      0     1     1     The  <NA>  <NA>  <NA>    <NA>  <NA>    NA
+## 3      0     1     2 regular  <NA>  <NA>  <NA>    <NA>  <NA>    NA
+## 4      0     1     3   early  <NA>  <NA>  <NA>    <NA>  <NA>    NA
+## 5      0     1     4 morning  <NA>  <NA>  <NA>    <NA>  <NA>    NA
+## 6      0     1     5    yell  <NA>  <NA>  <NA>    <NA>  <NA>    NA
+## 7      0     1     6      of  <NA>  <NA>  <NA>    <NA>  <NA>    NA
+## 8      0     1     7  horror  <NA>  <NA>  <NA>    <NA>  <NA>    NA
+## 9      0     1     8     was  <NA>  <NA>  <NA>    <NA>  <NA>    NA
+## 10     0     1     9     the  <NA>  <NA>  <NA>    <NA>  <NA>    NA
+## # ... with 54 more rows, and 1 more variables: cid_end <int>
 ```
 
 The output from the "get_*" tables are (mostly) pre-calculted. All of the hard
