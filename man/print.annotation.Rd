@@ -17,4 +17,3 @@ Print a summary of an annotation object
 \author{
 Taylor B. Arnold, \email{taylor.arnold@acm.org}
 }
-

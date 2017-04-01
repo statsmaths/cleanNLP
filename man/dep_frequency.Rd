@@ -12,4 +12,3 @@ in standard treebank corpora. Frequencies are multiplied by 100.
 \url{http://universaldependencies.org/}
 }
 \keyword{data}
-

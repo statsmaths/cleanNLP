@@ -35,12 +35,11 @@ get_document(obama)
 
 
 }
-\author{
-Taylor B. Arnold, \email{taylor.arnold@acm.org}
-}
 \references{
 Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bethard, and
   David McClosky. 2014. \href{http://nlp.stanford.edu/pubs/StanfordCoreNlp2014.pdf}{The Stanford CoreNLP Natural Language Processing Toolkit}.
   In: \emph{Proceedings of the 52nd Annual Meeting of the Association for Computational Linguistics: System Demonstrations, pp. 55-60.}
 }
-
+\author{
+Taylor B. Arnold, \email{taylor.arnold@acm.org}
+}

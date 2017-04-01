@@ -39,9 +39,6 @@ get_sentiment(obama) \%>\%
   summarize(mean(pred_class), se = sd(pred_class) / sqrt(n()))
 
 }
-\author{
-Taylor B. Arnold, \email{taylor.arnold@acm.org}
-}
 \references{
 Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bethard, and
   David McClosky. 2014. \href{http://nlp.stanford.edu/pubs/StanfordCoreNlp2014.pdf}{The Stanford CoreNLP Natural Language Processing Toolkit}.
@@ -50,4 +47,6 @@ Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bet
   Socher, Richard, et al. "Recursive deep models for semantic compositionality over a sentiment treebank." Proceedings of the conference on
   empirical methods in natural language processing (EMNLP). Vol. 1631. 2013.
 }
-
+\author{
+Taylor B. Arnold, \email{taylor.arnold@acm.org}
+}

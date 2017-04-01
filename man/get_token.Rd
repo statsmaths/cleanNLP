@@ -46,9 +46,6 @@ get_token(obama) \%>\%
   summarize(sentence_length = max(tid)) \%>\%
   summarize(avg_sentence_length = mean(sentence_length))
 }
-\author{
-Taylor B. Arnold, \email{taylor.arnold@acm.org}
-}
 \references{
 Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bethard, and
   David McClosky. 2014. \href{http://nlp.stanford.edu/pubs/StanfordCoreNlp2014.pdf}{The Stanford CoreNLP Natural Language Processing Toolkit}.
@@ -60,4 +57,6 @@ Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bet
   Kristina Toutanova, Dan Klein, Christopher Manning, and Yoram Singer. 2003. Feature-Rich Part-of-Speech Tagging with a Cyclic Dependency Network.
   In: \emph{Proceedings of HLT-NAACL 2003, pp. 252-259.}
 }
-
+\author{
+Taylor B. Arnold, \email{taylor.arnold@acm.org}
+}

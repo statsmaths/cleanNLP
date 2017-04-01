@@ -22,18 +22,15 @@
 #' data(obama)
 #'
 #' # Get principal components from the non-proper noun lemmas
-#' pca_doc <- get_token(obama) %>%
+#' res <- get_token(obama) %>%
 #'   filter(pos %in% c("NN", "NNS")) %>%
-#'   get_tfidf() %$%
-#'   tidy_pca(tfidf, get_document(obama))
+#'   get_tfidf()
+#' pca_doc <- tidy_pca(res$tfidf, get_document(obama))
 #'
 #' # Plot speeches using the first two principal components
 #' plot(pca_doc$PC1, pca_doc$PC2, col = "white")
 #' text(pca_doc$PC1, pca_doc$PC2, label = 2009:2016)
 #'
-#' @importFrom  stats prcomp
-#' @importFrom  magrittr use_series
-#' @importFrom  dplyr as_data_frame bind_cols
 #' @export
 tidy_pca <- function(x, meta = NULL, k = 2, center = TRUE, scale = TRUE) {
 
@@ -107,10 +104,6 @@ tidy_pca <- function(x, meta = NULL, k = 2, center = TRUE, scale = TRUE) {
 #' vids <- order(tfidf$tfidf[1,], decreasing = TRUE)[1:10]
 #' tfidf$vocab[vids]
 #'
-#' @importFrom  dplyr  data_frame group_by_ summarize filter mutate arrange desc
-#' @importFrom  magrittr use_series
-#' @importFrom  Matrix spMatrix sparse.model.matrix t
-#' @importFrom  methods as
 #' @export
 get_tfidf <- function(object, type = c("tfidf", "tf", "idf", "vocab", "all"),
                       tf_weight = c("lognorm", "binary", "raw", "dnorm"),
@@ -134,18 +127,18 @@ get_tfidf <- function(object, type = c("tfidf", "tf", "idf", "vocab", "all"),
 
   if (is.null(vocabulary)) {
 
-    N <- length(unique(use_series(x, "doc")))
-    possible_vocab <- unique(x) %>%
-      dplyr::group_by_("token") %>%
-      dplyr::summarize(prop = n() / N) %>%
-      dplyr::filter(prop > min_df & prop < max_df) %>%
-      use_series("token")
+    N <- length(unique(x$doc))
 
-    vocabulary <- x %>%
-      dplyr::filter(token %in% possible_vocab) %>%
-      dplyr::group_by_("token") %>%
-      dplyr::summarize(n = n()) %>%
-      dplyr::arrange(dplyr::desc(n))
+    possible_vocab <- unique(x)
+    possible_vocab <- dplyr::group_by_(possible_vocab, "token")
+    possible_vocab <- dplyr::summarize(possible_vocab, prop = n() / N)
+    possible_vocab <- dplyr::filter(possible_vocab, prop > min_df & prop < max_df)
+    possible_vocab <- possible_vocab$token
+
+    vocabulary <- dplyr::filter(x, token %in% possible_vocab)
+    vocabulary <- dplyr::group_by_(vocabulary, "token")
+    vocabulary <- dplyr::summarize(vocabulary, n = n())
+    vocabulary <- dplyr::arrange(vocabulary, dplyr::desc(n))
 
     vocabulary <- vocabulary[["token"]][1:min(c(max_features, nrow(vocabulary)))]
 
@@ -158,7 +151,7 @@ get_tfidf <- function(object, type = c("tfidf", "tf", "idf", "vocab", "all"),
   # create counts
   x <- dplyr::filter(x, token %in% vocabulary)
   x <- dplyr::mutate(x, token = factor(token, levels = vocabulary))
-  doc <- use_series(x, "doc")
+  doc <- x[["doc"]]
   doc_set <- unique(doc)
   N <- length(doc_set)
   id <- match(doc, doc_set)
@@ -171,7 +164,7 @@ get_tfidf <- function(object, type = c("tfidf", "tf", "idf", "vocab", "all"),
   term_counts <- Matrix::spMatrix(nrow = length(doc_set), ncol = ncol(mat), i = df$id, j = df$lid + 1, x = df$count)
 
   # tf
-  if (type %in% c("tfidf", "tf", "idf", "list")) {
+  if (type %in% c("tfidf", "tf", "idf", "all")) {
 
     if (tf_weight == "lognorm") {
       tf <- 1 + log2(term_counts)
@@ -188,7 +181,7 @@ get_tfidf <- function(object, type = c("tfidf", "tf", "idf", "vocab", "all"),
   }
 
   # idf
-  if (type %in% c("tfidf", "idf", "list")) {
+  if (type %in% c("tfidf", "idf", "all")) {
 
     if (idf_weight == "idf") {
 
@@ -208,7 +201,7 @@ get_tfidf <- function(object, type = c("tfidf", "tf", "idf", "vocab", "all"),
   }
 
   # tf-idf
-  if (type %in% c("tfidf", "list")) {
+  if (type %in% c("tfidf", "all")) {
     tfidf <- Matrix::t(Matrix::t(tf) * idf)
   }
 

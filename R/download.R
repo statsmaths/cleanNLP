@@ -1,12 +1,11 @@
-#' Download java files needed for cleanNLP
+#' Download java files needed for CoreNLP
 #'
 #' The cleanNLP package does not supply the raw java files
 #' provided by the Stanford NLP Group as they are quite large.
 #' This function downloads the libraries automatically, by default into
-#' the directory where the package was installed.
+#' the directory where the package was installed. These are not
+#' required for using the spaCy Python implementation.
 #'
-#' @importFrom           utils download.file unzip
-#' @importFrom           RCurl curlPerform CFILE close
 #' @param type           type of files to download. The base backage is always required.
 #'                       Other jars include model files for French, German,
 #'                       and Spanish. These can be installed in addition to the
@@ -26,15 +25,18 @@
 #'
 #'@examples
 #'\dontrun{
-#'download_clean_nlp()
-#'download_clean_nlp(type="spanish")
+#'download_core_nlp()
+#'download_core_nlp(type="spanish")
 #'}
 #' @export
-download_clean_nlp = function(type = c("default", "base", "en", "fr", "de", "es"),
+download_core_nlp = function(type = c("default", "base", "en", "fr", "de", "es"),
     output_loc, url = NULL, url_core = TRUE) {
 
+  if (!requireNamespace("RCurl"))
+    stop("You must install RCurl to download the coreNLP files.")
+
   # set defaults and determine where files should be saved
-  baseURL <- "http://nlp.stanford.edu/software/"
+  baseURL <- "https://nlp.stanford.edu/software/"
   coreFile <- "/stanford-corenlp-full-2016-10-31"
   if (missing(output_loc)) {
     output_loc <- system.file("extdata", package="cleanNLP")
@@ -47,15 +49,19 @@ download_clean_nlp = function(type = c("default", "base", "en", "fr", "de", "es"
   # if url is given, simply download the specified files as required
   if (!is.null(url)) {
     if (url_core) {
-      ret <- download.file(url, destfile = file.path(output_loc, paste0(coreFile, ".zip")))
+      f <- RCurl::CFILE(file.path(output_loc, paste0(coreFile, ".zip")), mode="wb")
+      ret <- RCurl::curlPerform(url = url, writedata = f@ref, noprogress=FALSE)
+      RCurl::close(f)
       if (ret != 0) stop("Download error!")
 
-      unzip(file.path(output_loc, paste0(coreFile, ".zip")), exdir = output_loc)
+      utils::unzip(file.path(output_loc, paste0(coreFile, ".zip")), exdir = output_loc)
       file.remove(file.path(output_loc, paste0(coreFile, ".zip")))
       return(0L)
     } else {
       fname <- basename(url)
-      download.file(url, destfile = file.path(output_loc, coreFile, fname))
+      f <- RCurl::CFILE(file.path(output_loc, coreFile, fname), mode="wb")
+      ret <- RCurl::curlPerform(url = url, writedata = f@ref, noprogress=FALSE)
+      RCurl::close(f)
     }
   }
 
@@ -68,7 +74,7 @@ download_clean_nlp = function(type = c("default", "base", "en", "fr", "de", "es"
     RCurl::close(f)
     if (ret != 0) stop("Download error!")
 
-    unzip(file.path(output_loc, paste0(coreFile, ".zip")), exdir = output_loc)
+    utils::unzip(file.path(output_loc, paste0(coreFile, ".zip")), exdir = output_loc)
     file.remove(file.path(output_loc, paste0(coreFile, ".zip")))
     ret <- 0L
   }

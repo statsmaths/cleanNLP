@@ -2,38 +2,28 @@
 #'
 #' Provides a set of fast tools for converting a textual corpus into a set of
 #' normalized tables. The underlying natural language processing pipeline utilizes
-#' the Stanford's CoreNLP library.
-#'
-#' To quickly start using the \pkg{cleanNLP} package, first download the CoreNLP
-#' jar files using the function \code{\link{download_clean_nlp}}. Properties can then
-#' be set to change the behavior of the pipeline using the function \code{\link{set_language}}.
-#' There is also \code{\link{set_properties}}, which
-#' provide lower-level mechanisms for setting pipeline properties. The output of all of
-#' these functions are cached between R sessions and only need to be run once.
+#' either the Python module spaCy or the Java-based Stanford CoreNLP library.
+#' The Python option is faster and generally easier to install; the Java option
+#' has additional annotators that are not available in spaCy.
 #'
 #' Once the package is set up, run \code{\link{init_clean_nlp}} to start the
-#' java engine and to load the CoreNLP pipeline. The latter may take up to several
-#' minutes depending on how which annotators are being used. After this function is
+#' either the Python or Java engine and to load the CoreNLP pipeline. After this function is
 #' done loading, use \code{\link{annotate}} to run the annotation engine over a corpus
 #' of text. Functions are then available to extract data tables from the annotation
 #' object: \code{\link{get_token}}, \code{\link{get_dependency}}, \code{\link{get_document}},
-#' \code{\link{get_coreference}}, \code{\link{get_entity}}, \code{\link{get_sentiment}}, and
-#' \code{\link{get_triple}}. See their documentation for further details.
+#' \code{\link{get_coreference}}, \code{\link{get_entity}}, \code{\link{get_sentiment}},
+#' \code{\link{get_triple}}, and \code{\link{get_vector}}. See their documentation for
+#' further details. The package vignettes provide more detailed set-up information.
 #'
 #' If loading annotation that have previously been saved to disk, these can be pulled back into R
-#' using \code{\link{read_annotation}}. This does not require downloading the java jar files or
-#' initializing the annotation pipeline.
+#' using \code{\link{read_annotation}}. This does not require Java or Python nor does it
+#' require initializing the annotation pipeline.
 #'
 #' @examples
 #'
 #'\dontrun{
-#' # download files and set properties of the annotation engine (only need to do this once)
-#' download_clean_nlp()
-#' set_properties()
-#' set_language("en", speed = 2)
-#'
-#' # load the annotation engine (only do once per session)
-#' init_clean_nlp()
+#' # load the annotation engine (skip this if you spaCy not installed)
+#' init_clean_nlp("spaCy")
 #'
 #' # annotate your text
 #' annotation <- annotate("path/to/corpus/directory")
@@ -46,8 +36,10 @@
 #' entity <- get_entity(annotation)
 #' sentiment <- get_sentiment(annotation)
 #' triple <- get_triple(annotation)
+#' vector <- get_vector(annotation)
 #'}
 #'
+#' @import dplyr
+#'
 #' @docType package
-#' @name cleanNLP
-NULL
+"_PACKAGE"

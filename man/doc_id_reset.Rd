@@ -27,4 +27,3 @@ doc_id_reset(annotation, 10)
 \author{
 Taylor B. Arnold, \email{taylor.arnold@acm.org}
 }
-

@@ -50,16 +50,13 @@ language-specific universal dependency types are included in the output.
 data(obama)
 
 # find the most common noun lemmas that are the syntactic subject of a clause
-get_dependency(obama, get_token = TRUE) \%>\%
-  filter(relation == "nsubj") \%>\%
-  use_series(lemma_target) \%>\%
+res <- get_dependency(obama, get_token = TRUE) \%>\%
+  filter(relation == "nsubj")
+res$lemma_target \%>\%
   table() \%>\%
   sort(decreasing = TRUE) \%>\%
   head(n = 40)
 
-}
-\author{
-Taylor B. Arnold, \email{taylor.arnold@acm.org}
 }
 \references{
 Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bethard, and
@@ -79,4 +76,6 @@ Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bet
   Anna Rafferty and Christopher D. Manning. 2008. Parsing Three German Treebanks: Lexicalized and Unlexicalized Baselines.
   In: \emph{ACL Workshop on Parsing German.}
 }
-
+\author{
+Taylor B. Arnold, \email{taylor.arnold@acm.org}
+}

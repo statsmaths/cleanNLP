@@ -42,15 +42,11 @@ the subject and object are related by the words consituting the relation.
 \examples{
 
 # what are the most common relations in the text?
-get_triple(obama) \%>\%
-  use_series(relation) \%>\%
+get_triple(obama)$relation \%>\%
   table() \%>\%
   sort(decreasing = TRUE) \%>\%
   head(n = 40L)
 
-}
-\author{
-Taylor B. Arnold, \email{taylor.arnold@acm.org}
 }
 \references{
 Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bethard, and
@@ -60,4 +56,6 @@ Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bet
    Gabor Angeli, Melvin Johnson Premkumar, and Christopher D. Manning. Leveraging Linguistic Structure For Open Domain Information Extraction.
    In: \emph{Proceedings of the Association of Computational Linguistics (ACL), 2015}.
 }
-
+\author{
+Taylor B. Arnold, \email{taylor.arnold@acm.org}
+}

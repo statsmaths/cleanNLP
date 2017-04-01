@@ -25,4 +25,3 @@ write_annotation(annotation, "/path/to/annotation")
 \author{
 Taylor B. Arnold, \email{taylor.arnold@acm.org}
 }
-

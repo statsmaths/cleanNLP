@@ -12,4 +12,3 @@ from the Google Web Trillion Word Corpus. Frequencies are multiplied by 100.
 \url{http://norvig.com/ngrams/}
 }
 \keyword{data}
-

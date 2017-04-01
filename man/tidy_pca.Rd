@@ -36,14 +36,13 @@ is a simple but powerful technique for visualizing a corpus of documents.
 data(obama)
 
 # Get principal components from the non-proper noun lemmas
-pca_doc <- get_token(obama) \%>\%
+res <- get_token(obama) \%>\%
   filter(pos \%in\% c("NN", "NNS")) \%>\%
-  get_tfidf() \%$\%
-  tidy_pca(tfidf, get_document(obama))
+  get_tfidf()
+pca_doc <- tidy_pca(res$tfidf, get_document(obama))
 
 # Plot speeches using the first two principal components
 plot(pca_doc$PC1, pca_doc$PC2, col = "white")
 text(pca_doc$PC1, pca_doc$PC2, label = 2009:2016)
 
 }
-

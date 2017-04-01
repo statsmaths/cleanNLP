@@ -11,4 +11,3 @@ Parsed text from all eight State of the Union addresses given by Barack Obama.
 \url{http://www.presidency.ucsb.edu/sou.php}
 }
 \keyword{data}
-

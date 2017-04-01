@@ -1,24 +1,31 @@
 Package: cleanNLP
 Type: Package
 Title: A Tidy Data Model for Natural Language Processing
-Version: 0.25
-Date: 2016-11-11
-Author: Taylor B. Arnold
-Maintainer: Taylor B. Arnold <taylor.arnold@acm.org>
-Description: Provides a set of fast tools for converting a textual corpus into a set of normalized tables. The underlying natural language processing pipeline utilizes the Stanford's CoreNLP library. Exposed annotation tasks include tokenization, part of speech tagging, named entity recognition, entity linking, sentiment analysis, dependency parsing, coreference resolution, and information extraction. Several datasets containing token unigram, part of speech tag, and dependency type frequencies are also included to assist with analyses. Currently supports parsing text in English, French, German, and Spanish.
+Version: 1.2
+Date: 2017-03-29
+Authors@R: c(person("Taylor", "Arnold", email = "taylor.arnold@acm.org", role = c("aut", "cre")))
+Author: Taylor Arnold [aut, cre]
+Maintainer: Taylor Arnold <taylor.arnold@acm.org>
+Description: Provides a set of fast tools for converting a textual corpus into a set of normalized tables. Users may make use of a Python backend with 'spaCy' (<https://spacy.io>) or the Java backend 'CoreNLP' (http://stanfordnlp.github.io/CoreNLP/). A minimal backend with no external dependencies is also provided. Exposed annotation tasks include tokenization, part of speech tagging, named entity recognition, entity linking, sentiment analysis, dependency parsing, coreference resolution, information extraction, and word embeddings. Datasets containing token unigram, part of speech tag, and dependency type frequencies are also included to assist with analyses. Currently supports parsing text in English, French, German, and Spanish.
 Depends:
     dplyr,
-    magrittr,
-    R (>= 2.10)
+    R (>= 3.0)
 Imports:
     readr,
-    rJava,
-    RCurl,
     Matrix,
     stats,
-    methods
-SystemRequirements: Java (>= 7.0); Stanford CoreNLP <http://nlp.stanford.edu/
-    software/corenlp.shtml> (>= 3.7.0)
+    methods,
+    utils
+Suggests:
+    reticulate,
+    rJava,
+    tokenizers,
+    RCurl,
+    knitr,
+    rmarkdown,
+    testthat
+SystemRequirements: Python (>= 2.7.0); spaCy <https://spacy.io/> (>= 1.7); Java (>= 7.0); Stanford CoreNLP <http://nlp.stanford.edu/software/corenlp.shtml> (>= 3.7.0)
 License: GPL-3
 LazyData: true
-RoxygenNote: 5.0.1
+VignetteBuilder: knitr
+RoxygenNote: 6.0.1

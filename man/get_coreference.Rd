@@ -41,12 +41,9 @@ any mention of an entity; these can be linked using the \code{rid} key.
 data(obama)
 
 # how often are references made to males versus female in each speech?
-get_coreference(obama) \%$\%
-  table(gender, id)
+coref <- get_coreference(obama)
+table(coref$gender, coref$id)
 
-}
-\author{
-Taylor B. Arnold, \email{taylor.arnold@acm.org}
 }
 \references{
 Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bethard, and
@@ -68,4 +65,6 @@ Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bet
    Karthik Raghunathan, Heeyoung Lee, Sudarshan Rangarajan, Nathanael Chambers, Mihai Surdeanu, Dan Jurafsky, Christopher Manning
    A Multi-Pass Sieve for Coreference Resolution. EMNLP-2010, Boston, USA. 2010.
 }
-
+\author{
+Taylor B. Arnold, \email{taylor.arnold@acm.org}
+}

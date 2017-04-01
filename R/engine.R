@@ -2,36 +2,105 @@ volatiles = new.env(parent=emptyenv())
 
 #' Initialize the cleanNLP java object
 #'
-#' This must be run prior to calling any other cleanNLP
-#' functions. Options that control the behavior of the
-#' pipeline must be set using one of: \code{\link{set_language}} or
-#' \code{\link{set_properties}}. Options may be reset during a given R session;
-#' in order to take effect, make a new call to this function.
+#' This must be run prior to calling the `annotation`
+#' function with any backend other than "tokenizers".
+#' Options that control the behavior of the
+#' pipeline must be set using one of:
+#  \code{\link{set_spacy_properties}} (Python)
+#' or \code{\link{set_java_properties}} (Java). Options may
+#' be reset during a given R session; in order to take effect,
+#' make a new call to this function.
 #'
+#' @param type           whether you want to initalize the Python/spaCy model
+#'                       or the Java/coreNLP model.
+#' @param model_name     string giving the model name for the Python/spaCy backend.
+#'                       Defaults to English if not provided.
 #' @param lib_location   a string giving the location of the CoreNLP java
 #'                       files. This should point to a directory which
 #'                       contains, for example the file "stanford-corenlp-*.jar",
 #'                       where "*" is the version number. If missing, the function
 #'                       will try to find the library in the environment variable
-#'                       CORENLP_HOME, and otherwise will fail.
+#'                       CORENLP_HOME, and otherwise will fail. (Java model only)
 #' @param mem            a string giving the amount of memory to be assigned to the rJava
 #'                       engine. For example, "6g" assigned 6 gigabytes of memory. At least
 #'                       2 gigabytes are recommended at a minimum for running the CoreNLP
 #'                       package. On a 32bit machine, where this is not possible, setting
 #'                       "1800m" may also work. This option will only have an effect the first
 #'                       time \code{initCoreNLP} is called, and also will not have an effect if
-#'                       the java engine is already started by a separate process.
+#'                       the java engine is already started by a separate process. (Java
+#'                       model only)
 #' @param verbose        boolean. Should messages from the pipeline be written to the console or
-#'                       suppressed?
+#'                       suppressed? (Java model only)
 #'
 #' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
 #'@examples
 #'\dontrun{
-#'init_clean_nlp()
+#'init_clean_nlp(type = "spaCy")
+#'init_clean_nlp(type = "coreNLP")
 #'}
-#' @importFrom  rJava .jinit .jaddClassPath .jcall .jnew .jfield .jcast
 #' @export
-init_clean_nlp <- function(lib_location = NULL, mem = "12g", verbose = TRUE) {
+init_clean_nlp <- function(type = c("spaCy", "coreNLP"), model_name = NULL,
+                           lib_location = NULL, mem = "12g",
+                           verbose = TRUE) {
+
+  type <- match.arg(type)
+
+  if (type == "spaCy") {
+    message("Initalizing Python backend with spaCy")
+    res <- .init_clean_nlp_python(model_name = model_name)
+  }
+
+  if (type == "coreNLP") {
+    message("Initalizing Java backend with coreNLP")
+    res <- .init_clean_nlp_java(lib_location = lib_location, mem = mem, verbose = verbose)
+  }
+
+  invisible(res)
+}
+
+.init_clean_nlp_python <- function(model_name = model_name) {
+
+  if (is.null(model_name))
+    model_name <- "en"
+
+  if (!requireNamespace("reticulate")) {
+    stop("The reticulate package is required to use the spaCy backend.")
+  }
+
+  if (!reticulate::py_module_available("spacy")) {
+    stop("The spacy module must be installed in python before using as a backend.")
+  }
+
+  output_loc <- system.file("py", package="cleanNLP")
+  volatiles$py_file <- reticulate::py_run_file(file.path(output_loc, "load_spacy.py"))
+
+  temp <- tryCatch({
+      volatiles$spacy <- volatiles$py_file$SpacyCleanNLP(model_name)
+  }, error = function(e) {
+      stop(sprintf("The model name '%s' cannot be found by spaCy.\n", model_name),
+           sprintf("You can generally download models using the following\n"),
+           sprintf("command in a terminal:\n\n"),
+           sprintf("   python -m spacy download %s\n\n", model_name),
+           sprintf("See the spaCy documentation <https://spacy.io> for more help."))
+  })
+
+  volatiles$spacy$setEntityFlag(volatiles$spacy_props$entity_flag)
+  volatiles$spacy$setVectorFlag(volatiles$spacy_props$vector_flag)
+
+  gc() # manually garbage collect in case we just threw
+       # away a large python object; it may look small to
+       # R but the spaCy pipeline is relatively large
+
+  message("The spaCy backend was succesfully loaded.")
+
+  return(NULL)
+}
+
+.init_clean_nlp_java <- function(lib_location = NULL, mem = "12g", verbose = TRUE) {
+
+  if (!requireNamespace("rJava")) {
+    stop("The rJava package is required to use the coreNLP backend")
+  }
 
   # parse input
   if (is.null(lib_location))
@@ -40,8 +109,8 @@ init_clean_nlp <- function(lib_location = NULL, mem = "12g", verbose = TRUE) {
   # Parse default parameters
   fp <- file.path(system.file("extdata",package="cleanNLP"), "properties.rds")
   if (!file.exists(fp)) {
-    warning("running set_language(\"en\") to generate properties file.")
-    set_language("en")
+    warning("running set_java_properties(\"en\") to generate properties file.")
+    set_java_properties("en")
   }
   properties <- readr::read_rds(fp)
   keys <- names(properties)
@@ -90,7 +159,7 @@ init_clean_nlp <- function(lib_location = NULL, mem = "12g", verbose = TRUE) {
   message("Loading NLP pipeline.\n(This may take several minutes. Please be patient.)")
   if (!verbose) {
     err <- rJava::.jfield("java/lang/System", , "err")
-    rJava::.jcall("java/lang/System", "V", "setErr", .jnew("java/io/PrintStream",
+    rJava::.jcall("java/lang/System", "V", "setErr", rJava::.jnew("java/io/PrintStream",
           rJava::.jcast(rJava::.jnew("java/io/ByteArrayOutputStream"), "java/io/OutputStream")))
   }
   volatiles$cNLP <- rJava::.jnew("edu.stanford.nlp.pipeline.StanfordCoreNLP", prop)
@@ -98,15 +167,20 @@ init_clean_nlp <- function(lib_location = NULL, mem = "12g", verbose = TRUE) {
   if (!verbose) rJava::.jcall("java/lang/System", "V", "setErr", err)
   message("NLP pipeline finished loading.")
 
+  gc() # manually garbage collect in case we just threw
+       # away a large Java object; it may look small to
+       # R (just a pointer) but the CoreNLP pipeline is
+       # very large
+
   invisible(properties)
 }
 
-#' Set properties for the coreNLP pipeline
+#' Set properties for the Java-based pipeline
 #'
 #' This function allows for directly setting properties to be passed on to the
 #' Stanford CoreNLP pipeline. This will generally be of interest to experienced
 #' users who are already familiar with the general pipeline. See the function
-#' \code{\link{set_language}} for a more user-friendly approach.
+#' \code{\link{set_java_properties}} for a more user-friendly approach.
 #'
 #' @param keys     a character vector of keys giving the names of the properties to set
 #' @param values   a character vector the same length of keys giving the values to set
@@ -116,12 +190,11 @@ init_clean_nlp <- function(lib_location = NULL, mem = "12g", verbose = TRUE) {
 #' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
 #'@examples
 #'\dontrun{
-#'set_properties("annotators", "segment, ssplit, tokenize, pos")
+#'set_raw_java_properties("annotators", "segment, ssplit, tokenize, pos")
 #'}
 #'
-#' @importFrom  readr read_rds write_rds
 #' @export
-set_properties <- function(keys, values, clear = FALSE) {
+set_raw_java_properties <- function(keys, values, clear = FALSE) {
   if (length(keys) != length(values))
     stop(sprintf("length of keys (%d) does not match length of values (%d)", length(keys), length(values)))
   if (!inherits(keys, "character"))
@@ -146,12 +219,12 @@ set_properties <- function(keys, values, clear = FALSE) {
   readr::write_rds(prop, file.path(system.file("extdata", package="cleanNLP"), "properties.rds"))
 }
 
-#' Easy interface for setting up the pipeline
+#' Easy interface for setting up the Java-based pipeline
 #'
-#' This function calls \code{\link{set_properties}}, setting all of the correct
-#' properties to parse the given language and given speed. This is the most
-#' user-friendly entry point for setting properties. The function
-#' \code{\link{set_properties}} provides more fine grained control.
+#' This function calls \code{\link{set_raw_java_properties}}, setting all
+#' of the correct properties to parse the given language and given speed. This is
+#' user-friendly entry point for setting the Java properties. The function
+#' \code{\link{set_raw_java_properties}} provides more fine grained control.
 #' See Details for more information about the speed codes
 #'
 #' @param language   a character vector describing the desired language;
@@ -198,11 +271,12 @@ set_properties <- function(keys, values, clear = FALSE) {
 #'
 #' @examples
 #'\dontrun{
-#'set_language("en")
+#'set_java_properties("en")
 #'}
 #'
 #' @export
-set_language <- function(language, speed = 2) {
+set_java_properties <- function(language, speed = 2) {
+  if (missing(language)) language <- "en"
   language_list <- c("en", "de", "fr", "es")
   language <- match.arg(arg = language, choices = language_list)
   speed <- as.integer(speed)[1]
@@ -211,98 +285,120 @@ set_language <- function(language, speed = 2) {
 
   # German models
   if (language == "de" & speed == 0) {
-    set_properties("annotators", "tokenize, ssplit, pos", clear = TRUE)
-    set_properties("tokenize.language", "de")
-    set_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger")
+    set_raw_java_properties("annotators", "tokenize, ssplit, pos", clear = TRUE)
+    set_raw_java_properties("tokenize.language", "de")
+    set_raw_java_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger")
   }
   if (language == "de" & speed == 1) {
-    set_properties("annotators", "tokenize, ssplit, pos, parse", clear = TRUE)
-    set_properties("tokenize.language", "de")
-    set_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger")
-    set_properties("parse.model", "edu/stanford/nlp/models/lexparser/germanFactored.ser.gz")
+    set_raw_java_properties("annotators", "tokenize, ssplit, pos, parse", clear = TRUE)
+    set_raw_java_properties("tokenize.language", "de")
+    set_raw_java_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger")
+    set_raw_java_properties("parse.model", "edu/stanford/nlp/models/lexparser/germanFactored.ser.gz")
   }
   if (language == "de" & speed >= 2) {
-    set_properties("annotators", "tokenize, ssplit, pos, ner, parse", clear = TRUE)
-    set_properties("tokenize.language", "de")
-    set_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger")
-    set_properties("ner.model", "edu/stanford/nlp/models/ner/german.hgc_175m_600.crf.ser.gz")
-    set_properties("ner.applyNumericClassifiers", "false")
-    set_properties("ner.useSUTime", "false")
-    set_properties("parse.model", "edu/stanford/nlp/models/lexparser/germanFactored.ser.gz")
+    set_raw_java_properties("annotators", "tokenize, ssplit, pos, ner, parse", clear = TRUE)
+    set_raw_java_properties("tokenize.language", "de")
+    set_raw_java_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger")
+    set_raw_java_properties("ner.model", "edu/stanford/nlp/models/ner/german.hgc_175m_600.crf.ser.gz")
+    set_raw_java_properties("ner.applyNumericClassifiers", "false")
+    set_raw_java_properties("ner.useSUTime", "false")
+    set_raw_java_properties("parse.model", "edu/stanford/nlp/models/lexparser/germanFactored.ser.gz")
   }
 
   # English models
   if (language == "en" & speed == 0) {
-    set_properties("annotators", "tokenize, ssplit, pos, lemma", clear = TRUE)
+    set_raw_java_properties("annotators", "tokenize, ssplit, pos, lemma", clear = TRUE)
   }
   if (language == "en" & speed == 1) {
-    set_properties("annotators", "tokenize, ssplit, pos, lemma, parse, depparse, sentiment", clear = TRUE)
-    set_properties("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
+    set_raw_java_properties("annotators", "tokenize, ssplit, pos, lemma, parse, depparse, sentiment", clear = TRUE)
+    set_raw_java_properties("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
   }
   if (language == "en" & speed == 2) {
-    set_properties("annotators", "tokenize, ssplit, pos, lemma, parse, depparse, sentiment, ner, mention, entitymentions, natlog", clear = TRUE)
-    set_properties("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
+    set_raw_java_properties("annotators", "tokenize, ssplit, pos, lemma, parse, depparse, sentiment, ner, mention, entitymentions, natlog", clear = TRUE)
+    set_raw_java_properties("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
   }
   if (language == "en" & speed == 3) {
-    set_properties("annotators", "tokenize, ssplit, pos, lemma, parse, depparse, sentiment, ner, mention, entitymentions, natlog, entitylink", clear = TRUE)
-    set_properties("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
+    set_raw_java_properties("annotators", "tokenize, ssplit, pos, lemma, parse, depparse, sentiment, ner, mention, entitymentions, natlog, entitylink", clear = TRUE)
+    set_raw_java_properties("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
   }
   if (language == "en" & speed == 4) {
-    set_properties("annotators", "tokenize, ssplit, pos, lemma, parse, depparse, sentiment, ner, mention, entitymentions, natlog, openie", clear = TRUE)
-    set_properties("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
+    set_raw_java_properties("annotators", "tokenize, ssplit, pos, lemma, parse, depparse, sentiment, ner, mention, entitymentions, natlog, openie", clear = TRUE)
+    set_raw_java_properties("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
   }
   if (language == "en" & speed == 5) {
-    set_properties("annotators", "tokenize, ssplit, pos, lemma, parse, depparse, sentiment, ner, mention, entitymentions, natlog, coref", clear = TRUE)
-    set_properties("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
+    set_raw_java_properties("annotators", "tokenize, ssplit, pos, lemma, parse, depparse, sentiment, ner, mention, entitymentions, natlog, coref", clear = TRUE)
+    set_raw_java_properties("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
   }
   if (language == "en" & speed == 6) {
-    set_properties("annotators", "tokenize, ssplit, pos, lemma, parse, depparse, sentiment, ner, mention, entitymentions, natlog, entitylink, coref", clear = TRUE)
-    set_properties("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
+    set_raw_java_properties("annotators", "tokenize, ssplit, pos, lemma, parse, depparse, sentiment, ner, mention, entitymentions, natlog, entitylink, coref", clear = TRUE)
+    set_raw_java_properties("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
   }
   if (language == "en" & speed == 7) {
-    set_properties("annotators", "tokenize, ssplit, pos, lemma, parse, depparse, sentiment, ner, mention, entitymentions, natlog, openie, coref", clear = TRUE)
-    set_properties("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
+    set_raw_java_properties("annotators", "tokenize, ssplit, pos, lemma, parse, depparse, sentiment, ner, mention, entitymentions, natlog, openie, coref", clear = TRUE)
+    set_raw_java_properties("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
   }
   if (language == "en" & speed >= 8) {
-    set_properties("annotators", "tokenize, ssplit, pos, lemma, parse, depparse, sentiment, ner, mention, entitymentions, natlog, entitylink, openie, coref", clear = TRUE)
-    set_properties("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
+    set_raw_java_properties("annotators", "tokenize, ssplit, pos, lemma, parse, depparse, sentiment, ner, mention, entitymentions, natlog, entitylink, openie, coref", clear = TRUE)
+    set_raw_java_properties("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
   }
 
   # Spanish models
   if (language == "es" & speed == 0) {
-    set_properties("annotators", "tokenize, ssplit, pos", clear = TRUE)
-    set_properties("tokenize.language", "es")
-    set_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger")
+    set_raw_java_properties("annotators", "tokenize, ssplit, pos", clear = TRUE)
+    set_raw_java_properties("tokenize.language", "es")
+    set_raw_java_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger")
   }
   if (language == "es" & speed == 1) {
-    set_properties("annotators", "tokenize, ssplit, pos, parse", clear = TRUE)
-    set_properties("tokenize.language", "es")
-    set_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger")
-    set_properties("parse.model", "edu/stanford/nlp/models/lexparser/spanishPCFG.ser.gz")
+    set_raw_java_properties("annotators", "tokenize, ssplit, pos, parse", clear = TRUE)
+    set_raw_java_properties("tokenize.language", "es")
+    set_raw_java_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger")
+    set_raw_java_properties("parse.model", "edu/stanford/nlp/models/lexparser/spanishPCFG.ser.gz")
   }
   if (language == "es" & speed >= 2) {
-    set_properties("annotators", "tokenize, ssplit, pos, ner, parse", clear = TRUE)
-    set_properties("tokenize.language", "es")
-    set_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger")
-    set_properties("ner.model", "edu/stanford/nlp/models/ner/spanish.ancora.distsim.s512.crf.ser.gz")
-    set_properties("ner.applyNumericClassifiers", "false")
-    set_properties("ner.useSUTime", "false")
-    set_properties("parse.model", "edu/stanford/nlp/models/lexparser/spanishPCFG.ser.gz")
+    set_raw_java_properties("annotators", "tokenize, ssplit, pos, ner, parse", clear = TRUE)
+    set_raw_java_properties("tokenize.language", "es")
+    set_raw_java_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger")
+    set_raw_java_properties("ner.model", "edu/stanford/nlp/models/ner/spanish.ancora.distsim.s512.crf.ser.gz")
+    set_raw_java_properties("ner.applyNumericClassifiers", "false")
+    set_raw_java_properties("ner.useSUTime", "false")
+    set_raw_java_properties("parse.model", "edu/stanford/nlp/models/lexparser/spanishPCFG.ser.gz")
   }
 
   # French models
   if (language == "fr" & speed == 0) {
-    set_properties("annotators", "tokenize, ssplit, pos", clear = TRUE)
-    set_properties("tokenize.language", "fr")
-    set_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/french/french.tagger")
+    set_raw_java_properties("annotators", "tokenize, ssplit, pos", clear = TRUE)
+    set_raw_java_properties("tokenize.language", "fr")
+    set_raw_java_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/french/french.tagger")
   }
   if (language == "fr" & speed >= 1) {
-    set_properties("annotators", "tokenize, ssplit, pos, parse", clear = TRUE)
-    set_properties("tokenize.language", "fr")
-    set_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/french/french.tagger")
-    set_properties("parse.model", "edu/stanford/nlp/models/lexparser/frenchFactored.ser.gz")
+    set_raw_java_properties("annotators", "tokenize, ssplit, pos, parse", clear = TRUE)
+    set_raw_java_properties("tokenize.language", "fr")
+    set_raw_java_properties("pos.model", "edu/stanford/nlp/models/pos-tagger/french/french.tagger")
+    set_raw_java_properties("parse.model", "edu/stanford/nlp/models/lexparser/frenchFactored.ser.gz")
   }
 
   invisible(NULL)
 }
 
+
+#' Interface for setting up the Python pipeline
+#'
+#' This function sets properties to parse text using the spaCy
+#' python NLP pipeline. You must re-run the \code{\link{init_clean_nlp}}
+#' for these changes to take place.
+#'
+#' @param entity_flag  boolean. Should named entities be identified.
+#' @param vector_flag  boolean. Should word vectors be computed and saved.
+#'
+#' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
+#'
+#' @examples
+#'\dontrun{
+#'set_spacy_properties(vector_flag = TRUE)
+#'}
+#'
+#' @export
+set_spacy_properties <- function(entity_flag = TRUE, vector_flag = FALSE) {
+  volatiles$spacy_props$entity_flag = entity_flag
+  volatiles$spacy_props$vector_flag = vector_flag
+}

@@ -80,4 +80,3 @@ vids <- order(tfidf$tfidf[1,], decreasing = TRUE)[1:10]
 tfidf$vocab[vids]
 
 }
-
