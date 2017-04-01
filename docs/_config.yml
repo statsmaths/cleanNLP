@@ -1,5 +1,5 @@
 theme: jekyll-theme-minimal
-title: cleanNLP: A Tidy Data Model for Natural Language Processing
+title: "cleanNLP: A Tidy Data Model for Natural Language Processing"
 description: Provides a set of fast tools for converting a textual corpus into a set of normalized tables.
   Users may make use of a Python backend with 'spaCy' or the Java backend 'CoreNLP'.
 show_downloads: true
