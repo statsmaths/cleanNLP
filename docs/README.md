@@ -148,7 +148,7 @@ straightforward, but this has caused problems on some machines, particularly
 with macOS. For help, see the GitHub issues tracker. Once these system
 requirements are met, we can install the ".jar" files with
 
-```{r, eval = FALSE}
+```{r}
 download_core_nlp()
 ```
 
