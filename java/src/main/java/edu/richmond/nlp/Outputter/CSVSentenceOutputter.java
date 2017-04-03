@@ -13,12 +13,12 @@ import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.AnnotationOutputter;
 
-public class CSVTripleOutputter extends AnnotationOutputter {
+public class CSVSentenceOutputter extends AnnotationOutputter {
 
-  private CSVTripleDocumentWriter csvWriter = new CSVTripleDocumentWriter("0");
+  private CSVSentenceDocumentWriter csvWriter = new CSVSentenceDocumentWriter("0");
   private boolean append = false;
 
-  public CSVTripleOutputter(String docID, boolean append) {
+  public CSVSentenceOutputter(String docID, boolean append) {
     this.csvWriter.setDocID(docID);
     this.append = append;
   }

@@ -13,7 +13,7 @@ get_coreference(annotation)
 Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}
  containing one row for every coreference in the corpus.
 
- The returned data frame includes the following columns:
+ The returned data frame includes at least the following columns:
 
 \itemize{
  \item{"id"}{ - integer. Id of the source document.}

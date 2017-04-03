@@ -12,8 +12,7 @@ test_that("extract subset of documents from an annotation object", {
   expect_equal(unique(get_document(sub_obama)$id), c(1L, 4L))
   expect_equal(unique(get_dependency(sub_obama)$id), c(1L, 4L))
   expect_equal(unique(get_coreference(sub_obama)$id), c(1L, 4L))
-  #expect_equal(unique(get_triple(sub_obama)$id), c(1L, 4L))
-  expect_equal(unique(get_sentiment(sub_obama)$id), c(1L, 4L))
+  expect_equal(unique(get_sentence(sub_obama)$id), c(1L, 4L))
   expect_equal(unique(get_entity(sub_obama)$id), c(1L, 4L))
 })
 
@@ -25,8 +24,7 @@ test_that("reset document ids", {
   expect_equal(unique(get_document(sub_obama)$id), c(0L, 1L))
   expect_equal(unique(get_dependency(sub_obama)$id), c(0L, 1L))
   expect_equal(unique(get_coreference(sub_obama)$id), c(0L, 1L))
-  #expect_equal(unique(get_triple(sub_obama)$id), c(0L, 1L))
-  expect_equal(unique(get_sentiment(sub_obama)$id), c(0L, 1L))
+  expect_equal(unique(get_sentence(sub_obama)$id), c(0L, 1L))
   expect_equal(unique(get_entity(sub_obama)$id), c(0L, 1L))
 
   sub_obama <- extract_documents(obama, ids = c(1L, 4L))
@@ -36,8 +34,7 @@ test_that("reset document ids", {
   expect_equal(unique(get_document(sub_obama)$id), c(100L, 101L))
   expect_equal(unique(get_dependency(sub_obama)$id), c(100L, 101L))
   expect_equal(unique(get_coreference(sub_obama)$id), c(100L, 101L))
-  #expect_equal(unique(get_triple(sub_obama)$id), c(100L, 101L))
-  expect_equal(unique(get_sentiment(sub_obama)$id), c(100L, 101L))
+  expect_equal(unique(get_sentence(sub_obama)$id), c(100L, 101L))
   expect_equal(unique(get_entity(sub_obama)$id), c(100L, 101L))
 })
 
@@ -52,14 +49,14 @@ test_that("combine documents", {
 })
 
 test_that("read and write annotations", {
-  set_spacy_properties(vector_flag = TRUE)
-  init_clean_nlp(type = "spaCy")
+  setup_spaCy_backend(vector_flag = TRUE)
+  init_backend(type = "spaCy")
   anno <- annotate(input_files)
 
   od <- file.path(tempdir(), "test_dir_2")
   write_annotation(anno, od)
 
-  anno_from_disk <- read_annotation(od, include_vectors = TRUE)
+  anno_from_disk <- read_annotation(od)
   expect_equal(anno, anno_from_disk)
 })
 

@@ -1,5 +1,6 @@
 .onLoad <- function(libname, pkgname) {
-  volatiles$cNLP  <- NULL
-  volatiles$spacy <- NULL
-  volatiles$spacy_props <- list(entity_flag = TRUE, vector_flag = FALSE)
+  volatiles$tokenizers <- list(init = FALSE, setup = FALSE)
+  volatiles$spaCy <- list(init = FALSE, setup = FALSE)
+  volatiles$coreNLP <- list(init = FALSE, setup = FALSE)
+  volatiles$model_init_last <- ""
 }

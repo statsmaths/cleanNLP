@@ -88,7 +88,7 @@ public class CSVTokenDocumentWriter {
 
   public CSVTokenDocumentWriter(String docID) {
     this.docID = docID;
-    this.header = String.format("id,sid,tid,word,lemma,upos,pos,speaker,wiki,cid,cid_end%n");
+    this.header = String.format("id,sid,tid,word,lemma,upos,pos,cid%n");
   }
 
   public String print(CoreMap sentence) {
@@ -99,7 +99,7 @@ public class CSVTokenDocumentWriter {
 
     // add sentence root as a token
     if (tokens.size() > 0) {
-      sb.append(String.format("%s,%d,0,\"ROOT\",\"ROOT\",\"\",\"\",,\"\",,%n", docID, tokens.get(0).sentIndex()));
+      sb.append(String.format("%s,%d,0,\"ROOT\",\"ROOT\",\"\",\"\",%n", docID, tokens.get(0).sentIndex()));
     }
 
 
@@ -110,20 +110,15 @@ public class CSVTokenDocumentWriter {
       String pos = token.getString(CoreAnnotations.PartOfSpeechAnnotation.class, "");
       String upos = posMap.get(pos);
       if (upos == null) upos = "";
-      String speaker = token.getString(CoreAnnotations.SpeakerAnnotation.class, "");
-      String wiki = token.getString(CoreAnnotations.WikipediaEntityAnnotation.class, "");
-      if (wiki.equals("O")) wiki = "";
 
       String charOffsetStart = "";
-      String charOffsetEnd = "";
       if (token.containsKey(CoreAnnotations.CharacterOffsetBeginAnnotation.class) && token.containsKey(CoreAnnotations.CharacterOffsetEndAnnotation.class)) {
         charOffsetStart = Integer.toString(token.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class));
-        charOffsetEnd = Integer.toString(token.get(CoreAnnotations.CharacterOffsetEndAnnotation.class));
       }
 
-      sb.append(String.format("%s,%d,%d,\"%s\",\"%s\",\"%s\",\"%s\",%s,\"%s\",%s,%s%n", docID,
+      sb.append(String.format("%s,%d,%d,\"%s\",\"%s\",\"%s\",\"%s\",%s%n", docID,
                               token.sentIndex(), token.index(), word, lemma, upos, pos,
-                              speaker, wiki, charOffsetStart, charOffsetEnd));
+                              charOffsetStart));
     }
 
     return sb.toString();

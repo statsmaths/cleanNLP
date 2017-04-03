@@ -13,14 +13,14 @@ import edu.stanford.nlp.trees.TreeCoreAnnotations;
 import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
 import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations;
 
-public class CSVSentimentDocumentWriter {
+public class CSVSentenceDocumentWriter {
 
   public String docID = "";
   public String header = "";
 
-  public CSVSentimentDocumentWriter(String docID) {
+  public CSVSentenceDocumentWriter(String docID) {
     this.docID = docID;
-    this.header = String.format("id,sid,pred_class,p0,p1,p2,p3,p4%n");
+    this.header = String.format("id,sid,sentiment%n");
   }
 
   public String print(CoreMap sentence) {
@@ -34,9 +34,7 @@ public class CSVSentimentDocumentWriter {
       String predClassString = (predClass == null) ? "NA" : predClass.toString();
       SimpleMatrix sm = RNNCoreAnnotations.getPredictions(sentimentTree);
 
-      sb.append(String.format("%s,%d,%s,%f,%f,%f,%f,%f%n", docID, tokens.get(0).sentIndex(),
-                              predClassString,sm.get(0), sm.get(1), sm.get(2), sm.get(3), sm.get(4)));
-
+      sb.append(String.format("%s,%d,%s%n", docID, tokens.get(0).sentIndex(), predClassString));
     }
 
     return sb.toString();

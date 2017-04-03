@@ -22,7 +22,7 @@ tidy data model of Hadley Wickham. The limited departures from this more stringe
 justified below wherever they exist. In every case the cause is a transitive
 dependency that would require a complex range join to reconstruct.
 
-We primarily considered the Java/CoreNLP backend when constructing the schema because it is
+We were primarily considered the Java/CoreNLP backend when constructing the schema because it is
 the most feature-rich. With the sole exception of word embeddings in spaCy, which require
 a matrix-based data structure, all of the fields from the Python and R backends map seamlessly
 into a subset of those provided by CoreNLP. Fields where the output may differ slightly amongst
@@ -76,15 +76,15 @@ get_document(obama)
 ## # A tibble: 8 × 5
 ##      id                time version language
 ##   <int>              <dttm>   <chr>    <chr>
-## 1     0 2016-11-07 22:21:00   3.7.0       en
-## 2     1 2016-11-07 22:21:00   3.7.0       en
-## 3     2 2016-11-07 22:22:00   3.7.0       en
-## 4     3 2016-11-07 22:23:00   3.7.0       en
-## 5     4 2016-11-07 22:23:00   3.7.0       en
-## 6     5 2016-11-07 22:24:00   3.7.0       en
-## 7     6 2016-11-07 22:24:00   3.7.0       en
-## 8     7 2016-11-07 22:25:00   3.7.0       en
-## # ... with 1 more variables: uri <chr>
+## 1     0 2017-04-02 22:56:00   3.7.0       en
+## 2     1 2017-04-02 22:57:00   3.7.0       en
+## 3     2 2017-04-02 22:58:00   3.7.0       en
+## 4     3 2017-04-02 22:58:00   3.7.0       en
+## 5     4 2017-04-02 22:59:00   3.7.0       en
+## 6     5 2017-04-02 22:59:00   3.7.0       en
+## 7     6 2017-04-02 23:00:00   3.7.0       en
+## 8     7 2017-04-02 23:01:00   3.7.0       en
+# ... with 1 more variables: uri <chr>
 ```
 Notice that metadata such as the president, year, and party into the
 document table has been included. It may seem that common fields such as year
@@ -107,10 +107,7 @@ speaker indicators. The schema is given by:
 - **lemma** character. Lemmatized form the token.
 - **upos** character. Universal part of speech code.
 - **pos** character. Language-specific part of speech code; uses the Penn Treebank codes.
-- **speaker** character. Identity of the speaker, with \code{PER0} denoting the narratorial voice.
-- **wiki** character. Link to Wikipedia entity.
 - **cid** integer. Character offset at the start of the word in the original document.
-- **cid_end** integer. Character offset pointing one past the character at the end of the word.
 
 Given the annotators selected during the pipeline initialization, some of these
 columns may contain only missing data. A composite key exists by taking together the
@@ -121,20 +118,20 @@ An example of the table looks like this:
 get_token(obama)
 ```
 ```
-## # A tibble: 64,807 × 11
-##       id   sid   tid      word     lemma  upos   pos speaker  wiki   cid
-##    <int> <int> <int>     <chr>     <chr> <chr> <chr>   <chr> <chr> <int>
-## 1      0     0     0      ROOT      ROOT  <NA>  <NA>    <NA>  <NA>    NA
-## 2      0     0     1    Please    please     X    UH    PER0  <NA>     0
-## 3      0     0     2         ,         ,     .     ,    PER0  <NA>     6
-## 4      0     0     3 everybody everybody  NOUN    NN    PER0  <NA>     8
-## 5      0     0     4         ,         ,     .     ,    PER0  <NA>    17
-## 6      0     0     5      have      have  VERB   VBP    PER0  <NA>    19
-## 7      0     0     6         a         a   DET    DT    PER0  <NA>    24
-## 8      0     0     7      seat      seat  NOUN    NN    PER0  <NA>    26
-## 9      0     0     8         .         .     .     .    PER0  <NA>    30
-## 10     0     1     0      ROOT      ROOT  <NA>  <NA>    <NA>  <NA>    NA
-## # ... with 64,797 more rows, and 1 more variables: cid_end <int>
+## # A tibble: 61,881 × 8
+##       id   sid   tid      word     lemma  upos   pos   cid
+##    <int> <int> <int>     <chr>     <chr> <chr> <chr> <int>
+## 1      0     0     1     Madam     Madam  NOUN   NNP     0
+## 2      0     0     2   Speaker   Speaker  NOUN   NNP     6
+## 3      0     0     3         ,         ,     .     ,    13
+## 4      0     0     4       Mr.       Mr.  NOUN   NNP    15
+## 5      0     0     5      Vice      Vice  NOUN   NNP    19
+## 6      0     0     6 President President  NOUN   NNP    24
+## 7      0     0     7         ,         ,     .     ,    33
+## 8      0     0     8   Members   Members  NOUN   NNP    35
+## 9      0     0     9        of        of   ADP    IN    43
+## 10     0     0    10  Congress  Congress  NOUN   NNP    46
+## # ... with 61,871 more rows
 ```
 A phantom token "ROOT" is included at the start of each sentence (it always
 has ``tid`` equal to 0). This was added so that joins from the dependency table, which
@@ -165,7 +162,6 @@ The schema is given by:
 - **id** integer. Id of the source document.
 - **sid** integer. Sentence id of the source token.
 - **tid** integer. Id of the source token.
-- **sid_target** integer. Sentence id of the target token.
 - **tid_target** integer. Id of the target token.
 - **relation** character. Language-agnostic universal dependency type.
 - **relation_full** character. Language specific universal dependency type.
@@ -188,21 +184,21 @@ with the option turned on, is given by:
 get_dependency(obama, get_token = TRUE)
 ```
 ```
-## # A tibble: 65,281 × 11
-##       id   sid   tid sid_target tid_target  relation relation_full    word
-##    <int> <int> <int>      <int>      <int>     <chr>         <chr>   <chr>
-## 1      0     0     0          0          5      root          root    ROOT
-## 2      0     0     5          0          1 discourse     discourse    have
-## 3      0     0     5          0          2     punct         punct    have
-## 4      0     0     5          0          3     nsubj         nsubj    have
-## 5      0     0     5          0          4     punct         punct    have
-## 6      0     0     7          0          6       det           det    seat
-## 7      0     0     5          0          7      dobj          dobj    have
-## 8      0     0     5          0          8     punct         punct    have
-## 9      0     1     0          1          2      root          root    ROOT
-## 10     0     1     2          1          1  compound      compound Speaker
-## # ... with 65,271 more rows, and 3 more variables: lemma <chr>,
-## #   word_target <chr>, lemma_target <chr>
+## # A tibble: 16,592,392 × 11
+##       id   sid   tid tid_target relation relation_full  word lemma sid_target
+##    <int> <int> <int>      <int>    <chr>         <chr> <chr> <chr>      <int>
+## 1      0     0     0          2     root          root  <NA>  <NA>          0
+## 2      0     0     0          2     root          root  <NA>  <NA>          1
+## 3      0     0     0          2     root          root  <NA>  <NA>          2
+## 4      0     0     0          2     root          root  <NA>  <NA>          3
+## 5      0     0     0          2     root          root  <NA>  <NA>          4
+## 6      0     0     0          2     root          root  <NA>  <NA>          5
+## 7      0     0     0          2     root          root  <NA>  <NA>          6
+## 8      0     0     0          2     root          root  <NA>  <NA>          7
+## 9      0     0     0          2     root          root  <NA>  <NA>          8
+## 10     0     0     0          2     root          root  <NA>  <NA>          9
+## # ... with 16,592,382 more rows, and 2 more variables: word_target <chr>,
+## #   lemma_target <chr>
 ```
 The word "ROOT" shows up in the first row, which would have been ``NA``
 had sentence roots not been explicitly included in the token table.
@@ -325,97 +321,33 @@ given in the final field of the table. As with the coreference table, a complete
 representation of the entity is given as a character string due to the difficulty in
 reconstructing this after the fact from the token table.
 
-## Sentiment analysis
+## Senetences
 
-The sentiment tagger provided by the CoreNLP pipeline predicts whether a sentence is very negative (0),
-negative (1), neutral (2), positive (3), or very positive (4).
-The sentiment output is placed in a separate table because it returns information
-exclusively at the sentence level, unlike any of the other parsers. The schema
-is given by:
+The schema for sentence-level information is given by:
 
 - **id** integer. Id of the source document.
 - **sid** integer. Sentence id.
-- **pred_class** integer. Predicted sentiment class of the sentence, from 0 (worst) to 4 (best).
-- **p0** double. Predicted probability of the sentence being class 0.
-- **p1** double. Predicted probability of the sentence being class 1.
-- **p2** double. Predicted probability of the sentence being class 2.
-- **p3** double. Predicted probability of the sentence being class 3.
-- **p4** double. Predicted probability of the sentence being class 4.
+- **sentiment** integer. Predicted sentiment class of the sentence, from 0 (worst) to 4 (best).
 
 An example of the output can be seen in:
 ```{r}
-get_sentiment(obama)
+get_sentence(obama)
 ```
 ```
-## # A tibble: 2,988 × 8
-##       id   sid pred_class       p0       p1       p2       p3       p4
-##    <int> <int>      <int>    <dbl>    <dbl>    <dbl>    <dbl>    <dbl>
-## 1      0     0          2 0.058601 0.363095 0.439430 0.117105 0.021769
-## 2      0     1          1 0.132826 0.697524 0.144485 0.017455 0.007710
-## 3      0     2          3 0.083750 0.226689 0.129352 0.422234 0.137976
-## 4      0     3          3 0.079751 0.207277 0.240439 0.358697 0.113835
-## 5      0     4          3 0.066142 0.162890 0.131020 0.477982 0.161966
-## 6      0     5          1 0.112066 0.607693 0.206194 0.057028 0.017018
-## 7      0     6          1 0.097406 0.639818 0.199368 0.049293 0.014116
-## 8      0     7          1 0.292397 0.392003 0.074113 0.110128 0.131359
-## 9      0     8          1 0.234672 0.518319 0.146478 0.052902 0.047629
-## 10     0     9          1 0.096802 0.579911 0.272984 0.039296 0.011008
+## # A tibble: 2,988 × 3
+##       id   sid sentiment
+##    <int> <int>     <int>
+## 1      0     0         1
+## 2      0     1         3
+## 3      0     2         1
+## 4      0     3         1
+## 5      0     4         2
+## 6      0     5         1
+## 7      0     6         3
+## 8      0     7         1
+## 9      0     8         1
+## 10     0     9         1
 ## # ... with 2,978 more rows
 ```
-The underlying model is a neural network. The most likely categorization is
-included along with the predicted probabilities for all 5 classes.
-
-## Information extraction
-
-The final table in the data model contains the information of the relationship triples generated
-(by default) by the OpenIE parser. These triples contain a subject,
-object, and relation, all of which consist of a set of tokens in the raw text.
-There are a relatively large number of fields
-given the need to index three separate phrases that may be scattered across multiple sentences.
-This is also the only table for which there is no natural composite key (though all of the ids
-together are guaranteed to be unique). The schema is given by:
-
-- **id** integer. Id of the source document.
-- **subject** character. Raw text of the triple's subject.
-- **object** character. Raw text of the triple's object.
-- **relation** character. Raw text of the triple's relation.
-- **confidence** double. Confidence score from 0 (least confident) to 1 (most confident).
-- **be_prefix** integer. Equals 1 if the triple's relationship has a form of "to be" as a prefix.
-- **be_suffix** integer. Equals 1 if the triple's relationship has a form of "to be" as a suffix.
-- **of_suffix** integer. Equals 1 if the triple's relationship has a form of "of" as a suffix.
-- **tmod** integer. Equals 1 if the triple is a temporal modifier.
-- **sid** integer. Sentence id of the triple.
-- **tid_subject** integer. Token id at the start of the triple's subject.
-- **tid_subject\_end** integer. Token id at the end of the triple's subject.
-- **tid_object** integer. Token id at the start of the triple's object.
-- **tid_object\_end** integer. Token id at the end of the triple's object.
-- **tid_relation** integer. Token id at the start of the triple's relation.
-- **tid_relation\_end** integer. Token id at the end of the triple's relation.
-
-The following serves as a typical example of the output:
-```{r}
-get_triple(obama)
-```
-```
-# A tibble: 507,991 x 16
-      id           subject                        object      relation confidence
-   <int>             <chr>                         <chr>         <chr>      <dbl>
-1      0     rising credit                    auspicious           are          1
-2      0         accession                    auspicious           are          1
-3      0            credit                    auspicious           are          1
-4      0  recent accession                    auspicious           are          1
-5      0 particular regard                common defense providing for          1
-6      0              they            such manufactories       promote          1
-7      0              they                        render          tend          1
-8      0              plan                     requisite            is          1
-9      0              they render for essential supplies          tend          1
-10     0      uniform plan                     requisite            is          1
-# ... with 507,981 more rows, and 11 more variables: be_prefix <int>,
-#   be_suffix <int>, of_suffix <int>, tmod <int>, sid <int>, tid_subject <int>,
-#   tid_subject_end <int>, tid_object <int>, tid_object_end <int>,
-#   tid_relation <int>, tid_relation_end <int>
-```
-As with the coreference and entity tables, the complete subject, object, and relation phrases
-are included given the difficulty of extracting them from the data.
-
+The underlying sentiemnt model is a neural network.
 

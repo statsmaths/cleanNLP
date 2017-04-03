@@ -4,12 +4,10 @@
 \alias{read_annotation}
 \title{Read annotation files from disk}
 \usage{
-read_annotation(input_dir, include_vectors = FALSE)
+read_annotation(input_dir)
 }
 \arguments{
 \item{input_dir}{path to the directory where the files are stored}
-
-\item{include_vectors}{boolean. Should word vectors be loaded as well.}
 }
 \value{
 an object of class \code{annotation}

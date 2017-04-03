@@ -14,7 +14,7 @@
 #'  containing one row for every token in the corpus. The root of each
 #'  sentence is included as its own token.
 #'
-#'  The returned data frame includes the following columns:
+#'  The returned data frame includes at a minimum the following columns:
 #'
 #' \itemize{
 #'  \item{"id"}{ - integer. Id of the source document.}
@@ -24,10 +24,7 @@
 #'  \item{"lemma"}{ - character. Lemmatized form the token.}
 #'  \item{"upos"}{ - character. Universal part of speech code.}
 #'  \item{"pos"}{ - character. Language-specific part of speech code; uses the Penn Treebank codes.}
-#'  \item{"speaker"}{ - character. Identity of the speaker, with \code{PER0} denoting the narratorial voice.}
-#'  \item{"wiki"}{ - character. Link to Wikipedia entity.}
 #'  \item{"cid"}{ - integer. Character offset at the start of the word in the original document.}
-#'  \item{"cid_end"}{ - integer. Character offset pointing one past the character at the end of the word.}
 #' }
 #'
 #' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
@@ -80,7 +77,6 @@ get_token <- function(annotation) {
 #'  \item{"id"}{ - integer. Id of the source document.}
 #'  \item{"sid"}{ - integer. Sentence id of the source token.}
 #'  \item{"tid"}{ - integer. Id of the source token.}
-#'  \item{"sid_target"}{ - integer. Sentence id of the source token.}
 #'  \item{"tid_target"}{ - integer. Id of the source token.}
 #'  \item{"relation"}{ - character. Language-agnostic universal dependency type.}
 #'  \item{"relation_full"}{ - character. Language specific universal dependency type.}
@@ -196,7 +192,7 @@ get_document <- function(annotation) {
 #'  Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}
 #'  containing one row for every coreference in the corpus.
 #'
-#'  The returned data frame includes the following columns:
+#'  The returned data frame includes at least the following columns:
 #'
 #' \itemize{
 #'  \item{"id"}{ - integer. Id of the source document.}
@@ -269,7 +265,6 @@ get_coreference <- function(annotation) {
 #'  \item{"tid_end"}{ - integer. Token id at the end of the entity mention.}
 #'  \item{"entity_type"}{ - character. See below from details.}
 #'  \item{"entity"}{ - character. Raw words of the named entity in the text.}
-#'  \item{"entity_normalized"}{ - character. Normalized version of the entity.}
 #' }
 #'
 #' @details When using CoreNLP, the default entity types are:
@@ -335,11 +330,7 @@ get_entity <- function(annotation) {
   annotation$entity
 }
 
-#' Access sentiment scores from an annotation object
-#'
-#' Sentiment analysis attempts to extract the attitudes of the narrator or speaker
-#' towards their object of study. This function extracts a sentiment score from 0
-#' to 4 from each sentence in the annotation.
+#' Access sentence-level annotations
 #'
 #' @param annotation   an annotation object
 #'
@@ -347,18 +338,16 @@ get_entity <- function(annotation) {
 #'  Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}
 #'  containing one row for every sentence in the corpus.
 #'
-#'  The returned data frame includes the following columns:
+#'  The returned data frame includes at a minimum following columns:
 #'
 #' \itemize{
 #'  \item{"id"}{ - integer. Id of the source document.}
 #'  \item{"sid"}{ - integer. Sentence id.}
-#'  \item{"pred_class"}{ - integer. Predicted sentiment class of the sentence, from 0 (worst) to 4 (best).}
-#'  \item{"p0"}{ - double. Predicted probability of the sentence being class 0.}
-#'  \item{"p1"}{ - double. Predicted probability of the sentence being class 1.}
-#'  \item{"p2"}{ - double. Predicted probability of the sentence being class 2.}
-#'  \item{"p3"}{ - double. Predicted probability of the sentence being class 3.}
-#'  \item{"p4"}{ - double. Predicted probability of the sentence being class 4.}
 #' }
+#'
+#' The coreNLP backend also currently returns a column "sentiment" that
+#' gives a score from 0 (worst) to 4 (best) for how positive the
+#' tone of the sentence is predicted to be.
 #'
 #' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
 #' @references
@@ -373,69 +362,13 @@ get_entity <- function(annotation) {
 #' @examples
 #'
 #' # how do the predicted sentiment scores change across the years?
-#' get_sentiment(obama) %>%
+#' get_sentence(obama) %>%
 #'   group_by(id) %>%
-#'   summarize(mean(pred_class), se = sd(pred_class) / sqrt(n()))
+#'   summarize(mean(sentiment), se = sd(sentiment) / sqrt(n()))
 #'
 #' @export
-get_sentiment <- function(annotation) {
-  annotation$sentiment
-}
-
-#' Access triples from an annotation object
-#'
-#' Relationship triples contain a subject, object, and relationship, all
-#' extracted directly from the text. They represent factual statements whereby
-#' the subject and object are related by the words consituting the relation.
-#'
-#' @param annotation   an annotation object
-#'
-#' @return
-#'  Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}
-#'  containing one row for every triple found in the corpus.
-#'
-#'  The returned data frame includes the following columns:
-#'
-#' \itemize{
-#'  \item{"id"}{ - integer. Id of the source document.}
-#'  \item{"subject"}{ - character. Raw text of the triple's subject.}
-#'  \item{"object"}{ - character. Raw text of the triple's object.}
-#'  \item{"relation"}{ - character. Raw text of the triple's relation.}
-#'  \item{"confidence"}{ - double. Confidence score from 0 (least confident) to 1 (most confident).}
-#'  \item{"be_prefix"}{ - integer. Equals 1 if the triple's relationship has a form of "to be" as a prefix.}
-#'  \item{"be_suffix"}{ - integer. Equals 1 if the triple's relationship has a form of "to be" as a suffix.}
-#'  \item{"of_suffix"}{ - integer. Equals 1 if the triple's relationship has a form of "of" as a suffix.}
-#'  \item{"tmod"}{ - integer. Equals 1 if the triple is a temporal modifier.}
-#'  \item{"sid"}{ - integer. Sentence id of the triple.}
-#'  \item{"tid_subject"}{ - integer. Token id at the start of the triple's subject.}
-#'  \item{"tid_subject_end"}{ - integer. Token id at the end of the triple's subject.}
-#'  \item{"tid_object"}{ - integer. Token id at the start of the triple's object.}
-#'  \item{"tid_object_end"}{ - integer. Token id at the end of the triple's object.}
-#'  \item{"tid_relation"}{ - integer. Token id at the start of the triple's relation.}
-#'  \item{"tid_relation_end"}{ - integer. Token id at the end of the triple's relation.}
-#' }
-#'
-#' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
-#' @references
-#'
-#'   Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bethard, and
-#'   David McClosky. 2014. \href{http://nlp.stanford.edu/pubs/StanfordCoreNlp2014.pdf}{The Stanford CoreNLP Natural Language Processing Toolkit}.
-#'   In: \emph{Proceedings of the 52nd Annual Meeting of the Association for Computational Linguistics: System Demonstrations, pp. 55-60.}
-#'
-#'    Gabor Angeli, Melvin Johnson Premkumar, and Christopher D. Manning. Leveraging Linguistic Structure For Open Domain Information Extraction.
-#'    In: \emph{Proceedings of the Association of Computational Linguistics (ACL), 2015}.
-#'
-#' @examples
-#'
-#' # what are the most common relations in the text?
-#' get_triple(obama)$relation %>%
-#'   table() %>%
-#'   sort(decreasing = TRUE) %>%
-#'   head(n = 40L)
-#'
-#' @export
-get_triple <- function(annotation) {
-  annotation$triple
+get_sentence <- function(annotation) {
+  annotation$sentence
 }
 
 
@@ -450,7 +383,6 @@ get_triple <- function(annotation) {
 #' @return
 #'  Returns a matrix containing one row for every triple found
 #'  in the corpus, or \code{NULL} if not embeddings are present
-#'
 #'
 #' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
 #' @references

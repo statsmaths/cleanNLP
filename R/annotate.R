@@ -3,8 +3,9 @@
 #' Runs the clean_nlp annotators over a given corpus of text
 #' using either the R, Java, or Python backend. The details for
 #' which annotators to run and how to run them are specified
-#' by using one of: \code{\link{set_spacy_properties}} or
-#' \code{\link{set_java_properties}}.
+#' by using one of: \code{\link{setup_tokenizers_backend}},
+#' \code{\link{setup_spaCy_backend}}, or
+#' code{\link{setup_coreNLP_backend}}.
 #'
 #' @param input          either a vector of file names to parse, or a character vector
 #'                       with one document in each element. Specify the latter with the
@@ -21,10 +22,7 @@
 #' @param as_strings     logical. Is the data given to \code{input} the actual document text rather
 #'                       than file names?
 #' @param doc_id_offset  integer. The first document id to use. Defaults to 0.
-#' @param backend        which backend to use. Either "tokenizers", "spaCy", or "coreNLP". If
-#'                       not specified it will first see if the spaCy model is initialized and
-#'                       use it if so. Otherwise it checks to see if the coreNLP one is initialized
-#'                       and then uses it. If neither are found the "tokenizers" package is used instead.
+#' @param backend        which backend to use. Will default to the last model to be initalized.
 #'
 #' @return if \code{load} is true, an object of class \code{annotation}. Otherwise, a character
 #'   vector giving the output location of the files.
@@ -44,30 +42,31 @@
 #'
 #' @export
 annotate <- function(input, file = NULL, output_dir = NULL, load = TRUE, keep = TRUE,
-                      as_strings = FALSE, doc_id_offset = 0L,
-                      backend = c("tokenizers", "spaCy", "coreNLP")) {
+                      as_strings = FALSE, doc_id_offset = 0L, backend = NULL) {
 
-  backend <- match.arg(backend, several.ok = TRUE)
 
-  # need to figure out which one to use; if not specified
-  # and spaCy is initalized is that
-  if (length(backend) > 1L) {
-    if (!is.null(volatiles$spacy)) {
-      backend <- "spaCy"
-    } else if (!is.null(volatiles$cNLP)) {
-      backend <- "coreNLP"
-    } else {
-      backend <- "tokenizers"
-    }
+  if (is.null(backend)) {
+    if (volatiles$model_init_last == "")
+      stop("No initialized backends found.")
+    backend <- volatiles$model_init_last
+  } else {
+    backend <- match.arg(backend, c("tokenizers", "spaCy", "coreNLP"))
   }
 
-  if (backend == "spaCy" && is.null(volatiles$spacy))
+  if (backend == "tokenizers" & !volatiles$tokenizers$init)
+    stop("The tokenizers backend has not been initialized.")
+  if (backend == "spaCy" & !volatiles$spaCy$init)
     stop("The spaCy backend has not been initialized.")
-  if (backend == "coreNLP" && is.null(volatiles$cNLP))
+  if (backend == "coreNLP" & !volatiles$coreNLP$init)
     stop("The coreNLP backend has not been initialized.")
 
   if (is.null(output_dir))
-    output_dir <- tempdir()
+    output_dir <- tempfile() # yes, we want tempfile and not tempdir; the
+                             # latter points to a static directory that is
+                             # persistent through the R session; tempfile()
+                             # gives a random path *within* that directory;
+                             # we are free to treat it as a directory rather
+                             # than a file.
 
   if (!dir.exists(output_dir))
     dir.create(output_dir, FALSE, TRUE)
@@ -94,8 +93,6 @@ annotate <- function(input, file = NULL, output_dir = NULL, load = TRUE, keep = 
   if (length(input) == 0) stop("No valid files found.")
 
   if (backend == "spaCy") {
-    message("Annotating with Python backend using spaCy")
-
     # this is just a safe guard; in theory cannot get here
     # w/o reticuate
     if (!requireNamespace("reticulate")) {
@@ -103,30 +100,27 @@ annotate <- function(input, file = NULL, output_dir = NULL, load = TRUE, keep = 
     }
 
     output_loc <- system.file("py", package="cleanNLP")
-    x <- reticulate::py_run_file(file.path(output_loc, "load_spacy.py"))
-    volatiles$spacy$setOutputPath(output_dir)
-    volatiles$spacy$setIdOffset(as.integer(doc_id_offset))
+    volatiles$spaCy$SpacyObj$setOutputPath(output_dir)
+    volatiles$spaCy$SpacyObj$setIdOffset(as.integer(doc_id_offset))
     if (length(input) <= 1)
       input <- list(input)
-    volatiles$spacy$processFiles(input)
+    volatiles$spaCy$SpacyObj$processFiles(input)
 
   } else if (backend == "coreNLP") {
-    message("Annotating with Java backend using coreNLP")
-
     # this is just a safe guard; in theory cannot get here
     # w/o rJava
     if (!requireNamespace("rJava")) {
       stop("The rJava package is required to use the coreNLP backend.")
     }
 
-    rJava::.jcall(volatiles$ap, "V", "setOutputPath", output_dir)
-    rJava::.jcall(volatiles$ap, "V", "setLanguage", volatiles$language)
-    rJava::.jcall(volatiles$ap, "V", "setIdOffset", doc_id_offset)
+    rJava::.jcall(volatiles$coreNLP$AnnotationProcessor, "V", "setOutputPath", output_dir)
+    rJava::.jcall(volatiles$coreNLP$AnnotationProcessor, "V", "setLanguage", volatiles$coreNLP$language)
+    rJava::.jcall(volatiles$coreNLP$AnnotationProcessor, "V", "setIdOffset", doc_id_offset)
 
-    rJava::.jcall(volatiles$ap, "V", "processFiles", rJava::.jarray(input), volatiles$cNLP)
+    rJava::.jcall(volatiles$coreNLP$AnnotationProcessor, "V", "processFiles",
+                  rJava::.jarray(input), volatiles$coreNLP$coreNLP)
+
   } else if (backend == "tokenizers") {
-    message("Annotating with R backend using tokenizers")
-
     if (!requireNamespace("tokenizers")) {
       stop("The tokenizers package is required to use the tokenizers backend.")
     }
@@ -141,9 +135,8 @@ annotate <- function(input, file = NULL, output_dir = NULL, load = TRUE, keep = 
 
   # read in the output, if desired
   load_at_all <- load | !is.null(file)
-  include_vectors <- (backend == "spaCy") & volatiles$spacy_props$vector_flag
   out <- if (load_at_all) {
-    read_annotation(output_dir, include_vectors = include_vectors)
+    read_annotation(output_dir)
   } else {
     output_dir
   }
@@ -156,7 +149,7 @@ annotate <- function(input, file = NULL, output_dir = NULL, load = TRUE, keep = 
 
   # remove the output, if desired
   if (!keep) {
-    for (this in c("coreference", "dependency", "document", "entity", "sentiment", "token", "triple")) {
+    for (this in c("coreference", "dependency", "document", "entity", "sentence", "token")) {
       if (file.exists(fp <- file.path(output_dir, sprintf("%s.csv", this)))) file.remove(fp)
     }
   }
@@ -170,7 +163,6 @@ annotate <- function(input, file = NULL, output_dir = NULL, load = TRUE, keep = 
 #' This is typically created by a call to \code{\link{annotate}} or \code{\link{write_annotation}}.
 #'
 #' @param input_dir         path to the directory where the files are stored
-#' @param include_vectors   boolean. Should word vectors be loaded as well.
 #'
 #' @return an object of class \code{annotation}
 #'
@@ -181,37 +173,141 @@ annotate <- function(input, file = NULL, output_dir = NULL, load = TRUE, keep = 
 #'}
 #'
 #' @export
-read_annotation <- function(input_dir, include_vectors = FALSE) {
+read_annotation <- function(input_dir) {
 
-  if (file.exists(file.path(input_dir, "document.csv"))) {
-
-    anno <- structure(list(
-        coreference = readr::read_csv(file.path(input_dir, "coreference.csv"), col_types = "iiiccccciiii"),
-        dependency  = readr::read_csv(file.path(input_dir, "dependency.csv"),  col_types = "iiiiicc"),
-        document    = readr::read_csv(file.path(input_dir, "document.csv"),    col_types = "iTccc"),
-        entity      = readr::read_csv(file.path(input_dir, "entity.csv"),      col_types = "iiiiccc"),
-        sentiment   = readr::read_csv(file.path(input_dir, "sentiment.csv"),   col_types = "iiiddddd"),
-        token       = readr::read_csv(file.path(input_dir, "token.csv"),       col_types = "iiiccccccii"),
-        triple      = readr::read_csv(file.path(input_dir, "triple.csv"),      col_types = "icccdiiiiiiiiiii"),
-        vector      = NULL
-      ), class = "annotation")
-
-    if (include_vectors) {
-      vec_file <- file.path(input_dir, "vector.csv")
-      if (file.exists(vec_file)) {
-        vector <- scan(file.path(input_dir, "vector.csv"), sep = ",")
-        anno$vector <- matrix(vector, ncol = 303L, byrow = TRUE)
-      } else {
-        warning("No vector file found. Ignoring request to include it.")
-      }
-    }
-
-
-  } else {
-
+  if (!file.exists(file.path(input_dir, "document.csv"))) {
     stop(sprintf("Cannot find the file \"%s.csv\"", file.path(input_dir, "document")))
-
   }
+
+  if (file.exists(fn <- file.path(input_dir, "coreference.csv"))) {
+    coreference <- readr::read_csv(fn, col_types = cols(id           = col_integer(),
+                                                        rid          = col_integer(),
+                                                        mid          = col_integer(),
+                                                        mention      = col_character(),
+                                                        mention_type = col_character(),
+                                                        number       = col_character(),
+                                                        gender       = col_character(),
+                                                        animacy      = col_character(),
+                                                        sid          = col_integer(),
+                                                        tid          = col_integer(),
+                                                        tid_end      = col_integer(),
+                                                        tid_head     = col_integer()))
+  } else {
+    coreference <- structure(list(id           = integer(0),
+                                  rid          = integer(0),
+                                  mid          = integer(0),
+                                  mention      = character(0),
+                                  mention_type = character(0),
+                                  number       = character(0),
+                                  gender       = character(0),
+                                  animacy      = character(0),
+                                  sid          = integer(0),
+                                  tid          = integer(0),
+                                  tid_end      = integer(0),
+                                  tid_head     = integer(0)),
+                              row.names    = integer(0),
+                              class = c("tbl_df", "tbl", "data.frame"))
+  }
+
+  if (file.exists(fn <- file.path(input_dir, "dependency.csv"))) {
+    dependency <- readr::read_csv(fn, col_types = cols(id            = col_integer(),
+                                                       sid           = col_integer(),
+                                                       tid           = col_integer(),
+                                                       tid_target    = col_integer(),
+                                                       relation      = col_character(),
+                                                       relation_full = col_character()))
+  } else {
+    dependency <- structure(list(id            = integer(0),
+                                 sid           = integer(0),
+                                 tid           = integer(0),
+                                 tid_target    = integer(0),
+                                 relation      = character(0),
+                                 relation_full = character(0)),
+                            row.names = integer(0),
+                            class = c("tbl_df", "tbl", "data.frame"))
+  }
+
+  if (file.exists(fn <- file.path(input_dir, "document.csv"))) {
+    document <- readr::read_csv(fn, col_types = cols(id       = col_integer(),
+                                                     time     = col_datetime(),
+                                                     version  = col_character(),
+                                                     language = col_character(),
+                                                     uri      = col_character()))
+  } else {
+    document <- structure(list(id       = integer(0),
+                               time     = structure(numeric(0), class = c("POSIXct", "POSIXt"), tzone = "UTC"),
+                               version  = character(0),
+                               language = character(0),
+                               uri      = character(0)),
+                          row.names = integer(0),
+                          class = c("tbl_df", "tbl", "data.frame"))
+  }
+
+  if (file.exists(fn <- file.path(input_dir, "entity.csv"))) {
+    entity <- readr::read_csv(fn, col_types = cols(id                = col_integer(),
+                                                   sid               = col_integer(),
+                                                   tid               = col_integer(),
+                                                   tid_end           = col_integer(),
+                                                   entity_type       = col_character(),
+                                                   entity            = col_character()))
+  } else {
+    entity <- structure(list(id                = integer(0),
+                             sid               = integer(0),
+                             tid               = integer(0),
+                             tid_end           = integer(0),
+                             entity_type       = character(0),
+                             entity            = character(0)),
+                        row.names = integer(0),
+                        class = c("tbl_df", "tbl", "data.frame"))
+  }
+
+  if (file.exists(fn <- file.path(input_dir, "sentence.csv"))) {
+    sentence <- readr::read_csv(fn, col_types = cols(id        = col_integer(),
+                                                     sid       = col_integer()))
+  } else {
+    sentence <- structure(list(id        = integer(0),
+                               sid       = integer(0)),
+                           row.names = integer(0),
+                           class = c("tbl_df", "tbl", "data.frame"))
+  }
+
+  if (file.exists(fn <- file.path(input_dir, "token.csv"))) {
+    token <- readr::read_csv(fn, col_types = cols(id      = col_integer(),
+                                                  sid     = col_integer(),
+                                                  tid     = col_integer(),
+                                                  word    = col_character(),
+                                                  lemma   = col_character(),
+                                                  upos    = col_character(),
+                                                  pos     = col_character(),
+                                                  cid     = col_integer()))
+  } else {
+    token <- structure(list(id      = integer(0),
+                            sid     = integer(0),
+                            tid     = integer(0),
+                            word    = character(0),
+                            lemma   = character(0),
+                            upos    = character(0),
+                            pos     = character(0),
+                            cid     = integer(0)),
+                        row.names   = integer(0),
+                        class = c("tbl_df", "tbl", "data.frame"))
+  }
+
+  if (file.exists(fn <- file.path(input_dir, "vector.csv"))) {
+    vector <- scan(file.path(input_dir, "vector.csv"), sep = ",")
+    vector <- matrix(vector, ncol = 303L, byrow = TRUE)
+  } else {
+    vector <- matrix(numeric(0), ncol = 3L, nrow = 0L)
+  }
+
+  anno <- structure(list( coreference = coreference,
+                          dependency  = dependency,
+                          document    = document,
+                          entity      = entity,
+                          sentence    = sentence,
+                          token       = token,
+                          vector      = vector),
+                    class = "annotation")
 
   anno
 }
@@ -236,13 +332,19 @@ write_annotation <- function(annotation, output_dir) {
   if (!dir.exists(output_dir))
     dir.create(output_dir, FALSE, TRUE)
 
-  readr::write_csv(annotation$coreference, file.path(output_dir, "coreference.csv"))
-  readr::write_csv(annotation$dependency, file.path(output_dir, "dependency.csv"))
-  readr::write_csv(annotation$document, file.path(output_dir, "document.csv"))
-  readr::write_csv(annotation$entity, file.path(output_dir, "entity.csv"))
-  readr::write_csv(annotation$sentiment, file.path(output_dir, "sentiment.csv"))
-  readr::write_csv(annotation$token, file.path(output_dir, "token.csv"))
-  readr::write_csv(annotation$triple, file.path(output_dir, "triple.csv"))
+  if (nrow(annotation$coreference) > 0L)
+    readr::write_csv(annotation$coreference, file.path(output_dir, "coreference.csv"))
+  if (nrow(annotation$dependency) > 0L)
+    readr::write_csv(annotation$dependency,  file.path(output_dir, "dependency.csv"))
+  if (nrow(annotation$document) > 0L)
+    readr::write_csv(annotation$document,    file.path(output_dir, "document.csv"))
+  if (nrow(annotation$entity) > 0L)
+    readr::write_csv(annotation$entity,      file.path(output_dir, "entity.csv"))
+  if (nrow(annotation$sentence) > 0L)
+    readr::write_csv(annotation$sentence,    file.path(output_dir, "sentence.csv"))
+  if (nrow(annotation$token) > 0L)
+    readr::write_csv(annotation$token,       file.path(output_dir, "token.csv"))
+
   if (!is.null(annotation$vector)) {
     utils::write.table(annotation$vector, file.path(output_dir, "vector.csv"),
                 col.names = FALSE, row.names = FALSE, sep = ",")
@@ -302,49 +404,45 @@ from_CoNLLU <- function(file) {
 
   # create annotation object
   anno <- list()
-  anno$coreference <- structure(list(id = integer(0), rid = integer(0), mid = integer(0),
-      mention = character(0), mention_type = character(0), number = character(0),
-      gender = character(0), animacy = character(0), sid = integer(0),
-      tid = integer(0), tid_end = integer(0), tid_head = integer(0)), .Names = c("id",
-  "rid", "mid", "mention", "mention_type", "number", "gender",
-  "animacy", "sid", "tid", "tid_end", "tid_head"), row.names = integer(0), class = c("tbl_df",
-  "tbl", "data.frame"))
+  anno$coreference <- structure(list( id           = integer(0),
+                                      rid          = integer(0),
+                                      mid          = integer(0),
+                                      mention      = character(0),
+                                      mention_type = character(0),
+                                      number       = character(0),
+                                      gender       = character(0),
+                                      animacy      = character(0),
+                                      sid          = integer(0),
+                                      tid          = integer(0),
+                                      tid_end      = integer(0),
+                                      tid_head     = integer(0)),
+                              row.names    = integer(0),
+                              class = c("tbl_df", "tbl", "data.frame"))
 
   anno$dependency <- dep
 
-  anno$document <- structure(list(id = 0L, time = structure(NA_real_, tzone = "UTC", class = c("POSIXct",
-  "POSIXt")), version = NA_character_, language = NA_character_,
-      file = file), .Names = c("id", "time", "version",
-  "language", "file"), row.names = c(NA, -1L), class = c("tbl_df",
-  "tbl", "data.frame"))
+  anno$document <- structure(list(id   = 0L,
+                                  time = structure(NA_real_, tzone = "UTC", class = c("POSIXct", "POSIXt")),
+                                  version = NA_character_,
+                                  language = NA_character_,
+                                  file = file), row.names = c(NA, -1L),
+                              class = c("tbl_df", "tbl", "data.frame"))
 
-  anno$entity <- structure(list(id = integer(0), sid = integer(0), tid = integer(0),
-      tid_end = integer(0), entity_type = character(0), entity = character(0),
-      entity_normalized = character(0)), .Names = c("id", "sid",
-  "tid", "tid_end", "entity_type", "entity", "entity_normalized"
-  ), row.names = integer(0), class = c("tbl_df", "tbl", "data.frame"
-  ))
+  anno$entity <- structure(list( id                = integer(0),
+                                 sid               = integer(0),
+                                 tid               = integer(0),
+                                 tid_end           = integer(0),
+                                 entity_type       = character(0),
+                                 entity            = character(0)),
+                        row.names = integer(0),
+                        class = c("tbl_df", "tbl", "data.frame"))
 
-  anno$sentiment <- structure(list(id = integer(0), sid = integer(0), pred_class = integer(0),
-      p0 = numeric(0), p1 = numeric(0), p2 = numeric(0), p3 = numeric(0),
-      p4 = numeric(0)), .Names = c("id", "sid", "pred_class", "p0",
-  "p1", "p2", "p3", "p4"), row.names = integer(0), class = c("tbl_df",
-  "tbl", "data.frame"))
+  anno$sentence <- structure(list(id     = integer(0),
+                                  sid    = integer(0)),
+                           row.names = integer(0),
+                           class = c("tbl_df", "tbl", "data.frame"))
 
   anno$token <- token
-
-  anno$triple <- structure(list(id = integer(0), subject = character(0), object = character(0),
-      relation = character(0), confidence = numeric(0), be_prefix = integer(0),
-      be_suffix = integer(0), of_suffix = integer(0), tmod = integer(0),
-      sid = integer(0), tid_subject = integer(0), tid_subject_end = integer(0),
-      tid_object = integer(0), tid_object_end = integer(0), tid_relation = integer(0),
-      tid_relation_end = integer(0)), .Names = c("id", "subject",
-  "object", "relation", "confidence", "be_prefix", "be_suffix",
-  "of_suffix", "tmod", "sid", "tid_subject", "tid_subject_end",
-  "tid_object", "tid_object_end", "tid_relation", "tid_relation_end"
-  ), row.names = integer(0), class = c("tbl_df", "tbl", "data.frame"
-  ))
-
   anno$vector <- NULL
 
   class(anno) <- "annotation"
@@ -428,9 +526,8 @@ combine_documents <- function(...) {
        dependency  = dplyr::bind_rows(lapply(temp, getElement, "dependency")),
        document    = dplyr::bind_rows(lapply(temp, getElement, "document")),
        entity      = dplyr::bind_rows(lapply(temp, getElement, "entity")),
-       sentiment   = dplyr::bind_rows(lapply(temp, getElement, "sentiment")),
+       sentence    = dplyr::bind_rows(lapply(temp, getElement, "sentence")),
        token       = dplyr::bind_rows(lapply(temp, getElement, "token")),
-       triple      = dplyr::bind_rows(lapply(temp, getElement, "triple")),
        vector      = Reduce(rbind, lapply(temp, getElement, "vector"))
   ), class = "annotation")
 
@@ -468,9 +565,8 @@ extract_documents <- function(annotation, ids) {
        dependency  = dplyr::filter(get_dependency(annotation), id %in% ids),
        document    = dplyr::filter(get_document(annotation), id %in% ids),
        entity      = dplyr::filter(get_entity(annotation), id %in% ids),
-       sentiment   = dplyr::filter(get_sentiment(annotation), id %in% ids),
+       sentence   = dplyr::filter(get_sentence(annotation), id %in% ids),
        token       = dplyr::filter(get_token(annotation), id %in% ids),
-       triple      = dplyr::filter(get_triple(annotation), id %in% ids),
        vector      = new_vector
   ), class = "annotation")
 
@@ -498,28 +594,10 @@ print.annotation <- function(x, ...) {
 
   # FILE HEADERS
   fp <- file.path(output_dir, "token.csv")
-  writeLines("id,sid,tid,word,lemma,upos,pos,speaker,wiki,cid,cid_end", fp)
-
-  fp <- file.path(output_dir, "dependency.csv")
-  writeLines("id,sid,tid,sid_target,tid_target,relation,relation_full", fp)
-
-  fp <- file.path(output_dir, "entity.csv")
-  writeLines("id,sid,tid,tid_end,entity_type,entity,entity_normalized", fp)
+  writeLines("id,sid,tid,word,lemma,upos,pos,cid", fp)
 
   fp <- file.path(output_dir, "document.csv")
   writeLines("id,time,version,language,uri", fp)
-
-  fp <- file.path(output_dir, "sentiment.csv")
-  writeLines("id,sid,pred_class,p0,p1,p2,p3,p4", fp)
-
-  fp <- file.path(output_dir, "coreference.csv")
-  writeLines("id,rid,mid,mention,mention_type,number,gender,animacy,sid,tid,tid_end,tid_head", fp)
-
-  fp <- file.path(output_dir, "triple.csv")
-  temp <- c("id,subject,object,relation,confidence,be_prefix,be_suffix,",
-             "of_suffix,tmod,sid,tid_subject,tid_subject_end,tid_object,",
-             "tid_object_end,tid_relation,tid_relation_end")
-  writeLines(paste(temp, collapse = ""), fp)
 
   id <- doc_id_offset
   for (x in input) {
@@ -527,7 +605,7 @@ print.annotation <- function(x, ...) {
     df <- data_frame(id = id, time = format(Sys.time(), fmt = "%d"),
                      version = as.character(utils::packageVersion("cleanNLP")),
                      language = "n/a", uri = x)
-    readr::write_csv(df, file.path(output_dir, "document.csv"), append = TRUE)
+    readr::write_csv(df, file.path(output_dir, "document.csv"), append = TRUE, na = "")
 
     txt <- readLines(x)
     txt <- iconv(txt, sub = "")
@@ -541,11 +619,10 @@ print.annotation <- function(x, ...) {
 
     df <- data_frame(id = id, sid = unlist(sid), tid = unlist(tid), word = unlist(y),
                      lemma = NA_character_, upos = NA_character_, pos = NA_character_,
-                     speaker = NA_character_, wiki = NA_character_, cid = NA_integer_,
-                     cid_end = NA_integer_)
+                     cid = NA_integer_)
 
     # ADD LINE TO TOKEN FILE
-    readr::write_csv(df, file.path(output_dir, "token.csv"), append = TRUE)
+    readr::write_csv(df, file.path(output_dir, "token.csv"), append = TRUE, na = "")
 
     id <- id + 1
   }

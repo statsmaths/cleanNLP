@@ -5,8 +5,7 @@
 \title{Run the annotation pipeline on a set of documents}
 \usage{
 annotate(input, file = NULL, output_dir = NULL, load = TRUE,
-  keep = TRUE, as_strings = FALSE, doc_id_offset = 0L,
-  backend = c("tokenizers", "spaCy", "coreNLP"))
+  keep = TRUE, as_strings = FALSE, doc_id_offset = 0L, backend = NULL)
 }
 \arguments{
 \item{input}{either a vector of file names to parse, or a character vector
@@ -31,10 +30,7 @@ than file names?}
 
 \item{doc_id_offset}{integer. The first document id to use. Defaults to 0.}
 
-\item{backend}{which backend to use. Either "tokenizers", "spaCy", or "coreNLP". If
-not specified it will first see if the spaCy model is initialized and
-use it if so. Otherwise it checks to see if the coreNLP one is initialized
-and then uses it. If neither are found the "tokenizers" package is used instead.}
+\item{backend}{which backend to use. Will default to the last model to be initalized.}
 }
 \value{
 if \code{load} is true, an object of class \code{annotation}. Otherwise, a character
@@ -44,8 +40,9 @@ if \code{load} is true, an object of class \code{annotation}. Otherwise, a chara
 Runs the clean_nlp annotators over a given corpus of text
 using either the R, Java, or Python backend. The details for
 which annotators to run and how to run them are specified
-by using one of: \code{\link{set_spacy_properties}} or
-\code{\link{set_java_properties}}.
+by using one of: \code{\link{setup_tokenizers_backend}},
+\code{\link{setup_spaCy_backend}}, or
+code{\link{setup_coreNLP_backend}}.
 }
 \examples{
 \dontrun{

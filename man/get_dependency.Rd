@@ -22,7 +22,6 @@ Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}
  \item{"id"}{ - integer. Id of the source document.}
  \item{"sid"}{ - integer. Sentence id of the source token.}
  \item{"tid"}{ - integer. Id of the source token.}
- \item{"sid_target"}{ - integer. Sentence id of the source token.}
  \item{"tid_target"}{ - integer. Id of the source token.}
  \item{"relation"}{ - character. Language-agnostic universal dependency type.}
  \item{"relation_full"}{ - character. Language specific universal dependency type.}

@@ -22,7 +22,6 @@ Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}
  \item{"tid_end"}{ - integer. Token id at the end of the entity mention.}
  \item{"entity_type"}{ - character. See below from details.}
  \item{"entity"}{ - character. Raw words of the named entity in the text.}
- \item{"entity_normalized"}{ - character. Normalized version of the entity.}
 }
 }
 \description{

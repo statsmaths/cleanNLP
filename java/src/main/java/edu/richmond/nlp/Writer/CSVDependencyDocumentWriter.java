@@ -13,7 +13,7 @@ public class CSVDependencyDocumentWriter {
 
   public CSVDependencyDocumentWriter(String docID) {
     this.docID = docID;
-    this.header = String.format("id,sid,tid,sid_target,tid_target,relation,relation_full%n");
+    this.header = String.format("id,sid,tid,tid_target,relation,relation_full%n");
   }
 
   public String print(CoreMap sentence) {
@@ -27,8 +27,8 @@ public class CSVDependencyDocumentWriter {
         String rel = GrammaticalRelation.ROOT.getLongName();
         rel = rel.replaceAll("\\s+", ""); // future proofing
 
-        sb.append(String.format("%s,%d,%d,%d,%d,%s,%s%n", docID, root.sentIndex(),
-                                0, root.sentIndex(), root.index(), rel, rel));
+        sb.append(String.format("%s,%d,%d,%d,%s,%s%n", docID, root.sentIndex(),
+                                0, root.index(), rel, rel));
       }
 
       for (SemanticGraphEdge edge : enhancedDependencies.edgeListSorted()) {
@@ -36,9 +36,9 @@ public class CSVDependencyDocumentWriter {
         String relnName = reln == null ? "" : reln.toString();
         String relnNameBasic = relnName.split(":",-1)[0];
 
-        sb.append(String.format("%s,%d,%d,%d,%d,%s,%s%n", docID, edge.getSource().sentIndex(),
-                                edge.getSource().index(), edge.getTarget().sentIndex(),
-                                edge.getTarget().index(), relnNameBasic, relnName));
+        sb.append(String.format("%s,%d,%d,%d,%s,%s%n", docID, edge.getSource().sentIndex(),
+                                edge.getSource().index(), edge.getTarget().index(),
+                                relnNameBasic, relnName));
       }
     }
 

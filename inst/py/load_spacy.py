@@ -31,7 +31,7 @@ class SpacyCleanNLP:
         self.vector_flag = vector_flag
 
     def processFiles(self, input_files):
-        tfile, dfile, efile, mfile, vfile = prepare_output(self.output_dir)
+        tfile, dfile, efile, mfile, vfile = prepare_output(self.output_dir, self.entity_flag, self.vector_flag)
 
         id = self.doc_id_offset
         for this_file in input_files:
@@ -49,9 +49,14 @@ class SpacyCleanNLP:
                 save_doc_vector(doc, vfile, id)
             id += 1
 
-        tfile.close()
-        dfile.close()
-        efile.close()
+        if tfile != None:
+            tfile.close()
+        if dfile != None:
+            dfile.close()
+        if efile != None:
+            efile.close()
+        if vfile != None:
+            vfile.close()
 
     def createSentDict(self, doc):
         self.sent_index = {}
@@ -64,9 +69,10 @@ class SpacyCleanNLP:
         for ent in doc.ents:
             sid = self.sent_index.get(ent.sent.start, -1)
             tid_start = ent.start - ent.sent.start + 1
-            tid_end = ent.end - ent.sent.start + 1
+            # NOTE: spaCy point one beyond entity, so do not add 1 here to tid_end:
+            tid_end = ent.end - ent.sent.start
             entity = ent.text.replace('"','')
-            orow = '{:d},{:d},{:d},{:d},"{:s}","{:s}",""\n'.format(id, sid,
+            orow = '{:d},{:d},{:d},{:d},"{:s}","{:s}"\n'.format(id, sid,
                     tid_start, tid_end, ent.root.ent_type_, entity)
             _ = efile.write(orow)
 
@@ -84,7 +90,7 @@ def save_doc_token(doc, tfile, id):
     for x in doc.sents:
         tid = 0
         # The 0th token is always the ROOT
-        orow = str('{:d},{:d},{:d},"ROOT","ROOT","","","","",,\n').format(id, sid, tid)
+        orow = str('{:d},{:d},{:d},"ROOT","ROOT","","",\n').format(id, sid, tid)
         _ = tfile.write(orow)
 
         # Now, parse the actual tokens, starting at 1
@@ -98,9 +104,8 @@ def save_doc_token(doc, tfile, id):
             if this_text == "'":
                 this_test = '\\\''
                 this_lemma = '\\\''
-            orow = str('{:d},{:d},{:d},"{:s}","{:s}","{:s}","{:s}","","",{:d},{:d}\n').format(id, sid,
-                    tid, this_text, this_lemma, word.pos_, word.tag_,
-                    word.idx, word.idx + len(word.text))
+            orow = str('{:d},{:d},{:d},"{:s}","{:s}","{:s}","{:s}",{:d}\n').format(id, sid,
+                    tid, this_text, this_lemma, word.pos_, word.tag_, word.idx)
             _ = tfile.write(orow)
             tid += 1
         sid += 1
@@ -122,8 +127,8 @@ def save_doc_dependency(doc, dfile, id):
                 dep_id = 0
             else:
                 dep_id = word.head.i - start_token_i + 1
-            orow = '{:d},{:d},{:d},{:d},{:d},"{:s}",""\n'.format(id, sid,
-                tid, sid, dep_id, word.dep_)
+            orow = '{:d},{:d},{:d},{:d},"{:s}",""\n'.format(id, sid,
+                tid, dep_id, word.dep_)
             _ = dfile.write(orow)
             tid += 1
         sid += 1
@@ -146,36 +151,37 @@ def save_doc_vector(doc, vfile, id):
         sid += 1
 
 
-def prepare_output(output_dir):
+def prepare_output(output_dir, entity_flag, vector_flag):
     if output_dir is None:
         raise RuntimeError("You must set the output directory before parsing.")
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
+    # token
     tfile = open(os.path.join(output_dir, "token.csv"), "w")
-    dfile = open(os.path.join(output_dir, "dependency.csv"), "w")
-    efile = open(os.path.join(output_dir, "entity.csv"), "w")
-    mfile = open(os.path.join(output_dir, "document.csv"), "w")
-    vfile = open(os.path.join(output_dir, "vector.csv"), "w")
+    _ = tfile.write("id,sid,tid,word,lemma,upos,pos,cid\n")
 
-    # Now, add headers (even if they are just empty)
-    _ = tfile.write("id,sid,tid,word,lemma,upos,pos,speaker,wiki,cid,cid_end\n")
-    _ = dfile.write("id,sid,tid,sid_target,tid_target,relation,relation_full\n")
-    _ = efile.write("id,sid,tid,tid_end,entity_type,entity,entity_normalized\n")
+    # dependency
+    dfile = open(os.path.join(output_dir, "dependency.csv"), "w")
+    _ = dfile.write("id,sid,tid,tid_target,relation,relation_full\n")
+
+    # document
+    mfile = open(os.path.join(output_dir, "document.csv"), "w")
     _ = mfile.write("id,time,version,language,uri\n")
 
-    with open(os.path.join(output_dir, "sentiment.csv"), 'w') as temp_file:
-        _ = temp_file.write("id,sid,pred_class,p0,p1,p2,p3,p4\n")
+    # vector
+    if vector_flag:
+        vfile = open(os.path.join(output_dir, "vector.csv"), "w")
+    else:
+        vfile = None
 
-    with open(os.path.join(output_dir, "coreference.csv"), 'w') as temp_file:
-        _ = temp_file.write("id,rid,mid,mention,mention_type,number,gender,animacy,sid,tid,tid_end,tid_head\n")
-
-    with open(os.path.join(output_dir, "triple.csv"), 'w') as temp_file:
-        header = "id,subject,object,relation,confidence,be_prefix,be_suffix,"
-        header +=  "of_suffix,tmod,sid,tid_subject,tid_subject_end,tid_object,"
-        header += "tid_object_end,tid_relation,tid_relation_end\n"
-        _ = temp_file.write(header)
+    # entity
+    if entity_flag:
+        efile = open(os.path.join(output_dir, "entity.csv"), "w")
+        _ = efile.write("id,sid,tid,tid_end,entity_type,entity\n")
+    else:
+        efile = None
 
     return tfile, dfile, efile, mfile, vfile
 

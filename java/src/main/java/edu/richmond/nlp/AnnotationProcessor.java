@@ -72,19 +72,16 @@ public final class AnnotationProcessor {
       CSVNamedEntityOutputter entityOut = new CSVNamedEntityOutputter(docIDString, append);
       entityOut.print(annotation, new FileOutputStream(output_path + "entity.csv", append), opt);
 
-      CSVTripleOutputter tripleOut = new CSVTripleOutputter(docIDString, append);
-      tripleOut.print(annotation, new FileOutputStream(output_path + "triple.csv", append), opt);
-
       CSVCoreferenceOutputter corefOut = new CSVCoreferenceOutputter(docIDString, append);
       corefOut.print(annotation, new FileOutputStream(output_path + "coreference.csv", append), opt);
 
-      CSVSentimentOutputter sentimentOut = new CSVSentimentOutputter(docIDString, append);
-      sentimentOut.print(annotation, new FileOutputStream(output_path + "sentiment.csv", append), opt);
+      CSVSentenceOutputter sentenceOut = new CSVSentenceOutputter(docIDString, append);
+      sentenceOut.print(annotation, new FileOutputStream(output_path + "sentence.csv", append), opt);
 
       CSVDocumentOutputter docOut = new CSVDocumentOutputter(docIDString, append, language, starttime, uri, corenlp_version);
       docOut.print(annotation, new FileOutputStream(output_path + "document.csv", append), opt);
 
-      append = true; // append on all but the first document
+      append = true; // always append documents after the first
       docID++;
     }
   }

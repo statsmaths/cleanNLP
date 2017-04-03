@@ -38,4 +38,3 @@ public class CSVCoreferenceOutputter extends AnnotationOutputter {
   }
 
 }
-
