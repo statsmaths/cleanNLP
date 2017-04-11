@@ -6,6 +6,14 @@ data(obama)
 input_dir <- system.file("txt_files", package="cleanNLP")
 input_files <- file.path(input_dir, c("bush.txt", "clinton.txt", "obama.txt"))
 
+check_spacy_exists <- function() {
+  if (!requireNamespace("reticulate")) {
+    skip("Python or reticulate not available")
+  } else if (!reticulate::py_module_available("spacy")) {
+    skip("spaCy module is not installed.")
+  }
+}
+
 test_that("extract subset of documents from an annotation object", {
   sub_obama <- extract_documents(obama, ids = c(1L, 4L))
   expect_equal(unique(get_token(sub_obama)$id), c(1L, 4L))
@@ -49,6 +57,9 @@ test_that("combine documents", {
 })
 
 test_that("read and write annotations", {
+  skip_on_cran()
+  check_spacy_exists()
+
   init_spaCy(vector_flag = TRUE)
   anno <- annotate(input_files)
 
