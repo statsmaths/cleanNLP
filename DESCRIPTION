@@ -3,7 +3,7 @@ Type: Package
 Title: A Tidy Data Model for Natural Language Processing
 Version: 1.5
 Date: 2017-04-11
-Authors@R: c(person("Taylor", "B.", "Arnold", email = "taylor.arnold@acm.org", role = c("aut", "cre")))
+Authors@R: c(person("Taylor", "Arnold", email = "taylor.arnold@acm.org", role = c("aut", "cre")))
 Author: Taylor Arnold [aut, cre]
 Maintainer: Taylor Arnold <taylor.arnold@acm.org>
 Description: Provides a set of fast tools for converting a textual corpus into a set of normalized tables. Users may make use of a Python backend with 'spaCy' (<https://spacy.io>) or the Java backend 'CoreNLP' (http://stanfordnlp.github.io/CoreNLP/). A minimal backend with no external dependencies is also provided. Exposed annotation tasks include tokenization, part of speech tagging, named entity recognition, entity linking, sentiment analysis, dependency parsing, coreference resolution, and word embeddings. Datasets containing token unigram, part of speech tag, and dependency type frequencies are also included to assist with analyses. 
