@@ -134,7 +134,7 @@ is required or when parsing in languages not yet available in spaCy.
 ### spaCy backend (python)
 
 To use the Python-based backend spaCy, we first need to install Python and spaCy
-on our system. The package **reticulte** must also be installed; see the
+on our system. The package **reticulate** must also be installed; see the
 [spaCy website](https://spacy.io/docs/usage/) for download instructions on
 your platform. After this is done, we can run the code snippet given in the
 prior section
