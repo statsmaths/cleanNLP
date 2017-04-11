@@ -7,8 +7,7 @@ input_files <- file.path(input_dir, c("bush.txt", "clinton.txt", "obama.txt"))
 
 test_that("annotation uses tokenizers by default", {
   cleanNLP:::.onLoad()
-  setup_tokenizers_backend()
-  init_backend("tokenizers")
+  init_tokenizers()
   anno1 <- annotate(input_files)
   anno2 <- annotate(input_files, backend = "tokenizers")
   anno1$document$time <- anno2$document$time # the times of course will not match
@@ -17,8 +16,7 @@ test_that("annotation uses tokenizers by default", {
 
 
 test_that("output of tokenizers", {
-  setup_tokenizers_backend()
-  init_backend("tokenizers")
+  init_tokenizers()
   anno <- annotate(input_files)
 
   # check tokens
@@ -52,8 +50,7 @@ test_that("output of tokenizers", {
 
 
 test_that("annotate options", {
-  setup_tokenizers_backend()
-  init_backend("tokenizers")
+  init_tokenizers()
 
   anno <- annotate(input_files, doc_id_offset = 137, backend = "tokenizers")
   token <- get_token(anno)

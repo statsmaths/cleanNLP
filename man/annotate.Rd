@@ -40,9 +40,8 @@ if \code{load} is true, an object of class \code{annotation}. Otherwise, a chara
 Runs the clean_nlp annotators over a given corpus of text
 using either the R, Java, or Python backend. The details for
 which annotators to run and how to run them are specified
-by using one of: \code{\link{setup_tokenizers_backend}},
-\code{\link{setup_spaCy_backend}}, or
-code{\link{setup_coreNLP_backend}}.
+by using one of: \code{\link{init_tokenizers}},
+\code{\link{init_spaCy}}, or \code{\link{init_coreNLP}}.
 }
 \examples{
 \dontrun{

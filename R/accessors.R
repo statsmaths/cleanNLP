@@ -131,7 +131,7 @@ get_dependency <- function(annotation, get_token = FALSE) {
 
   if (get_token) {
     dep <- dplyr::left_join(dep, dplyr::select(annotation$token, id, sid, tid, word, lemma))
-    dep <- dplyr::left_join(dep, dplyr::select(annotation$token, id, sid_target = sid, tid_target = tid,
+    dep <- dplyr::left_join(dep, dplyr::select(annotation$token, id, sid, tid_target = tid,
                                                word_target = word, lemma_target = lemma))
   }
 

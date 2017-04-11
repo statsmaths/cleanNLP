@@ -210,6 +210,53 @@ For the same reasons that both the part of speech codes and universal
 part of speech codes are included, each of these relationship types have been added to
 the dependency table.
 
+
+## Named entities
+
+Named entity recognition is the task of finding entities that can be defined by proper
+names, categorizing them, and standardizing their formats.
+The XML output of the Stanford CoreNLP pipeline places named entity information directly
+into their version of the token table. Doing this repeats information over every token in
+an entity and gives no canonical way of extracting the entirety of a single entity mention.
+We instead have a separate entity table, as is demanded by the normalized database structure,
+and record each entity mention in its own row. The schema is given by:
+
+- **id** integer. Id of the source document.
+- **sid** integer. Sentence id of the entity mention.
+- **tid** integer. Token id at the start of the entity mention.
+- **tid_end** integer. Token id at the end of the entity mention.
+- **entity_type** character. Type of entity.
+- **entity** character. Raw words of the named entity in the text.
+- **entity_normalized** character. Normalized version of the entity.
+
+An example of the named entity table is given by:
+```{r}
+get_entity(obama)
+```
+```
+## # A tibble: 3,166 × 7
+##       id   sid   tid tid_end  entity_type              entity
+##    <int> <int> <int>   <int>        <chr>               <chr>
+## 1      0     1     2       2       PERSON             Speaker
+## 2      0     1    10      10 ORGANIZATION            Congress
+## 3      0     1    13      13         MISC           Americans
+## 4      0     1    15      17         DATE Fifty-one years ago
+## 5      0     1    19      21       PERSON     John F. Kennedy
+## 6      0     3     1       1         DATE             Tonight
+## 7      0     3    11      11         MISC            American
+## 8      0     4     2       3     DURATION            a decade
+## 9      0     5     2       2     DURATION               years
+## 10     0     5    12      13       NUMBER           6 million
+## # ... with 3,156 more rows, and 1 more variables: entity_normalized <chr>
+```
+The categories available in the field ``entity_type`` are dependent on the models used
+in the annotation pipeline. The default English model selected for speed codes 2 and above
+include the categories: "LOCATION", "PERSON", "ORGANIZATION", "MISC", "MONEY",
+"PERCENT", "DATE" and "TIME". The last four of these also have a normalized form,
+given in the final field of the table. As with the coreference table, a complete
+representation of the entity is given as a character string due to the difficulty in
+reconstructing this after the fact from the token table.
+
 ## Coreference
 
 Coreferences link sets of tokens that refer to the same underlying person, object, or idea.
@@ -275,53 +322,7 @@ this information from the token table. It is also possible, though not supported
 CoreNLP pipeline, that a mention could consist of a set of non-contiguous tokens, making this field
 impossible to otherwise reconstruct.
 
-## Named entities
-
-Named entity recognition is the task of finding entities that can be defined by proper
-names, categorizing them, and standardizing their formats.
-The XML output of the Stanford CoreNLP pipeline places named entity information directly
-into their version of the token table. Doing this repeats information over every token in
-an entity and gives no canonical way of extracting the entirety of a single entity mention.
-We instead have a separate entity table, as is demanded by the normalized database structure,
-and record each entity mention in its own row. The schema is given by:
-
-- **id** integer. Id of the source document.
-- **sid** integer. Sentence id of the entity mention.
-- **tid** integer. Token id at the start of the entity mention.
-- **tid_end** integer. Token id at the end of the entity mention.
-- **entity_type** character. Type of entity.
-- **entity** character. Raw words of the named entity in the text.
-- **entity_normalized** character. Normalized version of the entity.
-
-An example of the named entity table is given by:
-```{r}
-get_entity(obama)
-```
-```
-## # A tibble: 3,166 × 7
-##       id   sid   tid tid_end  entity_type              entity
-##    <int> <int> <int>   <int>        <chr>               <chr>
-## 1      0     1     2       2       PERSON             Speaker
-## 2      0     1    10      10 ORGANIZATION            Congress
-## 3      0     1    13      13         MISC           Americans
-## 4      0     1    15      17         DATE Fifty-one years ago
-## 5      0     1    19      21       PERSON     John F. Kennedy
-## 6      0     3     1       1         DATE             Tonight
-## 7      0     3    11      11         MISC            American
-## 8      0     4     2       3     DURATION            a decade
-## 9      0     5     2       2     DURATION               years
-## 10     0     5    12      13       NUMBER           6 million
-## # ... with 3,156 more rows, and 1 more variables: entity_normalized <chr>
-```
-The categories available in the field ``entity_type`` are dependent on the models used
-in the annotation pipeline. The default English model selected for speed codes 2 and above
-include the categories: "LOCATION", "PERSON", "ORGANIZATION", "MISC", "MONEY",
-"PERCENT", "DATE" and "TIME". The last four of these also have a normalized form,
-given in the final field of the table. As with the coreference table, a complete
-representation of the entity is given as a character string due to the difficulty in
-reconstructing this after the fact from the token table.
-
-## Senetences
+## Sentences
 
 The schema for sentence-level information is given by:
 
@@ -349,5 +350,37 @@ get_sentence(obama)
 ## 10     0     9         1
 ## # ... with 2,978 more rows
 ```
-The underlying sentiemnt model is a neural network.
+The underlying sentiment model is a neural network.
+
+## Word vectors
+
+Our final table in the data model stores the a relatively new concept of a word vector.
+Also known as word embeddings, these vectors are deterministic maps from the set of all
+available words into a high-dimensional, real valued vector space. Words with similar
+meanings or themes will tend to be clustered together in this high-dimensional space.
+For example, we would expect apple and pear to be very close to one another, with
+vegetables such as carrots, broccoli, and asparagus only slightly farther away. The
+embeddings can often be used as input features to fitting models on top of textual
+data. For a more detailed description of these embeddings, see the papers on either of
+the most well-known examples: GloVe \citep{pennington2014glove} and
+word2vec \citep{mikolov2013distributed}.
+Only the spaCy backend to \pkg{cleanNLP} currently supports word vectors; these are
+turned off by default because they take a significantly large amount of space to store.
+The embedding model used is a modification of the GloVe embeddings, mapping words into
+a 300-dimensional space. To compute the embeddings, set the \code{vector_flag}
+parameter of \code{init_spaCy} to \code{TRUE} prior to running the annotation.
+
+Word vectors are stored in a separate table from the tokens table out of convenience
+rather than as a necessity of preserving the data model's normalized schema. Due to
+its size and the fact that the individual components of the word embedding have no
+intrinsic meaning, this table is stored as a matrix.
+``{r}
+dim(get_vector(obama))
+```
+```
+## [1] 61871 303
+```
+The first three columns hold the keys \code{id}, \code{sid}, and \code{tid},
+respectively. If no embedding is computed, the function \code{get_vector} returns
+an empty matrix.
 

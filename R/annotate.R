@@ -3,9 +3,8 @@
 #' Runs the clean_nlp annotators over a given corpus of text
 #' using either the R, Java, or Python backend. The details for
 #' which annotators to run and how to run them are specified
-#' by using one of: \code{\link{setup_tokenizers_backend}},
-#' \code{\link{setup_spaCy_backend}}, or
-#' code{\link{setup_coreNLP_backend}}.
+#' by using one of: \code{\link{init_tokenizers}},
+#' \code{\link{init_spaCy}}, or \code{\link{init_coreNLP}}.
 #'
 #' @param input          either a vector of file names to parse, or a character vector
 #'                       with one document in each element. Specify the latter with the
@@ -54,11 +53,11 @@ annotate <- function(input, file = NULL, output_dir = NULL, load = TRUE, keep = 
   }
 
   if (backend == "tokenizers" & !volatiles$tokenizers$init)
-    stop("The tokenizers backend has not been initialized.")
+    stop("The tokenizers backend has not been initialized; you must run 'init_tokenizers()'.")
   if (backend == "spaCy" & !volatiles$spaCy$init)
-    stop("The spaCy backend has not been initialized.")
+    stop("The spaCy backend has not been initialized; you must run 'init_spaCy()'.")
   if (backend == "coreNLP" & !volatiles$coreNLP$init)
-    stop("The coreNLP backend has not been initialized.")
+    stop("The coreNLP backend has not been initialized; you must run 'init_coreNLP()'.")
 
   if (is.null(output_dir))
     output_dir <- tempfile() # yes, we want tempfile and not tempdir; the

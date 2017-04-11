@@ -45,8 +45,7 @@ where the input data sits on the local machine"):
 
 ```{r}
 library(cleanNLP)
-setup_spaCy_backend()
-init_backend("spaCy")
+init_spaCy()
 obj <- annotate(text, as_strings = TRUE)
 ```
 
@@ -138,7 +137,7 @@ To use the Python-based backend spaCy, we first need to install Python and spaCy
 on our system. The package **reticulte** must also be installed; see the
 [spaCy website](https://spacy.io/docs/usage/) for download instructions on
 your platform. After this is done, we can run the code snippet given in the
-prior seciont
+prior section
 
 ### coreNLP backend (Java)
 
@@ -156,22 +155,17 @@ These files are large and may take several minutes to download. The Java
 backend is then configured with `setup_coreNLP_backend`. The easiest
 interface is to specify a speed code from 0 to 3, with higher numbers
 including more models but taking increasingly long to parse the text.
-Setting it equal to 2 is a good reasonable balance between time and
+Setting it equal to 2 is a good balance between time and
 feature-richness:
 
 ```{r}
-setup_coreNLP_backend(speed = 2L)
-```
-
-We once again call `init_backend`, this time specifying that we want
-the "coreNLP" version to be initialized:
-
-```{r}
-init_backend(type = "coreNLP")
+init_coreNLP(speed = 2L, lib_location = lib_loc)
 ```
 
 After the pipeline is loaded, we again call annotate and set the
-backend to "coreNLP":
+backend to "coreNLP" (by default annotate will use whichever backend
+for most recently initalized, so this option is technically not
+needed if you just ran `init_coreNLP`):
 
 ```{r}
 obj <- annotate(text, as_strings = TRUE, backend = "coreNLP")
@@ -188,7 +182,7 @@ with slightly different fields filled in.
 
 ## Saving annotations
 
-One an annotation object is created there are two ways of saving the output.
+Once an annotation object is created there are two ways of saving the output.
 Using `saveRDS` saves the output as a binary file which can be read back into
 R at any time. Alternatively, the function `write_annotation` saves the annotation
 as a collection of comma separated files:
@@ -229,4 +223,3 @@ can consult the help pages for the `get_` functions. An even more detailed
 guide to the fields and the underlying philosophy is given in the vignette
 
 - [A Data Model for the NLP Pipeline](schema.html).
-

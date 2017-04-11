@@ -49,8 +49,7 @@ test_that("combine documents", {
 })
 
 test_that("read and write annotations", {
-  setup_spaCy_backend(vector_flag = TRUE)
-  init_backend(type = "spaCy")
+  init_spaCy(vector_flag = TRUE)
   anno <- annotate(input_files)
 
   od <- file.path(tempdir(), "test_dir_2")

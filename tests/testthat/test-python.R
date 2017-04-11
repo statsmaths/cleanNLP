@@ -26,16 +26,14 @@ test_that("initialize gives error with bad model name", {
   skip_on_cran()
   check_spacy_exists()
 
-  setup_spaCy_backend(model_name = "elvish")
-  expect_error(init_backend(type = "spaCy"))
+  expect_error(init_spaCy(model_name = "elvish"))
 })
 
 test_that("tokens with spaCy", {
   skip_on_cran()
   check_spacy_exists()
 
-  setup_spaCy_backend()
-  init_backend(type = "spaCy")
+  init_spaCy()
   anno <- annotate(input_files)
   token <- get_token(anno)
 
@@ -55,8 +53,7 @@ test_that("dependency with spaCy", {
   skip_on_cran()
   check_spacy_exists()
 
-  setup_spaCy_backend()
-  init_backend(type = "spaCy")
+  init_spaCy()
   anno <- annotate(input_files)
   dep <- get_dependency(anno)
 
@@ -73,8 +70,7 @@ test_that("entity with spaCy", {
   skip_on_cran()
   check_spacy_exists()
 
-  setup_spaCy_backend()
-  init_backend(type = "spaCy")
+  init_spaCy()
   anno <- annotate(input_files)
   ent <- get_entity(anno)
 
@@ -91,15 +87,13 @@ test_that("set_spacy_properties", {
   skip_on_cran()
   check_spacy_exists()
 
-  setup_spaCy_backend(vector_flag = TRUE)
-  init_backend(type = "spaCy")
+  init_spaCy(vector_flag = TRUE)
   anno <- annotate(input_files)
   expect_true(nrow(get_vector(anno)) > 0L)
   expect_equal(ncol(get_vector(anno)), 303L)
   expect_equal(class(get_vector(anno)), "matrix")
 
-  setup_spaCy_backend(entity_flag = FALSE)
-  init_backend(type = "spaCy")
+  init_spaCy(entity_flag = FALSE)
   anno <- annotate(input_files)
   expect_equal(nrow(get_entity(anno)), 0L)
   expect_equal(nrow(get_vector(anno)), 0L)
@@ -109,8 +103,7 @@ test_that("annotate options", {
   skip_on_cran()
   check_spacy_exists()
 
-  setup_spaCy_backend(vector_flag = FALSE)
-  init_backend(type = "spaCy")
+  init_spaCy(vector_flag = FALSE)
   anno <- annotate(input_files, doc_id_offset = 137)
   token <- get_token(anno)
   expect_equal(unique(token$id), 137L:139L)
@@ -124,15 +117,13 @@ test_that("annotate options", {
   anno2 <- read_annotation(od)
   expect_equal(anno, anno2)
 
-  setup_spaCy_backend(vector_flag = TRUE)
-  init_backend(type = "spaCy")
+  init_spaCy(vector_flag = TRUE)
   od <- file.path(tempdir(), "test_dir")
   anno <- annotate(input_files, output_dir = od)
   anno2 <- read_annotation(od)
   expect_equal(anno, anno2)
 
-  setup_spaCy_backend(vector_flag = FALSE)
-  init_backend(type = "spaCy")
+  init_spaCy(vector_flag = FALSE)
   od <- tempfile()
   anno <- annotate(input_files, output_dir = od, keep = FALSE)
   expect_error({ anno2 <- read_annotation(od) })

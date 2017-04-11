@@ -6,11 +6,10 @@
 #' The Python option is faster and generally easier to install; the Java option
 #' has additional annotators that are not available in spaCy.
 #'
-#' Once the package is set up, run one of \code{\link{setup_tokenizers_backend}},
-#' \code{\link{setup_spaCy_backend}}, or \code{\link{setup_coreNLP_backend}} to
-#' set the parameters of the annotation backend. Then load the backend with
-#' a call to \code{\link{init_backend}}. After this function is
-#' done loading, use \code{\link{annotate}} to run the annotation engine over a corpus
+#' Once the package is set up, run one of \code{\link{init_tokenizers}},
+#' \code{\link{init_spaCy}}, or \code{\link{init_coreNLP}} to load the
+#' desired NLP backend. After this function is done running, use
+#' \code{\link{annotate}} to run the annotation engine over a corpus
 #' of text. Functions are then available to extract data tables from the annotation
 #' object: \code{\link{get_token}}, \code{\link{get_dependency}}, \code{\link{get_document}},
 #' \code{\link{get_coreference}}, \code{\link{get_entity}}, \code{\link{get_sentence}},

@@ -98,12 +98,22 @@ def save_doc_token(doc, tfile, id):
         for word in x:
             this_text = word.text
             this_lemma = word.lemma_
-            if this_text == '\"':
-                this_text = '\\\''
-                this_lemma = '\\\''
-            if this_text == "'":
-                this_test = '\\\''
-                this_lemma = '\\\''
+            this_text = this_text.replace("\"", "\\\'")
+            this_text = this_text.replace("\'", "\\\'")
+            this_lemma = this_lemma.replace("\"", "\\\'")
+            this_lemma = this_lemma.replace("\'", "\\\'")
+
+            # if this_text == '\"':
+            #     this_text = '\\\''
+            #     this_lemma = '\\\''
+            # if this_text == "'":
+            #     this_text = '\\\''
+            #     this_lemma = '\\\''
+            # if this_lemma == '\"':
+            #     this_lemma = '\\\''
+            # if this_lemma == "'":
+            #     this_lemma = '\\\''
+
             orow = str('{:d},{:d},{:d},"{:s}","{:s}","{:s}","{:s}",{:d}\n').format(id, sid,
                     tid, this_text, this_lemma, word.pos_, word.tag_, word.idx)
             _ = tfile.write(orow)
@@ -137,8 +147,8 @@ def save_doc_dependency(doc, dfile, id):
 def save_doc_vector(doc, vfile, id):
     sid = 0
     tid = 0
-    for x in doc.ents:
-        tid = 0
+    for x in doc.sents:
+        tid = 1 # no vector for the ROOT
         for word in x:
             orow = '{:d},{:d},{:d},'.format(id, sid, tid)
             _ = vfile.write(orow)

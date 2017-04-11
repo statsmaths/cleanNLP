@@ -30,16 +30,14 @@ test_that("initialize gives error with bad lib_location", {
   skip_on_cran()
   check_corenlp_available()
 
-  setup_coreNLP_backend(lib_location="/file/not/exists")
-  expect_error(init_backend(type = "coreNLP"))
+  expect_error(init_coreNLP(type = "coreNLP", lib_location="/file/not/exists"))
 })
 
 test_that("coreNLP; speed code 0", {
   skip_on_cran()
   check_corenlp_available()
 
-  setup_coreNLP_backend("en", speed = 0, lib_location = lib_loc)
-  init_backend(type = "coreNLP")
+  init_coreNLP("en", speed = 0, lib_location = lib_loc)
   anno <- annotate(input_files, backend = "coreNLP")
 
   # check token
@@ -72,8 +70,7 @@ test_that("coreNLP; speed code 1", {
   skip_on_cran()
   check_corenlp_available()
 
-  setup_coreNLP_backend("en", speed = 1, lib_location = lib_loc)
-  init_backend(type = "coreNLP")
+  init_coreNLP("en", speed = 1, lib_location = lib_loc)
   anno <- annotate(input_files, backend = "coreNLP")
 
   # check token
@@ -121,8 +118,7 @@ test_that("coreNLP; speed code 2", {
   skip_on_cran()
   check_corenlp_available()
 
-  setup_coreNLP_backend("en", speed = 2, lib_location = lib_loc)
-  init_backend(type = "coreNLP")
+  init_coreNLP("en", speed = 2, lib_location = lib_loc)
   anno <- annotate(input_files, backend = "coreNLP")
 
   # check token
@@ -178,8 +174,7 @@ test_that("coreNLP; speed code 3", {
   skip_on_cran()
   check_corenlp_available()
 
-  setup_coreNLP_backend("en", speed = 3, lib_location = lib_loc)
-  init_backend(type = "coreNLP")
+  init_coreNLP("en", speed = 3, lib_location = lib_loc)
   anno <- annotate(input_files, backend = "coreNLP")
 
   # check token
@@ -242,8 +237,7 @@ test_that("annotate options", {
   skip_on_cran()
   check_corenlp_available()
 
-  setup_coreNLP_backend("en", speed = 0, lib_location = lib_loc)
-  init_backend(type = "coreNLP")
+  init_coreNLP("en", speed = 0, lib_location = lib_loc)
   anno <- annotate(input_files, doc_id_offset = 137, backend = "coreNLP")
   token <- get_token(anno)
   expect_equal(unique(token$id), 137L:139L)
@@ -276,8 +270,7 @@ test_that("download function", {
   download_core_nlp()
 
   # test that the files work correctly
-  setup_coreNLP_backend("en", speed = 0, lib_location = lib_loc)
-  init_backend(type = "coreNLP")
+  init_coreNLP("en", speed = 0, lib_location = lib_loc)
   anno <- annotate(input_files)
 
 })
