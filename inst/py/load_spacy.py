@@ -2,6 +2,7 @@ import spacy
 import os
 import time
 import datetime
+import io
 
 class SpacyCleanNLP:
     """ A class to call spacy and output normalized tables """
@@ -35,7 +36,7 @@ class SpacyCleanNLP:
 
         id = self.doc_id_offset
         for this_file in input_files:
-            with open(this_file, 'r', errors = 'replace') as ifile:
+            with io.open(this_file, 'r', errors = 'replace') as ifile:
                 text = ifile.read().replace('\r\n', ' ').replace('\n', ' ')
             doc = self.nlp(text, tag = True, parse = True, entity = self.entity_flag)
 
