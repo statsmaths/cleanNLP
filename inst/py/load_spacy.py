@@ -170,26 +170,26 @@ def prepare_output(output_dir, entity_flag, vector_flag):
         os.makedirs(output_dir)
 
     # token
-    tfile = open(os.path.join(output_dir, "token.csv"), "w")
+    tfile = io.open(os.path.join(output_dir, "token.csv"), "w")
     _ = tfile.write("id,sid,tid,word,lemma,upos,pos,cid\n")
 
     # dependency
-    dfile = open(os.path.join(output_dir, "dependency.csv"), "w")
+    dfile = io.open(os.path.join(output_dir, "dependency.csv"), "w")
     _ = dfile.write("id,sid,tid,tid_target,relation,relation_full\n")
 
     # document
-    mfile = open(os.path.join(output_dir, "document.csv"), "w")
+    mfile = io.open(os.path.join(output_dir, "document.csv"), "w")
     _ = mfile.write("id,time,version,language,uri\n")
 
     # vector
     if vector_flag:
-        vfile = open(os.path.join(output_dir, "vector.csv"), "w")
+        vfile = io.open(os.path.join(output_dir, "vector.csv"), "w")
     else:
         vfile = None
 
     # entity
     if entity_flag:
-        efile = open(os.path.join(output_dir, "entity.csv"), "w")
+        efile = io.open(os.path.join(output_dir, "entity.csv"), "w")
         _ = efile.write("id,sid,tid,tid_end,entity_type,entity\n")
     else:
         efile = None
