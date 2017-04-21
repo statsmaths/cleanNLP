@@ -56,6 +56,6 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Taylor Arnold \email{taylor.arnold@acm.org}
+\strong{Maintainer}: Taylor B. Arnold \email{taylor.arnold@acm.org}
 
 }

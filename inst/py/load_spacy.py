@@ -3,6 +3,7 @@ import os
 import time
 import datetime
 import io
+import numpy as np
 
 class SpacyCleanNLP:
     """ A class to call spacy and output normalized tables """
@@ -37,7 +38,7 @@ class SpacyCleanNLP:
         id = self.doc_id_offset
         for this_file in input_files:
             with io.open(this_file, 'r', errors = 'replace') as ifile:
-                text = ifile.read().replace('\r\n', ' ').replace('\n', ' ')
+                text = ifile.read().replace(u'\r\n', u' ').replace(u'\n', u' ')
             doc = self.nlp(text, tag = True, parse = True, entity = self.entity_flag)
 
             self.createSentDict(doc)
@@ -73,7 +74,7 @@ class SpacyCleanNLP:
             # NOTE: spaCy point one beyond entity, so do not add 1 here to tid_end:
             tid_end = ent.end - ent.sent.start
             entity = ent.text.replace('"','')
-            orow = '{:d},{:d},{:d},{:d},"{:s}","{:s}"\n'.format(id, sid,
+            orow = u'{:d},{:d},{:d},{:d},"{:s}","{:s}"\n'.format(id, sid,
                     tid_start, tid_end, ent.root.ent_type_, entity)
             _ = efile.write(orow)
 
@@ -81,7 +82,7 @@ class SpacyCleanNLP:
 def save_doc_meta(mfile, id, language, fname):
     ts = time.time()
     st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-    orow = str('{:d},"{:s}","{:s}","{:s}","{:s}"\n').format(id, st, spacy.about.__version__, language, fname)
+    orow = u'{:d},"{:s}","{:s}","{:s}","{:s}"\n'.format(id, st, spacy.about.__version__, language, fname)
     _ = mfile.write(orow)
 
 
@@ -91,7 +92,7 @@ def save_doc_token(doc, tfile, id):
     for x in doc.sents:
         tid = 0
         # The 0th token is always the ROOT
-        orow = str('{:d},{:d},{:d},"ROOT","ROOT","","",\n').format(id, sid, tid)
+        orow = u'{:d},{:d},{:d},"ROOT","ROOT","","",\n'.format(id, sid, tid)
         _ = tfile.write(orow)
 
         # Now, parse the actual tokens, starting at 1
@@ -115,7 +116,7 @@ def save_doc_token(doc, tfile, id):
             # if this_lemma == "'":
             #     this_lemma = '\\\''
 
-            orow = str('{:d},{:d},{:d},"{:s}","{:s}","{:s}","{:s}",{:d}\n').format(id, sid,
+            orow = u'{:d},{:d},{:d},"{:s}","{:s}","{:s}","{:s}",{:d}\n'.format(id, sid,
                     tid, this_text, this_lemma, word.pos_, word.tag_, word.idx)
             _ = tfile.write(orow)
             tid += 1
@@ -138,7 +139,7 @@ def save_doc_dependency(doc, dfile, id):
                 dep_id = 0
             else:
                 dep_id = word.head.i - start_token_i + 1
-            orow = '{:d},{:d},{:d},{:d},"{:s}",""\n'.format(id, sid,
+            orow = u'{:d},{:d},{:d},{:d},"{:s}",""\n'.format(id, sid,
                 tid, dep_id, word.dep_)
             _ = dfile.write(orow)
             tid += 1
@@ -151,13 +152,14 @@ def save_doc_vector(doc, vfile, id):
     for x in doc.sents:
         tid = 1 # no vector for the ROOT
         for word in x:
-            orow = '{:d},{:d},{:d},'.format(id, sid, tid)
+            orow = u'{:d},{:d},{:d},'.format(id, sid, tid)
             _ = vfile.write(orow)
             # TODO: How precise does this really need to be? 4 decimal
             #       places seems enough and saves room; is anything
             #       lost?
-            word.vector.tofile(vfile, sep = ",", format = "%1.04f")
-            _ = vfile.write("\n")
+            x = np.char.mod('%1.04f', word.vector)
+            _ = vfile.write(u",".join(x))
+            _ = vfile.write(u"\n")
             tid += 1
         sid += 1
 
@@ -171,15 +173,15 @@ def prepare_output(output_dir, entity_flag, vector_flag):
 
     # token
     tfile = io.open(os.path.join(output_dir, "token.csv"), "w")
-    _ = tfile.write("id,sid,tid,word,lemma,upos,pos,cid\n")
+    _ = tfile.write(u"id,sid,tid,word,lemma,upos,pos,cid\n")
 
     # dependency
     dfile = io.open(os.path.join(output_dir, "dependency.csv"), "w")
-    _ = dfile.write("id,sid,tid,tid_target,relation,relation_full\n")
+    _ = dfile.write(u"id,sid,tid,tid_target,relation,relation_full\n")
 
     # document
     mfile = io.open(os.path.join(output_dir, "document.csv"), "w")
-    _ = mfile.write("id,time,version,language,uri\n")
+    _ = mfile.write(u"id,time,version,language,uri\n")
 
     # vector
     if vector_flag:
@@ -190,7 +192,7 @@ def prepare_output(output_dir, entity_flag, vector_flag):
     # entity
     if entity_flag:
         efile = io.open(os.path.join(output_dir, "entity.csv"), "w")
-        _ = efile.write("id,sid,tid,tid_end,entity_type,entity\n")
+        _ = efile.write(u"id,sid,tid,tid_end,entity_type,entity\n")
     else:
         efile = None
 
