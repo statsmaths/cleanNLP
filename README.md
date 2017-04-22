@@ -1,3 +1,5 @@
+[![CRAN Version](http://www.r-pkg.org/badges/version/cleanNLP)](https://CRAN.R-project.org/package=cleanNLP) ![Downloads](http://cranlogs.r-pkg.org/badges/cleanNLP)
+
 ## Installation
 
 The **cleanNLP** package is designed to make it as painless as possible
