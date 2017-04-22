@@ -89,7 +89,7 @@ init_coreNLP <- function(language, speed = 2, lib_location = NULL, mem = "12g", 
     .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, ner, parse", clear = TRUE)
     .setup_coreNLP_backend_raw("tokenize.language", "de")
     .setup_coreNLP_backend_raw("pos.model", "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger")
-    .setup_coreNLP_backend_raw("ner.model", "edu/stanford/nlp/models/ner/german.hgc_175m_600.crf.ser.gz")
+    .setup_coreNLP_backend_raw("ner.model", "edu/stanford/nlp/models/ner/german.conll.hgc_175m_600.crf.ser.gz")
     .setup_coreNLP_backend_raw("ner.applyNumericClassifiers", "false")
     .setup_coreNLP_backend_raw("ner.useSUTime", "false")
     .setup_coreNLP_backend_raw("parse.model", "edu/stanford/nlp/models/lexparser/germanFactored.ser.gz")
@@ -178,7 +178,6 @@ init_coreNLP <- function(language, speed = 2, lib_location = NULL, mem = "12g", 
 }
 
 .init_coreNLP_backend <- function() {
-
 
   if (!requireNamespace("rJava")) {
     stop("The rJava package is required to use the coreNLP backend")
