@@ -56,7 +56,7 @@
 #'}
 #'
 #' @export
-init_coreNLP <- function(language, speed = 2, lib_location = NULL, mem = "12g", verbose = FALSE) {
+init_coreNLP <- function(language, speed = 2, lib_location = NULL, mem = "6g", verbose = FALSE) {
 
   if (missing(language)) language <- "en"
   language_list <- c("en", "de", "fr", "es")
@@ -65,7 +65,7 @@ init_coreNLP <- function(language, speed = 2, lib_location = NULL, mem = "12g", 
   if (speed < 0)
     stop("speed must be set to a non-negative integer")
   if (is.null(lib_location))
-    lib_location <- file.path(system.file("extdata",package="cleanNLP"), "/stanford-corenlp-full-2016-10-31")
+    lib_location <- file.path(system.file("extdata", package="cleanNLP"), "/stanford-corenlp-full-2016-10-31")
 
   # set properties that are not "coreNLP" properties
   volatiles$coreNLP$language <- language
@@ -75,18 +75,18 @@ init_coreNLP <- function(language, speed = 2, lib_location = NULL, mem = "12g", 
 
   # German models
   if (language == "de" & speed == 0) {
-    .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos", clear = TRUE)
+    .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, lemma", clear = TRUE)
     .setup_coreNLP_backend_raw("tokenize.language", "de")
     .setup_coreNLP_backend_raw("pos.model", "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger")
   }
   if (language == "de" & speed == 1) {
-    .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, parse", clear = TRUE)
+    .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, lemma, parse, depparse", clear = TRUE)
     .setup_coreNLP_backend_raw("tokenize.language", "de")
     .setup_coreNLP_backend_raw("pos.model", "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger")
     .setup_coreNLP_backend_raw("parse.model", "edu/stanford/nlp/models/lexparser/germanFactored.ser.gz")
   }
   if (language == "de" & speed >= 2) {
-    .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, ner, parse", clear = TRUE)
+    .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, lemma, ner, parse, depparse", clear = TRUE)
     .setup_coreNLP_backend_raw("tokenize.language", "de")
     .setup_coreNLP_backend_raw("pos.model", "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger")
     .setup_coreNLP_backend_raw("ner.model", "edu/stanford/nlp/models/ner/german.conll.hgc_175m_600.crf.ser.gz")
@@ -101,33 +101,33 @@ init_coreNLP <- function(language, speed = 2, lib_location = NULL, mem = "12g", 
   }
   if (language == "en" & speed == 1) {
     .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, lemma, parse, depparse, sentiment", clear = TRUE)
-    .setup_coreNLP_backend_raw("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
+    #.setup_coreNLP_backend_raw("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
   }
   if (language == "en" & speed == 2) {
     .setup_coreNLP_backend_raw("annotators",
       "tokenize, ssplit, pos, lemma, parse, depparse, sentiment, ner, mention, entitymentions, natlog", clear = TRUE)
-    .setup_coreNLP_backend_raw("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
+    #.setup_coreNLP_backend_raw("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
   }
   if (language == "en" & speed >= 3) {
     .setup_coreNLP_backend_raw("annotators",
       "tokenize, ssplit, pos, lemma, parse, depparse, sentiment, ner, mention, entitymentions, natlog, coref", clear = TRUE)
-    .setup_coreNLP_backend_raw("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
+    #.setup_coreNLP_backend_raw("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
   }
 
   # Spanish models
   if (language == "es" & speed == 0) {
-    .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos", clear = TRUE)
+    .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, lemma", clear = TRUE)
     .setup_coreNLP_backend_raw("tokenize.language", "es")
     .setup_coreNLP_backend_raw("pos.model", "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger")
   }
   if (language == "es" & speed == 1) {
-    .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, parse", clear = TRUE)
+    .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, lemma, parse, depparse", clear = TRUE)
     .setup_coreNLP_backend_raw("tokenize.language", "es")
     .setup_coreNLP_backend_raw("pos.model", "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger")
     .setup_coreNLP_backend_raw("parse.model", "edu/stanford/nlp/models/lexparser/spanishPCFG.ser.gz")
   }
   if (language == "es" & speed >= 2) {
-    .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, ner, parse", clear = TRUE)
+    .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, lemma, ner, parse, depparse", clear = TRUE)
     .setup_coreNLP_backend_raw("tokenize.language", "es")
     .setup_coreNLP_backend_raw("pos.model", "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger")
     .setup_coreNLP_backend_raw("ner.model", "edu/stanford/nlp/models/ner/spanish.ancora.distsim.s512.crf.ser.gz")
@@ -138,12 +138,12 @@ init_coreNLP <- function(language, speed = 2, lib_location = NULL, mem = "12g", 
 
   # French models
   if (language == "fr" & speed == 0) {
-    .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos", clear = TRUE)
+    .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, lemma", clear = TRUE)
     .setup_coreNLP_backend_raw("tokenize.language", "fr")
     .setup_coreNLP_backend_raw("pos.model", "edu/stanford/nlp/models/pos-tagger/french/french.tagger")
   }
   if (language == "fr" & speed >= 1) {
-    .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, parse", clear = TRUE)
+    .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, lemma, parse, depparse", clear = TRUE)
     .setup_coreNLP_backend_raw("tokenize.language", "fr")
     .setup_coreNLP_backend_raw("pos.model", "edu/stanford/nlp/models/pos-tagger/french/french.tagger")
     .setup_coreNLP_backend_raw("parse.model", "edu/stanford/nlp/models/lexparser/frenchFactored.ser.gz")

@@ -140,7 +140,7 @@ def save_doc_dependency(doc, dfile, id):
             else:
                 dep_id = word.head.i - start_token_i + 1
             orow = u'{:d},{:d},{:d},{:d},"{:s}",""\n'.format(id, sid,
-                tid, dep_id, word.dep_)
+                dep_id, tid, word.dep_)
             _ = dfile.write(orow)
             tid += 1
         sid += 1

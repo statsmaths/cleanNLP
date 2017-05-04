@@ -4,7 +4,7 @@
 \alias{init_coreNLP}
 \title{Interface for initializingthe coreNLP backend}
 \usage{
-init_coreNLP(language, speed = 2, lib_location = NULL, mem = "12g",
+init_coreNLP(language, speed = 2, lib_location = NULL, mem = "6g",
   verbose = FALSE)
 }
 \arguments{

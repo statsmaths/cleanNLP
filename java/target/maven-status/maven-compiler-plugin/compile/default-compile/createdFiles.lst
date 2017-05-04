@@ -1,0 +1,15 @@
+edu/richmond/nlp/ConsoleOutputCapturer.class
+edu/richmond/nlp/ConsoleOutputCapturer$OutputStreamCombiner.class
+edu/richmond/nlp/CSVNamedEntityDocumentWriter.class
+edu/richmond/nlp/CSVNamedEntityOutputter.class
+edu/richmond/nlp/CSVDependencyOutputter.class
+edu/richmond/nlp/AnnotationProcessor.class
+edu/richmond/nlp/CSVDocumentOutputter.class
+edu/richmond/nlp/CSVCoreferenceDocumentWriter.class
+edu/richmond/nlp/CSVSentenceDocumentWriter.class
+edu/richmond/nlp/CSVCoreferenceOutputter.class
+edu/richmond/nlp/CSVTokenDocumentWriter.class
+edu/richmond/nlp/CSVSentenceOutputter.class
+edu/richmond/nlp/CSVDependencyDocumentWriter.class
+edu/richmond/nlp/CSVDocumentDocumentWriter.class
+edu/richmond/nlp/CSVTokenOutputter.class

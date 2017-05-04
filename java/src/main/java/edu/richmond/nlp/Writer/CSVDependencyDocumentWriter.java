@@ -20,6 +20,7 @@ public class CSVDependencyDocumentWriter {
 
     StringBuilder sb = new StringBuilder();
     SemanticGraph enhancedDependencies = sentence.get(SemanticGraphCoreAnnotations.EnhancedPlusPlusDependenciesAnnotation.class);
+    //SemanticGraph enhancedDependencies = sentence.get(SemanticGraphCoreAnnotations.BasicDependenciesAnnotation.class);
 
     if (enhancedDependencies != null) {
       // Need to add the root ourselves
