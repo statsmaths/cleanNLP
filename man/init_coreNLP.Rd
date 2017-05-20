@@ -4,16 +4,16 @@
 \alias{init_coreNLP}
 \title{Interface for initializingthe coreNLP backend}
 \usage{
-init_coreNLP(language, speed = 2, lib_location = NULL, mem = "6g",
+init_coreNLP(language, anno_level = 2, lib_location = NULL, mem = "6g",
   verbose = FALSE)
 }
 \arguments{
 \item{language}{a character vector describing the desired language;
 should be one of: "ar", "de", "en", "es", "fr", or "zh".}
 
-\item{speed}{integer code. Sets which annotators should be loaded, based on
-on how long they take to load and run. Speed 0 is the fastest,
-and speed 8 is the slowest. See Details for a full description
+\item{anno_level}{integer code. Sets which annotators should be loaded, based on
+on how long they take to load and run. anno_level 0 is the fastest,
+and anno_level 8 is the slowest. See Details for a full description
 of the levels}
 
 \item{lib_location}{a string giving the location of the CoreNLP java
@@ -40,26 +40,26 @@ This function must be run before annotating text with
 the tokenizers backend. It sets the properties for the
 soreNLP engine and loads the file using rJava
 interface provided by reticulate. See Details for more
-information about the speed codes.
+information about the anno_level codes.
 }
 \details{
-Currently available speed codes are integers from 0 to 8. Setting speed above 2
+Currently available anno_level codes are integers from 0 to 8. Setting anno_level above 2
          has no additional effect on the German and Spanish models. Setting above 1 has
-         no effect on the French model. The available speed codes are:
+         no effect on the French model. The available anno_level codes are:
 \itemize{
  \item{"0"}{ runs just the tokenizer, sentence splitter, and part of speech tagger. Extremely fast.}
  \item{"1"}{ includes the dependency parsers and, for English, the sentiment tagger. Often 20-30x
-             slower than speed 0.}
+             slower than anno_level 0.}
  \item{"2"}{ adds the named entity annotator to the parser and sentiment tagger (when available).
              For English models, it also includes the mentions and natlog annotators. Usually no
-             more than twice as slow as speed 1.}
- \item{"3"}{ add the coreference resolution annotator to the speed 2 annotators. Depending on the corpus,
-             this takes about 2-4x longer than the speed 2 annotators}
+             more than twice as slow as anno_level 1.}
+ \item{"3"}{ add the coreference resolution annotator to the anno_level 2 annotators. Depending on the corpus,
+             this takes about 2-4x longer than the anno_level 2 annotators}
 }
 
-We suggest starting at speed 2 and down grading to 0 if your corpus is particularly large, or upgrading
+We suggest starting at anno_level 2 and down grading to 0 if your corpus is particularly large, or upgrading
 to 3 if you sacrifice the slowdown. If your text is not formal written text (i.e., tweets or text messages),
-the speed 0 annotator should still work well but anything beyond that may be difficult. Semi-formal text
+the anno_level 0 annotator should still work well but anything beyond that may be difficult. Semi-formal text
 such as e-mails or transcribed speech are generally okay to run for all of the levels.
 }
 \examples{

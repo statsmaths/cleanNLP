@@ -5,35 +5,42 @@
 \title{Download java files needed for CoreNLP}
 \usage{
 download_core_nlp(type = c("default", "base", "en", "fr", "de", "es"),
-  output_loc, url = NULL, url_core = TRUE)
+  output_loc, url = NULL, url_core = TRUE, force = FALSE)
 }
 \arguments{
-\item{type}{type of files to download. The base backage is always required.
+\item{type}{type of files to download. The base package
 Other jars include model files for French, German,
-and Spanish. These can be installed in addition to the
-base package. By default, the function downloads the base
-package and English model files.}
+and Spanish. These can be installed in addition to
+the base package. By default, the function downloads
+the base package and English model files.}
 
-\item{output_loc}{a string showing where the files are to be downloaded.
-If missing, will try to download files into the directory
-where the package was original installed.}
+\item{output_loc}{a string showing where the files are to be
+downloaded. If missing, will try to download
+files into the directory where the package was
+original installed.}
 
-\item{url}{the url to try to download components from. Setting to NULL
-uses the default location on the Stanford NLP server, but
-you can set this manually by using this option. It also allows
-for local files, but note that the path must include the prefix
-\code{file://}. For details, see \code{\link{download.file}}.}
+\item{url}{the url to try to download components from. Setting
+to NULL uses the default location on the Stanford
+NLP server, but you can set this manually by using
+this option. It also allows for local files, but
+note that the path must include the prefix
+\code{file://}. For details, see
+\code{\link{download.file}}.}
 
-\item{url_core}{if \code{url} is not null, this flag indicates whehter the path
-given to url points to the core nlp files (which are zipped) or
+\item{url_core}{if \code{url} is not null, this flag indicates
+whether the path given to url points to the core
+nlp files (which are zipped) or
 to model files (which are unzipped).}
+
+\item{force}{logical. Should files be downloaded if they appear
+to already exist?}
 }
 \description{
 The cleanNLP package does not supply the raw java files
 provided by the Stanford NLP Group as they are quite large.
-This function downloads the libraries automatically, by default into
-the directory where the package was installed. These are not
-required for using the spaCy Python implementation.
+This function downloads the libraries automatically, by default
+into the directory where the package was installed. These are
+not required for using the spaCy Python implementation.
 }
 \examples{
 \dontrun{

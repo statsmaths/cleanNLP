@@ -4,10 +4,13 @@
 \alias{get_token}
 \title{Access tokens from an annotation object}
 \usage{
-get_token(annotation)
+get_token(annotation, include_root = FALSE)
 }
 \arguments{
 \item{annotation}{an annotation object}
+
+\item{include_root}{boolean. Should the sentence root be included?
+Set to FALSE by default.}
 }
 \value{
 Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}

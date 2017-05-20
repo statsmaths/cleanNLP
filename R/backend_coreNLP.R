@@ -4,13 +4,13 @@
 #' the tokenizers backend. It sets the properties for the
 #' soreNLP engine and loads the file using rJava
 #' interface provided by reticulate. See Details for more
-#' information about the speed codes.
+#' information about the anno_level codes.
 #'
 #' @param language       a character vector describing the desired language;
 #'                         should be one of: "ar", "de", "en", "es", "fr", or "zh".
-#' @param speed          integer code. Sets which annotators should be loaded, based on
-#'                         on how long they take to load and run. Speed 0 is the fastest,
-#'                         and speed 8 is the slowest. See Details for a full description
+#' @param anno_level     integer code. Sets which annotators should be loaded, based on
+#'                         on how long they take to load and run. anno_level 0 is the fastest,
+#'                         and anno_level 8 is the slowest. See Details for a full description
 #'                         of the levels
 #' @param lib_location   a string giving the location of the CoreNLP java
 #'                         files. This should point to a directory which
@@ -31,23 +31,23 @@
 #'
 #' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
 #'
-#' @details Currently available speed codes are integers from 0 to 8. Setting speed above 2
+#' @details Currently available anno_level codes are integers from 0 to 8. Setting anno_level above 2
 #'          has no additional effect on the German and Spanish models. Setting above 1 has
-#'          no effect on the French model. The available speed codes are:
+#'          no effect on the French model. The available anno_level codes are:
 #'\itemize{
 #'  \item{"0"}{ runs just the tokenizer, sentence splitter, and part of speech tagger. Extremely fast.}
 #'  \item{"1"}{ includes the dependency parsers and, for English, the sentiment tagger. Often 20-30x
-#'              slower than speed 0.}
+#'              slower than anno_level 0.}
 #'  \item{"2"}{ adds the named entity annotator to the parser and sentiment tagger (when available).
 #'              For English models, it also includes the mentions and natlog annotators. Usually no
-#'              more than twice as slow as speed 1.}
-#'  \item{"3"}{ add the coreference resolution annotator to the speed 2 annotators. Depending on the corpus,
-#'              this takes about 2-4x longer than the speed 2 annotators}
+#'              more than twice as slow as anno_level 1.}
+#'  \item{"3"}{ add the coreference resolution annotator to the anno_level 2 annotators. Depending on the corpus,
+#'              this takes about 2-4x longer than the anno_level 2 annotators}
 #'}
 #'
-#' We suggest starting at speed 2 and down grading to 0 if your corpus is particularly large, or upgrading
+#' We suggest starting at anno_level 2 and down grading to 0 if your corpus is particularly large, or upgrading
 #' to 3 if you sacrifice the slowdown. If your text is not formal written text (i.e., tweets or text messages),
-#' the speed 0 annotator should still work well but anything beyond that may be difficult. Semi-formal text
+#' the anno_level 0 annotator should still work well but anything beyond that may be difficult. Semi-formal text
 #' such as e-mails or transcribed speech are generally okay to run for all of the levels.
 #'
 #' @examples
@@ -56,14 +56,14 @@
 #'}
 #'
 #' @export
-init_coreNLP <- function(language, speed = 2, lib_location = NULL, mem = "6g", verbose = FALSE) {
+init_coreNLP <- function(language, anno_level = 2, lib_location = NULL, mem = "6g", verbose = FALSE) {
 
   if (missing(language)) language <- "en"
   language_list <- c("en", "de", "fr", "es")
   language <- match.arg(arg = language, choices = language_list)
-  speed <- as.integer(speed)[1]
-  if (speed < 0)
-    stop("speed must be set to a non-negative integer")
+  anno_level <- as.integer(anno_level)[1]
+  if (anno_level < 0)
+    stop("anno_level must be set to a non-negative integer")
   if (is.null(lib_location))
     lib_location <- file.path(system.file("extdata", package="cleanNLP"), "/stanford-corenlp-full-2016-10-31")
 
@@ -74,18 +74,18 @@ init_coreNLP <- function(language, speed = 2, lib_location = NULL, mem = "6g", v
   volatiles$coreNLP$verbose <- verbose
 
   # German models
-  if (language == "de" & speed == 0) {
+  if (language == "de" & anno_level == 0) {
     .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, lemma", clear = TRUE)
     .setup_coreNLP_backend_raw("tokenize.language", "de")
     .setup_coreNLP_backend_raw("pos.model", "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger")
   }
-  if (language == "de" & speed == 1) {
+  if (language == "de" & anno_level == 1) {
     .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, lemma, parse, depparse", clear = TRUE)
     .setup_coreNLP_backend_raw("tokenize.language", "de")
     .setup_coreNLP_backend_raw("pos.model", "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger")
     .setup_coreNLP_backend_raw("parse.model", "edu/stanford/nlp/models/lexparser/germanFactored.ser.gz")
   }
-  if (language == "de" & speed >= 2) {
+  if (language == "de" & anno_level >= 2) {
     .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, lemma, ner, parse, depparse", clear = TRUE)
     .setup_coreNLP_backend_raw("tokenize.language", "de")
     .setup_coreNLP_backend_raw("pos.model", "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger")
@@ -96,37 +96,37 @@ init_coreNLP <- function(language, speed = 2, lib_location = NULL, mem = "6g", v
   }
 
   # English models
-  if (language == "en" & speed == 0) {
+  if (language == "en" & anno_level == 0) {
     .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, lemma", clear = TRUE)
   }
-  if (language == "en" & speed == 1) {
+  if (language == "en" & anno_level == 1) {
     .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, lemma, parse, depparse, sentiment", clear = TRUE)
     #.setup_coreNLP_backend_raw("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
   }
-  if (language == "en" & speed == 2) {
+  if (language == "en" & anno_level == 2) {
     .setup_coreNLP_backend_raw("annotators",
       "tokenize, ssplit, pos, lemma, parse, depparse, sentiment, ner, mention, entitymentions, natlog", clear = TRUE)
     #.setup_coreNLP_backend_raw("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
   }
-  if (language == "en" & speed >= 3) {
+  if (language == "en" & anno_level >= 3) {
     .setup_coreNLP_backend_raw("annotators",
       "tokenize, ssplit, pos, lemma, parse, depparse, sentiment, ner, mention, entitymentions, natlog, coref", clear = TRUE)
     #.setup_coreNLP_backend_raw("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
   }
 
   # Spanish models
-  if (language == "es" & speed == 0) {
+  if (language == "es" & anno_level == 0) {
     .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, lemma", clear = TRUE)
     .setup_coreNLP_backend_raw("tokenize.language", "es")
     .setup_coreNLP_backend_raw("pos.model", "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger")
   }
-  if (language == "es" & speed == 1) {
+  if (language == "es" & anno_level == 1) {
     .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, lemma, parse, depparse", clear = TRUE)
     .setup_coreNLP_backend_raw("tokenize.language", "es")
     .setup_coreNLP_backend_raw("pos.model", "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger")
     .setup_coreNLP_backend_raw("parse.model", "edu/stanford/nlp/models/lexparser/spanishPCFG.ser.gz")
   }
-  if (language == "es" & speed >= 2) {
+  if (language == "es" & anno_level >= 2) {
     .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, lemma, ner, parse, depparse", clear = TRUE)
     .setup_coreNLP_backend_raw("tokenize.language", "es")
     .setup_coreNLP_backend_raw("pos.model", "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger")
@@ -137,12 +137,12 @@ init_coreNLP <- function(language, speed = 2, lib_location = NULL, mem = "6g", v
   }
 
   # French models
-  if (language == "fr" & speed == 0) {
+  if (language == "fr" & anno_level == 0) {
     .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, lemma", clear = TRUE)
     .setup_coreNLP_backend_raw("tokenize.language", "fr")
     .setup_coreNLP_backend_raw("pos.model", "edu/stanford/nlp/models/pos-tagger/french/french.tagger")
   }
-  if (language == "fr" & speed >= 1) {
+  if (language == "fr" & anno_level >= 1) {
     .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, lemma, parse, depparse", clear = TRUE)
     .setup_coreNLP_backend_raw("tokenize.language", "fr")
     .setup_coreNLP_backend_raw("pos.model", "edu/stanford/nlp/models/pos-tagger/french/french.tagger")

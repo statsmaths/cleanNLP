@@ -34,7 +34,7 @@ public class CSVSentenceDocumentWriter {
       String predClassString = (predClass == null) ? "NA" : predClass.toString();
       SimpleMatrix sm = RNNCoreAnnotations.getPredictions(sentimentTree);
 
-      sb.append(String.format("%s,%d,%s%n", docID, tokens.get(0).sentIndex(), predClassString));
+      sb.append(String.format("%s,%d,%s%n", docID, tokens.get(0).sentIndex() + 1, predClassString));
     }
 
     return sb.toString();

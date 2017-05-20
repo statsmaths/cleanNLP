@@ -4,7 +4,7 @@
 \alias{doc_id_reset}
 \title{Reset document ids}
 \usage{
-doc_id_reset(annotation, start_id = 0L)
+doc_id_reset(annotation, start_id = 1L)
 }
 \arguments{
 \item{annotation}{annotation object to reset the IDs of}

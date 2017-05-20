@@ -28,12 +28,12 @@ test_that("reset document ids", {
   sub_obama <- extract_documents(obama, ids = c(1L, 4L))
   sub_obama <- doc_id_reset(sub_obama)
 
-  expect_equal(unique(get_token(sub_obama)$id), c(0L, 1L))
-  expect_equal(unique(get_document(sub_obama)$id), c(0L, 1L))
-  expect_equal(unique(get_dependency(sub_obama)$id), c(0L, 1L))
-  expect_equal(unique(get_coreference(sub_obama)$id), c(0L, 1L))
-  expect_equal(unique(get_sentence(sub_obama)$id), c(0L, 1L))
-  expect_equal(unique(get_entity(sub_obama)$id), c(0L, 1L))
+  expect_equal(unique(get_token(sub_obama)$id), c(1L, 2L))
+  expect_equal(unique(get_document(sub_obama)$id), c(1L, 2L))
+  expect_equal(unique(get_dependency(sub_obama)$id), c(1L, 2L))
+  expect_equal(unique(get_coreference(sub_obama)$id), c(1L, 2L))
+  expect_equal(unique(get_sentence(sub_obama)$id), c(1L, 2L))
+  expect_equal(unique(get_entity(sub_obama)$id), c(1L, 2L))
 
   sub_obama <- extract_documents(obama, ids = c(1L, 4L))
   sub_obama <- doc_id_reset(sub_obama, start_id = 100L)

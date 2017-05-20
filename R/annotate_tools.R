@@ -216,7 +216,7 @@ from_CoNLL <- function(file) {
   # extract data
   x <- readr::read_delim(file, delim = "\t", col_types = "iccccciccc", col_names = FALSE, na = c("_"))
   tid <- x$X1
-  sid <- cumsum(tid == 1) - 1L
+  sid <- cumsum(tid == 1)
   id <- rep(0L, length(sid))
   word <- x$X2
   lemma <- x$X3
@@ -226,7 +226,7 @@ from_CoNLL <- function(file) {
   source <- x$X7
 
   # create token table
-  token <- dplyr::data_frame(id = id, sid = sid, tid = tid, word = word, lemma = lemma,
+  token <- dplyr::data_frame(id = id + 1, sid = sid, tid = tid, word = word, lemma = lemma,
                 upos = upos, pos = pos, speaker = NA_character_, wiki = NA_character_,
                 cid = NA_integer_, cid_end = NA_integer_)
 
@@ -385,7 +385,7 @@ to_CoNNL <- function(anno) {
 #'}
 #'
 #' @export
-doc_id_reset <- function(annotation, start_id = 0L) {
+doc_id_reset <- function(annotation, start_id = 1L) {
   start_id <- as.integer(start_id)
 
   old_ids <- sort(unique(annotation$document$id))
@@ -437,7 +437,7 @@ combine_documents <- function(...) {
                 function(anno) length(unique(anno$document$id))))
 
   offset <- cumsum(num_docs)
-  offset <- c(0, offset[-length(offset)])
+  offset <- c(0, offset[-length(offset)]) + 1L
 
   temp <- mapply(function(anno, os) doc_id_reset(anno, os),
                  obj, offset, SIMPLIFY = FALSE)
@@ -523,7 +523,7 @@ print.annotation <- function(x, ...) {
   id <- doc_id_offset
   for (x in input) {
     # ADD DOC TO DOC TABLE
-    df <- data_frame(id = id, time = format(Sys.time(), fmt = "%d"),
+    df <- data_frame(id = id, time = format(Sys.time(), fmt = "%dZ", tz = "UTC"),
                      version = as.character(utils::packageVersion("cleanNLP")),
                      language = "n/a", uri = x)
     readr::write_csv(df, file.path(output_dir, "document.csv"), append = TRUE, na = "")
@@ -536,10 +536,12 @@ print.annotation <- function(x, ...) {
     y <- lapply(y, function(v) c("ROOT", v[[1]]))
 
     sid <- mapply(function(u, v) rep(u, length(v)), seq_along(y), y, SIMPLIFY = FALSE)
-    tid <- mapply(function(u) seq_along(u) - 1, y, SIMPLIFY = FALSE)
+    tid <- mapply(function(u) seq_along(u) - 1L, y, SIMPLIFY = FALSE)
 
-    df <- data_frame(id = id, sid = unlist(sid), tid = unlist(tid), word = unlist(y),
-                     lemma = NA_character_, upos = NA_character_, pos = NA_character_,
+    df <- data_frame(id = id, sid = unlist(sid) - 1L,
+                     tid = unlist(tid), word = unlist(y),
+                     lemma = NA_character_, upos = NA_character_,
+                     pos = NA_character_,
                      cid = NA_integer_)
 
     # ADD LINE TO TOKEN FILE

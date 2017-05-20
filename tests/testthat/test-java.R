@@ -33,11 +33,11 @@ test_that("initialize gives error with bad lib_location", {
   expect_error(init_coreNLP(type = "coreNLP", lib_location="/file/not/exists"))
 })
 
-test_that("coreNLP; speed code 0", {
+test_that("coreNLP; anno_level 0", {
   skip_on_cran()
   check_corenlp_available()
 
-  init_coreNLP("en", speed = 0, lib_location = lib_loc)
+  init_coreNLP("en", anno_level = 0, lib_location = lib_loc)
   anno <- annotate(input_files, backend = "coreNLP")
 
   # check token
@@ -66,11 +66,11 @@ test_that("coreNLP; speed code 0", {
   expect_equal(nrow(get_sentence(anno)), 0L)
 })
 
-test_that("coreNLP; speed code 1", {
+test_that("coreNLP; anno_level 1", {
   skip_on_cran()
   check_corenlp_available()
 
-  init_coreNLP("en", speed = 1, lib_location = lib_loc)
+  init_coreNLP("en", anno_level = 1, lib_location = lib_loc)
   anno <- annotate(input_files, backend = "coreNLP")
 
   # check token
@@ -114,11 +114,11 @@ test_that("coreNLP; speed code 1", {
   expect_equal(nrow(get_entity(anno)), 0L)
 })
 
-test_that("coreNLP; speed code 2", {
+test_that("coreNLP; anno_level 2", {
   skip_on_cran()
   check_corenlp_available()
 
-  init_coreNLP("en", speed = 2, lib_location = lib_loc)
+  init_coreNLP("en", anno_level = 2, lib_location = lib_loc)
   anno <- annotate(input_files, backend = "coreNLP")
 
   # check token
@@ -170,11 +170,11 @@ test_that("coreNLP; speed code 2", {
   expect_equal(nrow(get_coreference(anno)), 0L)
 })
 
-test_that("coreNLP; speed code 3", {
+test_that("coreNLP; anno_level 3", {
   skip_on_cran()
   check_corenlp_available()
 
-  init_coreNLP("en", speed = 3, lib_location = lib_loc)
+  init_coreNLP("en", anno_level = 3, lib_location = lib_loc)
   anno <- annotate(input_files, backend = "coreNLP")
 
   # check token
@@ -237,7 +237,7 @@ test_that("annotate options", {
   skip_on_cran()
   check_corenlp_available()
 
-  init_coreNLP("en", speed = 0, lib_location = lib_loc)
+  init_coreNLP("en", anno_level = 0, lib_location = lib_loc)
   anno <- annotate(input_files, doc_id_offset = 137, backend = "coreNLP")
   token <- get_token(anno)
   expect_equal(unique(token$id), 137L:139L)
@@ -270,7 +270,7 @@ test_that("download function", {
   download_core_nlp()
 
   # test that the files work correctly
-  init_coreNLP("en", speed = 0, lib_location = lib_loc)
+  init_coreNLP("en", anno_level = 0, lib_location = lib_loc)
   anno <- annotate(input_files)
 
 })

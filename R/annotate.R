@@ -100,7 +100,7 @@ annotate <- function(input, file = NULL, output_dir = NULL, load = TRUE, keep = 
 
     output_loc <- system.file("py", package="cleanNLP")
     volatiles$spaCy$SpacyObj$setOutputPath(output_dir)
-    volatiles$spaCy$SpacyObj$setIdOffset(as.integer(doc_id_offset))
+    volatiles$spaCy$SpacyObj$setIdOffset(as.integer(doc_id_offset + 1L))
     if (length(input) <= 1)
       input <- list(input)
     volatiles$spaCy$SpacyObj$processFiles(input)
@@ -114,7 +114,7 @@ annotate <- function(input, file = NULL, output_dir = NULL, load = TRUE, keep = 
 
     rJava::.jcall(volatiles$coreNLP$AnnotationProcessor, "V", "setOutputPath", output_dir)
     rJava::.jcall(volatiles$coreNLP$AnnotationProcessor, "V", "setLanguage", volatiles$coreNLP$language)
-    rJava::.jcall(volatiles$coreNLP$AnnotationProcessor, "V", "setIdOffset", doc_id_offset)
+    rJava::.jcall(volatiles$coreNLP$AnnotationProcessor, "V", "setIdOffset", as.integer(doc_id_offset + 1))
 
     rJava::.jcall(volatiles$coreNLP$AnnotationProcessor, "V", "processFiles",
                   rJava::.jarray(input), volatiles$coreNLP$coreNLP)
@@ -124,7 +124,7 @@ annotate <- function(input, file = NULL, output_dir = NULL, load = TRUE, keep = 
       stop("The tokenizers package is required to use the tokenizers backend.")
     }
 
-    .annotate_with_r(input, output_dir, doc_id_offset)
+    .annotate_with_r(input, output_dir, doc_id_offset + 1)
 
   } else {
 

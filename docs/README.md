@@ -1,3 +1,5 @@
+[![CRAN Version](http://www.r-pkg.org/badges/version/cleanNLP)](https://CRAN.R-project.org/package=cleanNLP) ![Downloads](http://cranlogs.r-pkg.org/badges/cleanNLP) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/statsmaths/cleanNLP?branch=master&svg=true)](https://ci.appveyor.com/project/statsmaths/cleanNLP) [![Coverage Status](https://img.shields.io/codecov/c/github/statsmaths/cleanNLP/master.svg)](https://codecov.io/github/statsmaths/cleanNLP?branch=master) [![Travis-CI Build Status](https://travis-ci.org/statsmaths/cleanNLP.svg?branch=master)](https://travis-ci.org/statsmaths/cleanNLP)
+
 ## Installation
 
 The **cleanNLP** package is designed to make it as painless as possible
@@ -72,11 +74,11 @@ document:
 get_document(obj)
 ```
 ```
-## # A tibble: 1 × 5
-##      id                time version language
-##   <int>              <dttm>   <chr>    <chr>
-## 1     0 2017-04-01 17:54:28     1.2      n/a
-## # ... with 1 more variables: uri <chr>
+# A tibble: 1 × 5
+     id                time version language
+  <int>              <dttm>   <chr>    <chr>
+1     1 2017-05-20 15:24:44   1.8.2     <NA>
+# ... with 1 more variables: uri <chr>
 ```
 
 The tokens table has one row for each word in the input text, giving data
@@ -87,20 +89,20 @@ access these table with the `get_token` function:
 get_token(obj)
 ```
 ```
-## # A tibble: 71 × 8
-##       id   sid   tid    word   lemma  upos   pos   cid
-##    <int> <int> <int>   <chr>   <chr> <chr> <chr> <int>
-## 1      0     0     0    ROOT    ROOT  <NA>  <NA>    NA
-## 2      0     0     1     The     the   DET    DT     0
-## 3      0     0     2 regular regular   ADJ    JJ     4
-## 4      0     0     3   early   early   ADJ    JJ    12
-## 5      0     0     4 morning morning  NOUN    NN    18
-## 6      0     0     5    yell    yell  NOUN    NN    26
-## 7      0     0     6      of      of   ADP    IN    31
-## 8      0     0     7  horror  horror  NOUN    NN    34
-## 9      0     0     8     was      be  VERB   VBD    41
-## 10     0     0     9     the     the   DET    DT    45
-## # ... with 61 more rows
+# A tibble: 68 × 8
+      id   sid   tid    word   lemma  upos   pos   cid
+   <int> <int> <int>   <chr>   <chr> <chr> <chr> <int>
+1      1     1     1     The     the   DET    DT     0
+2      1     1     2 regular regular   ADJ    JJ     4
+3      1     1     3   early   early   ADJ    JJ    12
+4      1     1     4 morning morning  NOUN    NN    18
+5      1     1     5    yell    yell  NOUN    NN    26
+6      1     1     6      of      of   ADP    IN    31
+7      1     1     7  horror  horror  NOUN    NN    34
+8      1     1     8     was      be  VERB   VBD    41
+9      1     1     9     the     the   DET    DT    45
+10     1     1    10   sound   sound  NOUN    NN    49
+# ... with 58 more rows
 ```
 
 The output from the `get` functions are (mostly) pre-calculated. All of the hard
@@ -134,7 +136,7 @@ is required or when parsing in languages not yet available in spaCy.
 ### spaCy backend (python)
 
 To use the Python-based backend spaCy, we first need to install Python and spaCy
-on our system. The package **reticulte** must also be installed; see the
+on our system. The package **reticulate** must also be installed; see the
 [spaCy website](https://spacy.io/docs/usage/) for download instructions on
 your platform. After this is done, we can run the code snippet given in the
 prior section
@@ -159,7 +161,7 @@ Setting it equal to 2 is a good balance between time and
 feature-richness:
 
 ```{r}
-init_coreNLP(speed = 2L, lib_location = lib_loc)
+init_coreNLP(anno_level = 2L, lib_location = lib_loc)
 ```
 
 After the pipeline is loaded, we again call annotate and set the
@@ -223,3 +225,9 @@ can consult the help pages for the `get_` functions. An even more detailed
 guide to the fields and the underlying philosophy is given in the vignette
 
 - [A Data Model for the NLP Pipeline](schema.html).
+
+## Note
+
+Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
+
+

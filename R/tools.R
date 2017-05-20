@@ -161,7 +161,8 @@ get_tfidf <- function(object, type = c("tfidf", "tf", "idf", "vocab", "all"),
   df <- dplyr::group_by_(df, "id", "lid")
   df <- dplyr::summarize(df, count = sum(count))
 
-  term_counts <- Matrix::spMatrix(nrow = length(doc_set), ncol = ncol(mat), i = df$id, j = df$lid + 1, x = df$count)
+  term_counts <- Matrix::spMatrix(nrow = length(doc_set), ncol = ncol(mat),
+                                  i = df$id, j = df$lid + 1, x = df$count)
 
   # tf
   if (type %in% c("tfidf", "tf", "idf", "all")) {

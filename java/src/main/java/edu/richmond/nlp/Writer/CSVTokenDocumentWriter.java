@@ -311,7 +311,7 @@ public class CSVTokenDocumentWriter {
       }
 
       sb.append(String.format("%s,%d,%d,\"%s\",\"%s\",\"%s\",\"%s\",%s%n", docID,
-                              token.sentIndex(), token.index(), word, lemma, upos, pos,
+                              token.sentIndex() + 1, token.index(), word, lemma, upos, pos,
                               charOffsetStart));
     }
 

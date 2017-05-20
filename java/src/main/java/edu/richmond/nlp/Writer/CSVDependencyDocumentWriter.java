@@ -28,7 +28,7 @@ public class CSVDependencyDocumentWriter {
         String rel = GrammaticalRelation.ROOT.getLongName();
         rel = rel.replaceAll("\\s+", ""); // future proofing
 
-        sb.append(String.format("%s,%d,%d,%d,%s,%s%n", docID, root.sentIndex(),
+        sb.append(String.format("%s,%d,%d,%d,%s,%s%n", docID, root.sentIndex() + 1,
                                 0, root.index(), rel, rel));
       }
 
@@ -37,7 +37,7 @@ public class CSVDependencyDocumentWriter {
         String relnName = reln == null ? "" : reln.toString();
         String relnNameBasic = relnName.split(":",-1)[0];
 
-        sb.append(String.format("%s,%d,%d,%d,%s,%s%n", docID, edge.getSource().sentIndex(),
+        sb.append(String.format("%s,%d,%d,%d,%s,%s%n", docID, edge.getSource().sentIndex() + 1,
                                 edge.getSource().index(), edge.getTarget().index(),
                                 relnNameBasic, relnName));
       }

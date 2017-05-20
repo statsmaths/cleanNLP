@@ -1,6 +1,5 @@
 import spacy
 import os
-import time
 import datetime
 import io
 import numpy as np
@@ -74,14 +73,13 @@ class SpacyCleanNLP:
             # NOTE: spaCy point one beyond entity, so do not add 1 here to tid_end:
             tid_end = ent.end - ent.sent.start
             entity = ent.text.replace('"','')
-            orow = u'{:d},{:d},{:d},{:d},"{:s}","{:s}"\n'.format(id, sid,
+            orow = u'{:d},{:d},{:d},{:d},"{:s}","{:s}"\n'.format(id, sid + 1,
                     tid_start, tid_end, ent.root.ent_type_, entity)
             _ = efile.write(orow)
 
 
 def save_doc_meta(mfile, id, language, fname):
-    ts = time.time()
-    st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+    st = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%SZ')
     orow = u'{:d},"{:s}","{:s}","{:s}","{:s}"\n'.format(id, st, spacy.about.__version__, language, fname)
     _ = mfile.write(orow)
 
@@ -92,7 +90,7 @@ def save_doc_token(doc, tfile, id):
     for x in doc.sents:
         tid = 0
         # The 0th token is always the ROOT
-        orow = u'{:d},{:d},{:d},"ROOT","ROOT","","",\n'.format(id, sid, tid)
+        orow = u'{:d},{:d},{:d},"ROOT","ROOT","","",\n'.format(id, sid + 1, tid)
         _ = tfile.write(orow)
 
         # Now, parse the actual tokens, starting at 1
@@ -116,7 +114,7 @@ def save_doc_token(doc, tfile, id):
             # if this_lemma == "'":
             #     this_lemma = '\\\''
 
-            orow = u'{:d},{:d},{:d},"{:s}","{:s}","{:s}","{:s}",{:d}\n'.format(id, sid,
+            orow = u'{:d},{:d},{:d},"{:s}","{:s}","{:s}","{:s}",{:d}\n'.format(id, sid + 1,
                     tid, this_text, this_lemma, word.pos_, word.tag_, word.idx)
             _ = tfile.write(orow)
             tid += 1
@@ -139,7 +137,7 @@ def save_doc_dependency(doc, dfile, id):
                 dep_id = 0
             else:
                 dep_id = word.head.i - start_token_i + 1
-            orow = u'{:d},{:d},{:d},{:d},"{:s}",""\n'.format(id, sid,
+            orow = u'{:d},{:d},{:d},{:d},"{:s}",""\n'.format(id, sid + 1,
                 dep_id, tid, word.dep_)
             _ = dfile.write(orow)
             tid += 1
@@ -152,7 +150,7 @@ def save_doc_vector(doc, vfile, id):
     for x in doc.sents:
         tid = 1 # no vector for the ROOT
         for word in x:
-            orow = u'{:d},{:d},{:d},'.format(id, sid, tid)
+            orow = u'{:d},{:d},{:d},'.format(id, sid + 1, tid)
             _ = vfile.write(orow)
             # TODO: How precise does this really need to be? 4 decimal
             #       places seems enough and saves room; is anything

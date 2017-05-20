@@ -54,11 +54,11 @@ test_that("annotate options", {
 
   anno <- annotate(input_files, doc_id_offset = 137, backend = "tokenizers")
   token <- get_token(anno)
-  expect_equal(unique(token$id), 137L:139L)
+  expect_equal(unique(token$id), 138L:140L)
 
   anno <- annotate(c("Hi duck.", "Hi bunny.", "Hello goose."), as_strings = TRUE, backend = "tokenizers")
   token <- get_token(anno)
-  expect_equal(dim(token), c(9L, 8L))
+  expect_equal(dim(token), c(6L, 8L))
 
   od <- file.path(tempdir(), "test_dir")
   anno <- annotate(input_files, output_dir = od, backend = "tokenizers")

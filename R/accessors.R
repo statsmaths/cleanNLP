@@ -6,7 +6,9 @@
 #' added to each sentence; it is particularly useful when interacting with
 #' the table of dependencies.
 #'
-#' @param annotation   an annotation object
+#' @param annotation    an annotation object
+#' @param include_root  boolean. Should the sentence root be included?
+#'                      Set to FALSE by default.
 #'
 #' @return
 #'
@@ -49,8 +51,12 @@
 #'   summarize(sentence_length = max(tid)) %>%
 #'   summarize(avg_sentence_length = mean(sentence_length))
 #' @export
-get_token <- function(annotation) {
-  annotation$token
+get_token <- function(annotation, include_root = FALSE) {
+  res <- annotation$token
+  if (!include_root)
+    res <- res[res$tid > 0,]
+
+  return(res)
 }
 
 #' Access dependencies from an annotation object
@@ -130,9 +136,15 @@ get_dependency <- function(annotation, get_token = FALSE) {
   id <- sid <- tid <- word <- lemma <- NULL
 
   if (get_token) {
-    dep <- dplyr::left_join(dep, dplyr::select(annotation$token, id, sid, tid, word, lemma))
-    dep <- dplyr::left_join(dep, dplyr::select(annotation$token, id, sid, tid_target = tid,
-                                               word_target = word, lemma_target = lemma))
+    token <- get_token(annotation, include_root = TRUE)
+    dep <- dplyr::left_join(dep,
+                   dplyr::select(token, id, sid, tid, word, lemma),
+                   by = c("id", "sid", "tid"))
+    dep <- dplyr::left_join(dep,
+                   dplyr::select(token, id, sid, tid_target = tid,
+                      word_target = word,
+                      lemma_target = lemma),
+                   by = c("id", "sid", "tid_target"))
   }
 
   dep
