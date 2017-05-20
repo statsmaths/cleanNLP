@@ -5,7 +5,8 @@
 \title{Run the annotation pipeline on a set of documents}
 \usage{
 annotate(input, file = NULL, output_dir = NULL, load = TRUE,
-  keep = TRUE, as_strings = FALSE, doc_id_offset = 0L, backend = NULL)
+  keep = TRUE, as_strings = FALSE, doc_id_offset = 0L, backend = NULL,
+  meta = NULL)
 }
 \arguments{
 \item{input}{either a vector of file names to parse, or a character vector
@@ -31,6 +32,8 @@ than file names?}
 \item{doc_id_offset}{integer. The first document id to use. Defaults to 0.}
 
 \item{backend}{which backend to use. Will default to the last model to be initalized.}
+
+\item{meta}{an optional data frame to bind to the document table}
 }
 \value{
 if \code{load} is true, an object of class \code{annotation}. Otherwise, a character

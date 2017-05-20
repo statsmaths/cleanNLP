@@ -22,6 +22,7 @@
 #'                       than file names?
 #' @param doc_id_offset  integer. The first document id to use. Defaults to 0.
 #' @param backend        which backend to use. Will default to the last model to be initalized.
+#' @param meta           an optional data frame to bind to the document table
 #'
 #' @return if \code{load} is true, an object of class \code{annotation}. Otherwise, a character
 #'   vector giving the output location of the files.
@@ -41,7 +42,8 @@
 #'
 #' @export
 annotate <- function(input, file = NULL, output_dir = NULL, load = TRUE, keep = TRUE,
-                      as_strings = FALSE, doc_id_offset = 0L, backend = NULL) {
+                      as_strings = FALSE, doc_id_offset = 0L, backend = NULL,
+                      meta = NULL) {
 
 
   if (is.null(backend)) {
@@ -50,6 +52,13 @@ annotate <- function(input, file = NULL, output_dir = NULL, load = TRUE, keep = 
     backend <- volatiles$model_init_last
   } else {
     backend <- match.arg(backend, c("tokenizers", "spaCy", "coreNLP"))
+  }
+
+  if (!is.null(meta)) {
+    if (!inherits(meta, "data.frame"))
+      stop("meta must be a data frame")
+    if (nrow(meta) != length(input))
+      stop("meta must have exactly one row for each element in input")
   }
 
   if (backend == "tokenizers" & !volatiles$tokenizers$init)
@@ -133,11 +142,18 @@ annotate <- function(input, file = NULL, output_dir = NULL, load = TRUE, keep = 
   }
 
   # read in the output, if desired
-  load_at_all <- load | !is.null(file)
+  load_at_all <- load | !is.null(file) | !is.null(meta)
   out <- if (load_at_all) {
     read_annotation(output_dir)
   } else {
     output_dir
+  }
+
+  # Add metadata
+  if (!is.null(meta)) {
+    out$document <- dplyr::bind_cols(out$document, meta)
+    if (keep)
+      write_annotation(out, output_dir)
   }
 
   # save compressed file, if desired:
