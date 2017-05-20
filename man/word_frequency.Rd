@@ -5,8 +5,9 @@
 \alias{word_frequency}
 \title{Most frequent English words}
 \description{
-A dataset of the 150k most frequently used English words, extracted by Peter Norvig
-from the Google Web Trillion Word Corpus. Frequencies are multiplied by 100.
+A dataset of the 150k most frequently used English words, extracted by
+Peter Norvig from the Google Web Trillion Word Corpus. Frequencies are
+multiplied by 100.
 }
 \references{
 \url{http://norvig.com/ngrams/}

@@ -6,26 +6,30 @@
 \alias{cleanNLP-package}
 \title{cleanNLP: A Tidy Data Model for Natural Language Processing}
 \description{
-Provides a set of fast tools for converting a textual corpus into a set of
-normalized tables. The underlying natural language processing pipeline utilizes
-either the Python module spaCy or the Java-based Stanford CoreNLP library.
-The Python option is faster and generally easier to install; the Java option
-has additional annotators that are not available in spaCy.
+Provides a set of fast tools for converting a textual corpus into a set
+of normalized tables. The underlying natural language processing pipeline
+utilizes either the Python module spaCy or the Java-based Stanford
+CoreNLP library. The Python option is faster and generally easier to
+install; the Java option has additional annotators that are not available
+in spaCy.
 }
 \details{
 Once the package is set up, run one of \code{\link{init_tokenizers}},
 \code{\link{init_spaCy}}, or \code{\link{init_coreNLP}} to load the
 desired NLP backend. After this function is done running, use
-\code{\link{annotate}} to run the annotation engine over a corpus
-of text. Functions are then available to extract data tables from the annotation
-object: \code{\link{get_token}}, \code{\link{get_dependency}}, \code{\link{get_document}},
-\code{\link{get_coreference}}, \code{\link{get_entity}}, \code{\link{get_sentence}},
+\code{\link{run_annotators}} to run the annotation engine over a corpus
+of text. Functions are then available to extract data tables from the
+annotation object: \code{\link{get_token}}, \code{\link{get_dependency}},
+\code{\link{get_document}}, \code{\link{get_coreference}},
+\code{\link{get_entity}}, \code{\link{get_sentence}},
 and \code{\link{get_vector}}. See their documentation for
-further details. The package vignettes provide more detailed set-up information.
+further details. The package vignettes provide more detailed set-up
+information.
 
-If loading annotation that have previously been saved to disk, these can be pulled back into R
-using \code{\link{read_annotation}}. This does not require Java or Python nor does it
-require initializing the annotation pipeline.
+If loading annotation that have previously been saved to disk, these
+can be pulled back into R using \code{\link{read_annotation}}. This
+does not require Java or Python nor does it require initializing the
+annotation pipeline.
 }
 \examples{
 
@@ -35,7 +39,7 @@ setup_tokenizers_backend()
 init_backend(type = "tokenizers")
 
 # annotate your text
-annotation <- annotate("path/to/corpus/directory")
+annotation <- run_annotators("path/to/corpus/directory")
 
 # pull off data tables
 token <- get_token(annotation)

@@ -23,11 +23,14 @@ Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}
  \item{"sid"}{ - integer. Sentence id of the source token.}
  \item{"tid"}{ - integer. Id of the source token.}
  \item{"tid_target"}{ - integer. Id of the source token.}
- \item{"relation"}{ - character. Language-agnostic universal dependency type.}
- \item{"relation_full"}{ - character. Language specific universal dependency type.}
+ \item{"relation"}{ - character. Language-agnostic universal dependency
+                     type.}
+ \item{"relation_full"}{ - character. Language specific universal
+                        dependency type.}
 }
 
- If \code{get_token} is set to true, the following columns will also be included:
+ If \code{get_token} is set to true, the following columns will also be
+ included:
 
 \itemize{
  \item{"word"}{ - character. The source word in the raw text.}
@@ -37,18 +40,21 @@ Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}
 }
 }
 \description{
-This function grabs the table of dependencies from an annotation object. These
-are binary relationships between the tokens of a sentence. Common examples
-include nominal subject (linking the object of a sentence to a verb), and
-adjectival modifiers (linking an adjective to a noun). While not included in
-the underlying data, the function has an option for linking these dependencies
-to the raw words and lemmas in the table of tokens. Both language-agnostic and
-language-specific universal dependency types are included in the output.
+This function grabs the table of dependencies from an annotation object.
+These are binary relationships between the tokens of a sentence. Common
+examples include nominal subject (linking the object of a sentence to a
+verb), and adjectival modifiers (linking an adjective to a noun). While
+not included in the underlying data, the function has an option for
+linking these dependencies to the raw words and lemmas in the table of
+tokens. Both language-agnostic and language-specific universal dependency
+types are included in the output.
 }
 \examples{
 data(obama)
 
-# find the most common noun lemmas that are the syntactic subject of a clause
+# find the most common noun lemmas that are the syntactic subject of a
+# clause
+require(dplyr)
 res <- get_dependency(obama, get_token = TRUE) \%>\%
   filter(relation == "nsubj")
 res$lemma_target \%>\%
@@ -58,21 +64,33 @@ res$lemma_target \%>\%
 
 }
 \references{
-Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bethard, and
-  David McClosky. 2014. \href{http://nlp.stanford.edu/pubs/StanfordCoreNlp2014.pdf}{The Stanford CoreNLP Natural Language Processing Toolkit}.
-  In: \emph{Proceedings of the 52nd Annual Meeting of the Association for Computational Linguistics: System Demonstrations, pp. 55-60.}
+Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel,
+  Steven J. Bethard, and David McClosky. 2014.
+  \href{http://nlp.stanford.edu/pubs/StanfordCoreNlp2014.pdf}{
+  The Stanford CoreNLP Natural Language Processing Toolkit}.
+  In: \emph{Proceedings of the 52nd Annual Meeting of the
+  Association for Computational Linguistics: System Demonstrations,
+  pp. 55-60.}
 
-  Danqi Chen and Christopher D Manning. 2014. A Fast and Accurate Dependency Parser using Neural Networks. In: \emph{Proceedings of EMNLP 2014}
+  Danqi Chen and Christopher D Manning. 2014. A Fast and Accurate
+  Dependency Parser using Neural Networks. In: \emph{Proceedings of
+  EMNLP 2014}
 
-  Spence Green, Marie-Catherine de Marneffe, John Bauer, and Christopher D. Manning. 2010. Multiword Expression Identification with Tree
-  Substitution Grammars: A Parsing tour de force with French. In: \emph{EMNLP 2011}.
+  Spence Green, Marie-Catherine de Marneffe, John Bauer, and
+  Christopher D. Manning. 2010. Multiword Expression Identification
+  with Tree Substitution Grammars: A Parsing tour de force with French.
+  In: \emph{EMNLP 2011}.
 
-  Spence Green and Christopher D. Manning. 2010. Better Arabic Parsing: Baselines, Evaluations, and Analysis. In: COLING 2010.
+  Spence Green and Christopher D. Manning. 2010. Better Arabic Parsing:
+  Baselines, Evaluations, and Analysis. In: COLING 2010.
 
-  Pi-Chuan Chang, Huihsin Tseng, Dan Jurafsky, and Christopher D. Manning. 2009. Discriminative Reordering with Chinese Grammatical
-  Relations Features. In: Proceedings of the Third Workshop on Syntax and Structure in Statistical Translation.
+  Pi-Chuan Chang, Huihsin Tseng, Dan Jurafsky, and Christopher D.
+  Manning. 2009. Discriminative Reordering with Chinese Grammatical
+  Relations Features. In: Proceedings of the Third Workshop on Syntax
+  and Structure in Statistical Translation.
 
-  Anna Rafferty and Christopher D. Manning. 2008. Parsing Three German Treebanks: Lexicalized and Unlexicalized Baselines.
+  Anna Rafferty and Christopher D. Manning. 2008. Parsing Three German
+  Treebanks: Lexicalized and Unlexicalized Baselines.
   In: \emph{ACL Workshop on Parsing German.}
 }
 \author{

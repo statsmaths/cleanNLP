@@ -11,8 +11,8 @@ init_spaCy(entity_flag = TRUE, vector_flag = FALSE, model_name = NULL)
 
 \item{vector_flag}{boolean. Should word vectors be computed and saved.}
 
-\item{model_name}{string giving the model name for the Python/spaCy backend.
-Defaults to English if NULL.}
+\item{model_name}{string giving the model name for the Python/spaCy
+backend. Defaults to "en" (English) if NULL.}
 }
 \description{
 This function must be run before annotating text with

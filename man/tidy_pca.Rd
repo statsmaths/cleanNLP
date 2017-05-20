@@ -18,14 +18,14 @@ number of rows in \code{x}}
 
 \item{center}{logical. Should the data be centered?}
 
-\item{scale}{logical. Should the data be scaled? Note that this will need
-to be set to false if any columns in \code{x} are constant
-if \code{center} is also true.}
+\item{scale}{logical. Should the data be scaled? Note that this will
+need to be set to false if any columns in \code{x} are
+constant if \code{center} is also true.}
 }
 \value{
-a \code{data_frame} object containing the top \code{k} principal components
-        of the data in x, with the object \code{meta} appended to the front, when it
-        is non-null.
+a \code{data_frame} object containing the top \code{k} principal
+        components of the data in x, with the object \code{meta} appended
+        to the front, when it is non-null.
 }
 \description{
 Takes a matrix, perhaps from the output of \code{\link{get_tfidf}}, and
@@ -33,6 +33,7 @@ returns a data frame with the top principal components extracted. This
 is a simple but powerful technique for visualizing a corpus of documents.
 }
 \examples{
+require(dplyr)
 data(obama)
 
 # Get principal components from the non-proper noun lemmas

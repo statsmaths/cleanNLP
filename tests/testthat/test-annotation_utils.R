@@ -4,7 +4,8 @@ context("Testing annotation utility functions")
 
 data(obama)
 input_dir <- system.file("txt_files", package="cleanNLP")
-input_files <- file.path(input_dir, c("bush.txt", "clinton.txt", "obama.txt"))
+input_files <- file.path(input_dir,
+  c("bush.txt", "clinton.txt", "obama.txt"))
 
 check_spacy_exists <- function() {
   if (!requireNamespace("reticulate")) {
@@ -61,7 +62,7 @@ test_that("read and write annotations", {
   check_spacy_exists()
 
   init_spaCy(vector_flag = TRUE)
-  anno <- annotate(input_files)
+  anno <- run_annotators(input_files)
 
   od <- file.path(tempdir(), "test_dir_2")
   write_annotation(anno, od)

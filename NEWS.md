@@ -1,3 +1,8 @@
+# cleanNLP 1.8.0
+
+The function `annotate` has been changed to `run_annotations`
+in order to avoid a conflict with `ggplot2::annotate`
+
 # cleanNLP 1.7.0
 
 This update contains several major changes, include:

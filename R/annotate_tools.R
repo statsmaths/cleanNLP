@@ -1,9 +1,11 @@
 #' Read annotation files from disk
 #'
-#' Loads an annotation that has been stored as a set of csv files in a local directory.
-#' This is typically created by a call to \code{\link{annotate}} or \code{\link{write_annotation}}.
+#' Loads an annotation that has been stored as a set of csv files in a
+#' local directory. This is typically created by a call to
+#' \code{\link{run_annotators}} or \code{\link{write_annotation}}.
 #'
-#' @param input_dir         path to the directory where the files are stored
+#' @param input_dir         path to the directory where the files
+#'                          are stored
 #'
 #' @return an object of class \code{annotation}
 #'
@@ -17,22 +19,24 @@
 read_annotation <- function(input_dir) {
 
   if (!file.exists(file.path(input_dir, "document.csv"))) {
-    stop(sprintf("Cannot find the file \"%s.csv\"", file.path(input_dir, "document")))
+    stop(sprintf("Cannot find the file \"%s.csv\"",
+                 file.path(input_dir, "document")))
   }
 
   if (file.exists(fn <- file.path(input_dir, "coreference.csv"))) {
-    coreference <- readr::read_csv(fn, col_types = cols(id           = col_integer(),
-                                                        rid          = col_integer(),
-                                                        mid          = col_integer(),
-                                                        mention      = col_character(),
-                                                        mention_type = col_character(),
-                                                        number       = col_character(),
-                                                        gender       = col_character(),
-                                                        animacy      = col_character(),
-                                                        sid          = col_integer(),
-                                                        tid          = col_integer(),
-                                                        tid_end      = col_integer(),
-                                                        tid_head     = col_integer()))
+    coreference <- readr::read_csv(fn,
+    col_types = readr::cols(id           = readr::col_integer(),
+                            rid          = readr::col_integer(),
+                            mid          = readr::col_integer(),
+                            mention      = readr::col_character(),
+                            mention_type = readr::col_character(),
+                            number       = readr::col_character(),
+                            gender       = readr::col_character(),
+                            animacy      = readr::col_character(),
+                            sid          = readr::col_integer(),
+                            tid          = readr::col_integer(),
+                            tid_end      = readr::col_integer(),
+                            tid_head     = readr::col_integer()))
   } else {
     coreference <- structure(list(id           = integer(0),
                                   rid          = integer(0),
@@ -51,12 +55,13 @@ read_annotation <- function(input_dir) {
   }
 
   if (file.exists(fn <- file.path(input_dir, "dependency.csv"))) {
-    dependency <- readr::read_csv(fn, col_types = cols(id            = col_integer(),
-                                                       sid           = col_integer(),
-                                                       tid           = col_integer(),
-                                                       tid_target    = col_integer(),
-                                                       relation      = col_character(),
-                                                       relation_full = col_character()))
+    dependency <- readr::read_csv(fn,
+ col_types = readr::cols(id            = readr::col_integer(),
+                         sid           = readr::col_integer(),
+                         tid           = readr::col_integer(),
+                         tid_target    = readr::col_integer(),
+                         relation      = readr::col_character(),
+                         relation_full = readr::col_character()))
   } else {
     dependency <- structure(list(id            = integer(0),
                                  sid           = integer(0),
@@ -69,14 +74,17 @@ read_annotation <- function(input_dir) {
   }
 
   if (file.exists(fn <- file.path(input_dir, "document.csv"))) {
-    document <- readr::read_csv(fn, col_types = cols(id       = col_integer(),
-                                                     time     = col_datetime(),
-                                                     version  = col_character(),
-                                                     language = col_character(),
-                                                     uri      = col_character()))
+    document <- readr::read_csv(fn,
+ col_types = readr::cols(id       = readr::col_integer(),
+                         time     = readr::col_datetime(),
+                         version  = readr::col_character(),
+                         language = readr::col_character(),
+                         uri      = readr::col_character()))
   } else {
     document <- structure(list(id       = integer(0),
-                               time     = structure(numeric(0), class = c("POSIXct", "POSIXt"), tzone = "UTC"),
+                               time     = structure(numeric(0),
+                                  class = c("POSIXct", "POSIXt"),
+                                  tzone = "UTC"),
                                version  = character(0),
                                language = character(0),
                                uri      = character(0)),
@@ -85,12 +93,13 @@ read_annotation <- function(input_dir) {
   }
 
   if (file.exists(fn <- file.path(input_dir, "entity.csv"))) {
-    entity <- readr::read_csv(fn, col_types = cols(id                = col_integer(),
-                                                   sid               = col_integer(),
-                                                   tid               = col_integer(),
-                                                   tid_end           = col_integer(),
-                                                   entity_type       = col_character(),
-                                                   entity            = col_character()))
+    entity <- readr::read_csv(fn,
+       col_types = readr::cols(id        = readr::col_integer(),
+                       sid               = readr::col_integer(),
+                       tid               = readr::col_integer(),
+                       tid_end           = readr::col_integer(),
+                       entity_type       = readr::col_character(),
+                       entity            = readr::col_character()))
   } else {
     entity <- structure(list(id                = integer(0),
                              sid               = integer(0),
@@ -103,8 +112,9 @@ read_annotation <- function(input_dir) {
   }
 
   if (file.exists(fn <- file.path(input_dir, "sentence.csv"))) {
-    sentence <- readr::read_csv(fn, col_types = cols(id        = col_integer(),
-                                                     sid       = col_integer()))
+    sentence <- readr::read_csv(fn,
+ col_types = readr::cols(id        = readr::col_integer(),
+                         sid       = readr::col_integer()))
   } else {
     sentence <- structure(list(id        = integer(0),
                                sid       = integer(0)),
@@ -113,14 +123,15 @@ read_annotation <- function(input_dir) {
   }
 
   if (file.exists(fn <- file.path(input_dir, "token.csv"))) {
-    token <- readr::read_csv(fn, col_types = cols(id      = col_integer(),
-                                                  sid     = col_integer(),
-                                                  tid     = col_integer(),
-                                                  word    = col_character(),
-                                                  lemma   = col_character(),
-                                                  upos    = col_character(),
-                                                  pos     = col_character(),
-                                                  cid     = col_integer()))
+    token <- readr::read_csv(fn,
+       col_types = readr::cols(id      = readr::col_integer(),
+                        sid     = readr::col_integer(),
+                        tid     = readr::col_integer(),
+                        word    = readr::col_character(),
+                        lemma   = readr::col_character(),
+                        upos    = readr::col_character(),
+                        pos     = readr::col_character(),
+                        cid     = readr::col_integer()))
   } else {
     token <- structure(list(id      = integer(0),
                             sid     = integer(0),
@@ -155,9 +166,10 @@ read_annotation <- function(input_dir) {
 
 #' Write annotation files to disk
 #'
-#' Takes an annotation object and stores it as a set of files in a local directory.
-#' These are stored as plain-text csv files with column headers. To save as a compressed
-#' format, instead directly call the function \code{\link{saveRDS}}.
+#' Takes an annotation object and stores it as a set of files in a local
+#' directory. These are stored as plain-text csv files with column headers.
+#' To save as a compressed format, instead directly call the function
+#' \code{\link{saveRDS}}.
 #'
 #' @param annotation  annotation file being stored
 #' @param output_dir  path to the directory where the files will be saved
@@ -174,21 +186,30 @@ write_annotation <- function(annotation, output_dir) {
     dir.create(output_dir, FALSE, TRUE)
 
   if (nrow(annotation$coreference) > 0L)
-    readr::write_csv(annotation$coreference, file.path(output_dir, "coreference.csv"))
+    readr::write_csv(annotation$coreference,
+        file.path(output_dir, "coreference.csv"))
   if (nrow(annotation$dependency) > 0L)
-    readr::write_csv(annotation$dependency,  file.path(output_dir, "dependency.csv"))
+    readr::write_csv(annotation$dependency,
+        file.path(output_dir, "dependency.csv"))
   if (nrow(annotation$document) > 0L)
-    readr::write_csv(annotation$document,    file.path(output_dir, "document.csv"))
+    readr::write_csv(annotation$document,
+        file.path(output_dir, "document.csv"))
   if (nrow(annotation$entity) > 0L)
-    readr::write_csv(annotation$entity,      file.path(output_dir, "entity.csv"))
+    readr::write_csv(annotation$entity,
+        file.path(output_dir, "entity.csv"))
   if (nrow(annotation$sentence) > 0L)
-    readr::write_csv(annotation$sentence,    file.path(output_dir, "sentence.csv"))
+    readr::write_csv(annotation$sentence,
+        file.path(output_dir, "sentence.csv"))
   if (nrow(annotation$token) > 0L)
-    readr::write_csv(annotation$token,       file.path(output_dir, "token.csv"))
+    readr::write_csv(annotation$token,
+        file.path(output_dir, "token.csv"))
 
   if (!is.null(annotation$vector)) {
-    utils::write.table(annotation$vector, file.path(output_dir, "vector.csv"),
-                col.names = FALSE, row.names = FALSE, sep = ",")
+    utils::write.table(annotation$vector,
+                       file.path(output_dir, "vector.csv"),
+                       col.names = FALSE,
+                       row.names = FALSE,
+                       sep = ",")
   }
 
   invisible(NULL)
@@ -214,7 +235,8 @@ write_annotation <- function(annotation, output_dir) {
 from_CoNLL <- function(file) {
 
   # extract data
-  x <- readr::read_delim(file, delim = "\t", col_types = "iccccciccc", col_names = FALSE, na = c("_"))
+  x <- readr::read_delim(file, delim = "\t", col_types = "iccccciccc",
+                         col_names = FALSE, na = c("_"))
   tid <- x$X1
   sid <- cumsum(tid == 1)
   id <- rep(0L, length(sid))
@@ -226,8 +248,10 @@ from_CoNLL <- function(file) {
   source <- x$X7
 
   # create token table
-  token <- dplyr::data_frame(id = id + 1, sid = sid, tid = tid, word = word, lemma = lemma,
-                upos = upos, pos = pos, speaker = NA_character_, wiki = NA_character_,
+  token <- dplyr::data_frame(id = id + 1, sid = sid, tid = tid,
+                word = word, lemma = lemma,
+                upos = upos, pos = pos, speaker = NA_character_,
+                wiki = NA_character_,
                 cid = NA_integer_, cid_end = NA_integer_)
 
   roots <- token[tid == 1,]
@@ -239,9 +263,11 @@ from_CoNLL <- function(file) {
 
   # create dependency table
   tid_target <- tid
-  dep <- dplyr::data_frame(id = id, sid = sid, tid = source, sid_target = sid,
-                           tid_target = tid_target, relation = relation,
-                           relation_full = relation)
+  dep <- dplyr::data_frame(id = id, sid = sid, tid = source,
+                            sid_target = sid,
+                            tid_target = tid_target,
+                            relation = relation,
+                            relation_full = relation)
 
   # create annotation object
   anno <- list()
@@ -263,7 +289,9 @@ from_CoNLL <- function(file) {
   anno$dependency <- dep
 
   anno$document <- structure(list(id   = 0L,
-                                  time = structure(NA_real_, tzone = "UTC", class = c("POSIXct", "POSIXt")),
+                                  time = structure(NA_real_,
+                                      tzone = "UTC",
+                                      class = c("POSIXct", "POSIXt")),
                                   version = NA_character_,
                                   language = NA_character_,
                                   file = file), row.names = c(NA, -1L),
@@ -338,7 +366,7 @@ to_CoNNL <- function(anno) {
     names(dep)[3] <- "tid_source"
     names(dep)[4] <- "tid"
     dep <- dep[!duplicated(dep[,c(1,2,4)]),]
-    tok <- left_join(tok, dep)
+    tok <- dplyr::left_join(tok, dep)
   } else {
     tok$tid_source <- NA
     tok$relation <- NA
@@ -370,8 +398,9 @@ to_CoNNL <- function(anno) {
 
 #' Reset document ids
 #'
-#' Given an annotation object, this function changes all of the document ids so
-#' that they are all contiguous integers, starting at the parameter \code{start_id}.
+#' Given an annotation object, this function changes all of the document
+#' ids so that they are all contiguous integers, starting at the
+#' parameter \code{start_id}.
 #'
 #' @param annotation   annotation object to reset the IDs of
 #' @param start_id     the starting document id. Defaults to 0.
@@ -410,11 +439,11 @@ doc_id_reset <- function(annotation, start_id = 1L) {
 #' Combine a set of annotations
 #'
 #' Takes an arbitrary set of annotations and efficiently combines them into
-#' a single object. All document ids are reset so that they are contiguous integers
-#' starting at zero.
+#' a single object. All document ids are reset so that they are contiguous
+#' integers starting at zero.
 #'
-#' @param ...   annotation objects to combine; either a single list item or all of
-#'              the objects as individual inputs
+#' @param ...   annotation objects to combine; either a single list item
+#'              or all of the objects as individual inputs
 #'
 #' @return a single annotation object containing all of the input documents
 #'
@@ -443,13 +472,13 @@ combine_documents <- function(...) {
                  obj, offset, SIMPLIFY = FALSE)
 
   anno <- structure(list(
-       coreference = dplyr::bind_rows(lapply(temp, getElement, "coreference")),
-       dependency  = dplyr::bind_rows(lapply(temp, getElement, "dependency")),
-       document    = dplyr::bind_rows(lapply(temp, getElement, "document")),
-       entity      = dplyr::bind_rows(lapply(temp, getElement, "entity")),
-       sentence    = dplyr::bind_rows(lapply(temp, getElement, "sentence")),
-       token       = dplyr::bind_rows(lapply(temp, getElement, "token")),
-       vector      = Reduce(rbind, lapply(temp, getElement, "vector"))
+   coreference = dplyr::bind_rows(lapply(temp, getElement, "coreference")),
+   dependency  = dplyr::bind_rows(lapply(temp, getElement, "dependency")),
+   document    = dplyr::bind_rows(lapply(temp, getElement, "document")),
+   entity      = dplyr::bind_rows(lapply(temp, getElement, "entity")),
+   sentence    = dplyr::bind_rows(lapply(temp, getElement, "sentence")),
+   token       = dplyr::bind_rows(lapply(temp, getElement, "token")),
+   vector      = Reduce(rbind, lapply(temp, getElement, "vector"))
   ), class = "annotation")
 
   anno
@@ -457,8 +486,8 @@ combine_documents <- function(...) {
 
 #' Extract documents from an annotation object
 #'
-#' Takes an annotation object and returns an annotation object containing only
-#' a subset of the documents.
+#' Takes an annotation object and returns an annotation object containing
+#' only a subset of the documents.
 #'
 #' @param annotation   the object to extract from
 #' @param ids          a vector of integer ids from which to extract
@@ -523,10 +552,12 @@ print.annotation <- function(x, ...) {
   id <- doc_id_offset
   for (x in input) {
     # ADD DOC TO DOC TABLE
-    df <- data_frame(id = id, time = format(Sys.time(), fmt = "%dZ", tz = "UTC"),
+    df <- dplyr::data_frame(id = id,
+                     time = format(Sys.time(), fmt = "%dZ", tz = "UTC"),
                      version = as.character(utils::packageVersion("cleanNLP")),
                      language = "n/a", uri = x)
-    readr::write_csv(df, file.path(output_dir, "document.csv"), append = TRUE, na = "")
+    readr::write_csv(df, file.path(output_dir, "document.csv"),
+                      append = TRUE, na = "")
 
     txt <- readLines(x)
     txt <- iconv(txt, sub = "")
@@ -535,17 +566,19 @@ print.annotation <- function(x, ...) {
     y <- lapply(y, tokenizers::tokenize_words, lowercase = FALSE)
     y <- lapply(y, function(v) c("ROOT", v[[1]]))
 
-    sid <- mapply(function(u, v) rep(u, length(v)), seq_along(y), y, SIMPLIFY = FALSE)
+    sid <- mapply(function(u, v) rep(u, length(v)),
+                  seq_along(y), y, SIMPLIFY = FALSE)
     tid <- mapply(function(u) seq_along(u) - 1L, y, SIMPLIFY = FALSE)
 
-    df <- data_frame(id = id, sid = unlist(sid) - 1L,
+    df <- dplyr::data_frame(id = id, sid = unlist(sid) - 1L,
                      tid = unlist(tid), word = unlist(y),
                      lemma = NA_character_, upos = NA_character_,
                      pos = NA_character_,
                      cid = NA_integer_)
 
     # ADD LINE TO TOKEN FILE
-    readr::write_csv(df, file.path(output_dir, "token.csv"), append = TRUE, na = "")
+    readr::write_csv(df, file.path(output_dir, "token.csv"),
+                     append = TRUE, na = "")
 
     id <- id + 1
   }

@@ -15,8 +15,9 @@ doc_id_reset(annotation, start_id = 1L)
 an annotation object with document ids updated across all tables.
 }
 \description{
-Given an annotation object, this function changes all of the document ids so
-that they are all contiguous integers, starting at the parameter \code{start_id}.
+Given an annotation object, this function changes all of the document
+ids so that they are all contiguous integers, starting at the
+parameter \code{start_id}.
 }
 \examples{
 \dontrun{

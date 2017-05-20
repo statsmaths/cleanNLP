@@ -22,40 +22,53 @@ Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}
 \itemize{
  \item{"id"}{ - integer. Id of the source document.}
  \item{"sid"}{ - integer. Sentence id, starting from 0.}
- \item{"tid"}{ - integer. Token id, with the root of the sentence starting at 0.}
+ \item{"tid"}{ - integer. Token id, with the root of the sentence
+                 starting at 0.}
  \item{"word"}{ - character. Raw word in the input text.}
  \item{"lemma"}{ - character. Lemmatized form the token.}
  \item{"upos"}{ - character. Universal part of speech code.}
- \item{"pos"}{ - character. Language-specific part of speech code; uses the Penn Treebank codes.}
- \item{"cid"}{ - integer. Character offset at the start of the word in the original document.}
+ \item{"pos"}{ - character. Language-specific part of speech code;
+                 uses the Penn Treebank codes.}
+ \item{"cid"}{ - integer. Character offset at the start of the word
+                 in the original document.}
 }
 }
 \description{
 This function grabs the table of tokens from an annotation object. There
 is exactly one row for each token found in the raw text. Tokens include
-words as well as punctuation marks. A token called \code{ROOT} is also
-added to each sentence; it is particularly useful when interacting with
-the table of dependencies.
+words as well as punctuation marks. If \code{include_root} is set to
+\code{TRUE}, a token called \code{ROOT} is also added to each sentence;
+it is particularly useful when interacting with the table of dependencies.
 }
 \examples{
 data(obama)
 
 # find average sentence length from each address
+require(dplyr)
 get_token(obama) \%>\%
   group_by(id, sid) \%>\%
   summarize(sentence_length = max(tid)) \%>\%
   summarize(avg_sentence_length = mean(sentence_length))
 }
 \references{
-Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bethard, and
-  David McClosky. 2014. \href{http://nlp.stanford.edu/pubs/StanfordCoreNlp2014.pdf}{The Stanford CoreNLP Natural Language Processing Toolkit}.
-  In: \emph{Proceedings of the 52nd Annual Meeting of the Association for Computational Linguistics: System Demonstrations, pp. 55-60.}
+Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel,
+  Steven J. Bethard, and David McClosky. 2014.
+  \href{http://nlp.stanford.edu/pubs/StanfordCoreNlp2014.pdf}{
+  The Stanford CoreNLP Natural Language Processing Toolkit}.
+  In: \emph{Proceedings of the 52nd Annual Meeting of the
+  Association for Computational Linguistics: System Demonstrations,
+  pp. 55-60.}
 
-  Kristina Toutanova and Christopher D. Manning. 2000. Enriching the Knowledge Sources Used in a Maximum Entropy Part-of-Speech Tagger.
-  In: \emph{Proceedings of the Joint SIGDAT Conference on Empirical Methods in Natural Language Processing and Very Large Corpora (EMNLP/VLC-2000), pp. 63-70}.
+  Kristina Toutanova and Christopher D. Manning. 2000. Enriching
+  the Knowledge Sources Used in a Maximum Entropy Part-of-Speech
+  Tagger. In: \emph{Proceedings of the Joint SIGDAT Conference on
+  Empirical Methods in Natural Language Processing and Very Large
+  Corpora (EMNLP/VLC-2000), pp. 63-70}.
 
-  Kristina Toutanova, Dan Klein, Christopher Manning, and Yoram Singer. 2003. Feature-Rich Part-of-Speech Tagging with a Cyclic Dependency Network.
-  In: \emph{Proceedings of HLT-NAACL 2003, pp. 252-259.}
+  Kristina Toutanova, Dan Klein, Christopher Manning, and Yoram
+  Singer. 2003. Feature-Rich Part-of-Speech Tagging with a Cyclic
+  Dependency Network. In: \emph{Proceedings of HLT-NAACL 2003,
+  pp. 252-259.}
 }
 \author{
 Taylor B. Arnold, \email{taylor.arnold@acm.org}

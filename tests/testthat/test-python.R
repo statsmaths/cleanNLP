@@ -3,7 +3,8 @@ library(cleanNLP)
 context("Testing python/spaCy backend")
 
 input_dir <- system.file("txt_files", package="cleanNLP")
-input_files <- file.path(input_dir, c("bush.txt", "clinton.txt", "obama.txt"))
+input_files <- file.path(input_dir,
+  c("bush.txt", "clinton.txt", "obama.txt"))
 
 check_spacy_exists <- function() {
   if (!requireNamespace("reticulate")) {
@@ -18,7 +19,7 @@ test_that("annotation gives error if spaCy is uninitialized", {
   check_spacy_exists()
 
   cleanNLP:::.onLoad()
-  expect_error(annotate(input_files, backend = "spaCy"),
+  expect_error(run_annotators(input_files, backend = "spaCy"),
                "The spaCy backend has not been initialized.")
 })
 
@@ -34,7 +35,7 @@ test_that("tokens with spaCy", {
   check_spacy_exists()
 
   init_spaCy()
-  anno <- annotate(input_files)
+  anno <- run_annotators(input_files)
   token <- get_token(anno)
 
   expect_equal(class(token), c("tbl_df", "tbl", "data.frame"))
@@ -54,7 +55,7 @@ test_that("dependency with spaCy", {
   check_spacy_exists()
 
   init_spaCy()
-  anno <- annotate(input_files)
+  anno <- run_annotators(input_files)
   dep <- get_dependency(anno)
 
   expect_equal(class(dep), c("tbl_df", "tbl", "data.frame"))
@@ -71,7 +72,7 @@ test_that("entity with spaCy", {
   check_spacy_exists()
 
   init_spaCy()
-  anno <- annotate(input_files)
+  anno <- run_annotators(input_files)
   ent <- get_entity(anno)
 
   expect_equal(class(ent), c("tbl_df", "tbl", "data.frame"))
@@ -88,48 +89,49 @@ test_that("set_spacy_properties", {
   check_spacy_exists()
 
   init_spaCy(vector_flag = TRUE)
-  anno <- annotate(input_files)
+  anno <- run_annotators(input_files)
   expect_true(nrow(get_vector(anno)) > 0L)
   expect_equal(ncol(get_vector(anno)), 303L)
   expect_equal(class(get_vector(anno)), "matrix")
 
   init_spaCy(entity_flag = FALSE)
-  anno <- annotate(input_files)
+  anno <- run_annotators(input_files)
   expect_equal(nrow(get_entity(anno)), 0L)
   expect_equal(nrow(get_vector(anno)), 0L)
 })
 
-test_that("annotate options", {
+test_that("run_annotators options", {
   skip_on_cran()
   check_spacy_exists()
 
   init_spaCy(vector_flag = FALSE)
-  anno <- annotate(input_files, doc_id_offset = 137)
+  anno <- run_annotators(input_files, doc_id_offset = 137)
   token <- get_token(anno)
-  expect_equal(unique(token$id), 137L:139L)
+  expect_equal(unique(token$id), 138L:140L)
 
-  anno <- annotate(c("Hi duck.", "Hi bunny.", "Hello goose."), as_strings = TRUE)
+  anno <- run_annotators(c("Hi duck.", "Hi bunny.", "Hello goose."),
+    as_strings = TRUE)
   token <- get_token(anno)
-  expect_equal(dim(token), c(12L, 8L))
+  expect_equal(dim(token), c(9L, 8L))
 
   od <- tempfile()
-  anno <- annotate(input_files, output_dir = od)
+  anno <- run_annotators(input_files, output_dir = od)
   anno2 <- read_annotation(od)
   expect_equal(anno, anno2)
 
   init_spaCy(vector_flag = TRUE)
   od <- file.path(tempdir(), "test_dir")
-  anno <- annotate(input_files, output_dir = od)
+  anno <- run_annotators(input_files, output_dir = od)
   anno2 <- read_annotation(od)
   expect_equal(anno, anno2)
 
   init_spaCy(vector_flag = FALSE)
   od <- tempfile()
-  anno <- annotate(input_files, output_dir = od, keep = FALSE)
+  anno <- run_annotators(input_files, output_dir = od, keep = FALSE)
   expect_error({ anno2 <- read_annotation(od) })
 
   od <- tempfile()
-  anno <- annotate(input_files, output_dir = od, load = FALSE)
+  anno <- run_annotators(input_files, output_dir = od, load = FALSE)
   od <- file.path(Sys.glob(od), "")
   expect_equal(anno, od)
 })

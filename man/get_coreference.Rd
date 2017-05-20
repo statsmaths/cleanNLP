@@ -18,12 +18,17 @@ Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}
 \itemize{
  \item{"id"}{ - integer. Id of the source document.}
  \item{"rid"}{ - integer. Relation ID.}
- \item{"mid"}{ - integer. Mention ID; unique to each coreference within a document.}
+ \item{"mid"}{ - integer. Mention ID; unique to each coreference
+              within a document.}
  \item{"mention"}{ - character. The mention as raw words from the text.}
- \item{"mention_type"}{ - character. One of "LIST", "NOMINAL", "PRONOMINAL", or "PROPER".}
- \item{"number"}{ - character. One of "PLURAL", "SINGULAR", or "UNKNOWN".}
- \item{"gender"}{ - character. One of "FEMALE", "MALE", "NEUTRAL", or "UNKNOWN".}
- \item{"animacy"}{ - character. One of "ANIMATE", "INANIMATE", or "UNKNOWN".}
+ \item{"mention_type"}{ - character. One of "LIST", "NOMINAL",
+                       "PRONOMINAL", or "PROPER".}
+ \item{"number"}{ - character. One of "PLURAL", "SINGULAR", or
+                 "UNKNOWN".}
+ \item{"gender"}{ - character. One of "FEMALE", "MALE", "NEUTRAL",
+                 or "UNKNOWN".}
+ \item{"animacy"}{ - character. One of "ANIMATE", "INANIMATE", or
+                  "UNKNOWN".}
  \item{"sid"}{ - integer. Sentence id of the coreference.}
  \item{"tid"}{ - integer. Token id at the start of the coreference.}
  \item{"tid_end"}{ - integer. Token id at the start of the coreference.}
@@ -32,10 +37,12 @@ Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}
 }
 \description{
 Coreferences are collections of expressions that all represent the same
-person, entity, or thing. For example, the text "Lauren loves dogs. She would walk them all day.",
-there is a coreference consisting of the token "Lauren" in the first sentence and the token
-"She" in the second sentence. In the output given from this function, a row is given for
-any mention of an entity; these can be linked using the \code{rid} key.
+person, entity, or thing. For example, the text "Lauren loves dogs.
+She would walk them all day.", there is a coreference consisting of
+the token "Lauren" in the first sentence and the token "She" in the
+second sentence. In the output given from this function, a row is
+given for any mention of an entity; these can be linked using the
+\code{rid} key.
 }
 \examples{
 data(obama)
@@ -46,24 +53,34 @@ table(coref$gender, coref$id)
 
 }
 \references{
-Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bethard, and
-   David McClosky. 2014. \href{http://nlp.stanford.edu/pubs/StanfordCoreNlp2014.pdf}{The Stanford CoreNLP Natural Language Processing Toolkit}.
-   In: \emph{Proceedings of the 52nd Annual Meeting of the Association for Computational Linguistics: System Demonstrations, pp. 55-60.}
+Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel,
+  Steven J. Bethard, and David McClosky. 2014.
+  \href{http://nlp.stanford.edu/pubs/StanfordCoreNlp2014.pdf}{
+  The Stanford CoreNLP Natural Language Processing Toolkit}.
+  In: \emph{Proceedings of the 52nd Annual Meeting of the
+  Association for Computational Linguistics: System Demonstrations,
+  pp. 55-60.}
 
    Marta Recasens, Marie-Catherine de Marneffe, and Christopher Potts.
-   The Life and Death of Discourse Entities: Identifying Singleton Mentions.
-   In: \emph{Proceedings of NAACL 2013}.
+   The Life and Death of Discourse Entities: Identifying Singleton
+   Mentions. In: \emph{Proceedings of NAACL 2013}.
 
-   Heeyoung Lee, Angel Chang, Yves Peirsman, Nathanael Chambers, Mihai Surdeanu and Dan Jurafsky.
-   Deterministic coreference resolution based on entity-centric, precision-ranked rules.
+   Heeyoung Lee, Angel Chang, Yves Peirsman, Nathanael Chambers, Mihai
+   Surdeanu and Dan Jurafsky. Deterministic coreference resolution
+   based on entity-centric, precision-ranked rules.
    Computational Linguistics 39(4), 2013.
 
-   Heeyoung Lee, Yves Peirsman, Angel Chang, Nathanael Chambers, Mihai Surdeanu, Dan Jurafsky.
-   Stanford's Multi-Pass Sieve Coreference Resolution System at the CoNLL-2011 Shared Task.
+   Heeyoung Lee, Yves Peirsman, Angel Chang, Nathanael Chambers,
+   Mihai Surdeanu, Dan Jurafsky.
+   Stanford's Multi-Pass Sieve Coreference Resolution System at the
+   CoNLL-2011 Shared Task.
    In: \emph{Proceedings of the CoNLL-2011 Shared Task, 2011}.
 
-   Karthik Raghunathan, Heeyoung Lee, Sudarshan Rangarajan, Nathanael Chambers, Mihai Surdeanu, Dan Jurafsky, Christopher Manning
-   A Multi-Pass Sieve for Coreference Resolution. EMNLP-2010, Boston, USA. 2010.
+   Karthik Raghunathan, Heeyoung Lee, Sudarshan Rangarajan,
+   Nathanael Chambers, Mihai Surdeanu, Dan Jurafsky,
+   Christopher Manning
+   A Multi-Pass Sieve for Coreference Resolution.
+   EMNLP-2010, Boston, USA. 2010.
 }
 \author{
 Taylor B. Arnold, \email{taylor.arnold@acm.org}

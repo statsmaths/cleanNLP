@@ -1,6 +1,7 @@
 #' Annotation of Barack Obama's State of the Union Addresses
 #'
-#' Parsed text from all eight State of the Union addresses given by Barack Obama.
+#' Parsed text from all eight State of the Union addresses given by
+#' Barack Obama.
 #'
 #' @name obama
 #' @docType data
@@ -32,8 +33,9 @@ NULL
 
 #' Most frequent English words
 #'
-#' A dataset of the 150k most frequently used English words, extracted by Peter Norvig
-#' from the Google Web Trillion Word Corpus. Frequencies are multiplied by 100.
+#' A dataset of the 150k most frequently used English words, extracted by
+#' Peter Norvig from the Google Web Trillion Word Corpus. Frequencies are
+#' multiplied by 100.
 #'
 #' @name word_frequency
 #' @docType data

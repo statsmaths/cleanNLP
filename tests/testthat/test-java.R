@@ -3,7 +3,8 @@ library(cleanNLP)
 context("Testing java backend")
 
 input_dir <- system.file("txt_files", package="cleanNLP")
-input_files <- file.path(input_dir, c("bush.txt", "clinton.txt", "obama.txt"))
+input_files <- file.path(input_dir,
+  c("bush.txt", "clinton.txt", "obama.txt"))
 
 # Downloading the files is slow and network intensive; to test download
 # coreNLP library to this location and then the tests will run.
@@ -22,7 +23,7 @@ test_that("annotation gives error if coreNLP is uninitialized", {
   check_corenlp_available()
 
   cleanNLP:::.onLoad()
-  expect_error(annotate(input_files, backend = "coreNLP"),
+  expect_error(run_annotators(input_files, backend = "coreNLP"),
                "The coreNLP backend has not been initialized.")
 })
 
@@ -30,7 +31,8 @@ test_that("initialize gives error with bad lib_location", {
   skip_on_cran()
   check_corenlp_available()
 
-  expect_error(init_coreNLP(type = "coreNLP", lib_location="/file/not/exists"))
+  expect_error(init_coreNLP(type = "coreNLP",
+    lib_location="/file/not/exists"))
 })
 
 test_that("coreNLP; anno_level 0", {
@@ -38,7 +40,7 @@ test_that("coreNLP; anno_level 0", {
   check_corenlp_available()
 
   init_coreNLP("en", anno_level = 0, lib_location = lib_loc)
-  anno <- annotate(input_files, backend = "coreNLP")
+  anno <- run_annotators(input_files, backend = "coreNLP")
 
   # check token
   token <- get_token(anno)
@@ -71,7 +73,7 @@ test_that("coreNLP; anno_level 1", {
   check_corenlp_available()
 
   init_coreNLP("en", anno_level = 1, lib_location = lib_loc)
-  anno <- annotate(input_files, backend = "coreNLP")
+  anno <- run_annotators(input_files, backend = "coreNLP")
 
   # check token
   token <- get_token(anno)
@@ -119,7 +121,7 @@ test_that("coreNLP; anno_level 2", {
   check_corenlp_available()
 
   init_coreNLP("en", anno_level = 2, lib_location = lib_loc)
-  anno <- annotate(input_files, backend = "coreNLP")
+  anno <- run_annotators(input_files, backend = "coreNLP")
 
   # check token
   token <- get_token(anno)
@@ -175,7 +177,7 @@ test_that("coreNLP; anno_level 3", {
   check_corenlp_available()
 
   init_coreNLP("en", anno_level = 3, lib_location = lib_loc)
-  anno <- annotate(input_files, backend = "coreNLP")
+  anno <- run_annotators(input_files, backend = "coreNLP")
 
   # check token
   token <- get_token(anno)
@@ -233,30 +235,33 @@ test_that("coreNLP; anno_level 3", {
   expect_true(nrow(cr) > 0L)
 })
 
-test_that("annotate options", {
+test_that("run_annotators options", {
   skip_on_cran()
   check_corenlp_available()
 
   init_coreNLP("en", anno_level = 0, lib_location = lib_loc)
-  anno <- annotate(input_files, doc_id_offset = 137, backend = "coreNLP")
+  anno <- run_annotators(input_files, doc_id_offset = 137, backend = "coreNLP")
   token <- get_token(anno)
-  expect_equal(unique(token$id), 137L:139L)
+  expect_equal(unique(token$id), 138L:140L)
 
-  anno <- annotate(c("Hi duck.", "Hi bunny.", "Hello goose."), as_strings = TRUE, backend = "coreNLP")
+  anno <- run_annotators(c("Hi duck.", "Hi bunny.", "Hello goose."),
+    as_strings = TRUE, backend = "coreNLP")
   token <- get_token(anno)
-  expect_equal(dim(token), c(12L, 8L))
+  expect_equal(dim(token), c(9L, 8L))
 
   od <- file.path(tempdir(), "test_dir")
-  anno <- annotate(input_files, output_dir = od, , backend = "coreNLP")
+  anno <- run_annotators(input_files, output_dir = od, , backend = "coreNLP")
   anno2 <- read_annotation(od)
   expect_equal(anno, anno2)
 
   od <- file.path(tempdir(), "test_dir")
-  anno <- annotate(input_files, output_dir = od, keep = FALSE, backend = "coreNLP")
+  anno <- run_annotators(input_files, output_dir = od, keep = FALSE,
+    backend = "coreNLP")
   expect_error({ anno2 <- read_annotation(od) })
 
   od <- file.path(tempdir(), "test_dir")
-  anno <- annotate(input_files, output_dir = od, load = FALSE, backend = "coreNLP")
+  anno <- run_annotators(input_files, output_dir = od, load = FALSE,
+    backend = "coreNLP")
   od <- file.path(Sys.glob(od), "")
   expect_equal(anno, od)
 })
@@ -271,7 +276,7 @@ test_that("download function", {
 
   # test that the files work correctly
   init_coreNLP("en", anno_level = 0, lib_location = lib_loc)
-  anno <- annotate(input_files)
+  anno <- run_annotators(input_files)
 
 })
 

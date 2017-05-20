@@ -12,9 +12,10 @@ write_annotation(annotation, output_dir)
 \item{output_dir}{path to the directory where the files will be saved}
 }
 \description{
-Takes an annotation object and stores it as a set of files in a local directory.
-These are stored as plain-text csv files with column headers. To save as a compressed
-format, instead directly call the function \code{\link{saveRDS}}.
+Takes an annotation object and stores it as a set of files in a local
+directory. These are stored as plain-text csv files with column headers.
+To save as a compressed format, instead directly call the function
+\code{\link{saveRDS}}.
 }
 \examples{
 \dontrun{

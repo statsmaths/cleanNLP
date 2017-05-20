@@ -13,13 +13,15 @@ test_that("testing get_tfidf", {
   expect_equal(dim(tf_direct$tfidf), c(ndoc, vlen))
 
   tf_direct <- get_tfidf(obama)
-  tf_manual <- get_tfidf(get_token(obama), doc_var = "id", token_var = "lemma")
+  tf_manual <- get_tfidf(get_token(obama), doc_var = "id",
+    token_var = "lemma")
   expect_equal(tf_direct, tf_manual)
 
   tf_direct <- get_tfidf(obama, max_features = 5L)
   expect_equal(ncol(tf_direct$tfidf), 5L)
 
-  vocabulary <- get_tfidf(obama, type = "vocab", max_features = 100L)$vocab
+  vocabulary <- get_tfidf(obama, type = "vocab",
+    max_features = 100L)$vocab
   expect_equal(class(vocabulary), "character")
   expect_equal(length(vocabulary), 100L)
 

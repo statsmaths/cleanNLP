@@ -41,14 +41,14 @@ text <- paste(text, collapse = " ")
 
 A minimal working example of using **cleanNLP** consists of loading the
 package, setting up the NLP backend, initalizing the backend, and running
-the function `annotate`. Because our input is a text string we set `as_strings`
-to `TRUE` (the default is to assume that we are giving the function paths to
-where the input data sits on the local machine"):
+the function `run_annotators`. Because our input is a text string we set
+`as_strings` to `TRUE` (the default is to assume that we are giving the
+function paths to where the input data sits on the local machine"):
 
 ```{r}
 library(cleanNLP)
 init_spaCy()
-obj <- annotate(text, as_strings = TRUE)
+obj <- run_annotators(text, as_strings = TRUE)
 ```
 
 Here, we used the spaCy backend. A discussion of the various backend that
@@ -106,7 +106,7 @@ get_token(obj)
 ```
 
 The output from the `get` functions are (mostly) pre-calculated. All of the hard
-work is done in the `annotate` function.
+work is done in the `run_annotators` function.
 
 ## Backends
 
@@ -164,13 +164,13 @@ feature-richness:
 init_coreNLP(anno_level = 2L, lib_location = lib_loc)
 ```
 
-After the pipeline is loaded, we again call annotate and set the
-backend to "coreNLP" (by default annotate will use whichever backend
+After the pipeline is loaded, we again call run_annotators and set the
+backend to "coreNLP" (by default run_annotators will use whichever backend
 for most recently initalized, so this option is technically not
 needed if you just ran `init_coreNLP`):
 
 ```{r}
-obj <- annotate(text, as_strings = TRUE, backend = "coreNLP")
+obj <- run_annotators(text, as_strings = TRUE, backend = "coreNLP")
 obj
 ```
 ```

@@ -3,21 +3,24 @@ library(cleanNLP)
 context("Testing R/tokenizers backend")
 
 input_dir <- system.file("txt_files", package="cleanNLP")
-input_files <- file.path(input_dir, c("bush.txt", "clinton.txt", "obama.txt"))
+input_files <- file.path(input_dir,
+  c("bush.txt", "clinton.txt", "obama.txt"))
 
 test_that("annotation uses tokenizers by default", {
   cleanNLP:::.onLoad()
   init_tokenizers()
-  anno1 <- annotate(input_files)
-  anno2 <- annotate(input_files, backend = "tokenizers")
-  anno1$document$time <- anno2$document$time # the times of course will not match
+  anno1 <- run_annotators(input_files)
+  anno2 <- run_annotators(input_files, backend = "tokenizers")
+
+  # the times of course will not match
+  anno1$document$time <- anno2$document$time
   expect_equal(anno1, anno2)
 })
 
 
 test_that("output of tokenizers", {
   init_tokenizers()
-  anno <- annotate(input_files)
+  anno <- run_annotators(input_files)
 
   # check tokens
   token <- get_token(anno)
@@ -49,24 +52,26 @@ test_that("output of tokenizers", {
 })
 
 
-test_that("annotate options", {
+test_that("run_annotators options", {
   init_tokenizers()
 
-  anno <- annotate(input_files, doc_id_offset = 137, backend = "tokenizers")
+  anno <- run_annotators(input_files, doc_id_offset = 137, backend = "tokenizers")
   token <- get_token(anno)
   expect_equal(unique(token$id), 138L:140L)
 
-  anno <- annotate(c("Hi duck.", "Hi bunny.", "Hello goose."), as_strings = TRUE, backend = "tokenizers")
+  anno <- run_annotators(c("Hi duck.", "Hi bunny.", "Hello goose."),
+    as_strings = TRUE, backend = "tokenizers")
   token <- get_token(anno)
   expect_equal(dim(token), c(6L, 8L))
 
   od <- file.path(tempdir(), "test_dir")
-  anno <- annotate(input_files, output_dir = od, backend = "tokenizers")
+  anno <- run_annotators(input_files, output_dir = od, backend = "tokenizers")
   anno2 <- read_annotation(od)
   expect_equal(anno, anno2)
 
   od <- file.path(tempdir(), "test_dir")
-  anno <- annotate(input_files, output_dir = od, load = FALSE, backend = "tokenizers")
+  anno <- run_annotators(input_files, output_dir = od, load = FALSE,
+    backend = "tokenizers")
   od <- file.path(Sys.glob(od), "")
   expect_equal(anno, od)
 })

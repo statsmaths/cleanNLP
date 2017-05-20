@@ -25,15 +25,17 @@ Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}
 }
 }
 \description{
-Named entity recognition attempts to find the mentions of various categories
-within the corpus of text. Common example include proper references to location
-(e.g., "Boston", or "England") or people (e.g., "Winston Churchill"), as well as
+Named entity recognition attempts to find the mentions of various
+categories within the corpus of text. Common example include proper
+references to location (e.g., "Boston", or "England") or people
+(e.g., "Winston Churchill"), as well as
 specific dates (e.g., "tomorrow", or "September 19th") times, or numbers.
 }
 \details{
 When using CoreNLP, the default entity types are:
  \itemize{
-   \item{"LOCATION"}{ Countries, cities, states, locations, mountain ranges, bodies of water.}
+   \item{"LOCATION"}{ Countries, cities, states, locations, mountain
+      ranges, bodies of water.}
    \item{"PERSON"}{ People, including fictional.}
    \item{"ORGANIZATION"}{ Companies, agencies, institutions, etc.}
    \item{"MONEY"}{ Monetary values, including unit.}
@@ -58,6 +60,7 @@ When using CoreNLP, the default entity types are:
  }
 }
 \examples{
+require(dplyr)
 data(obama)
 
 # what are the most common entity types used in the addresses?
@@ -82,12 +85,19 @@ res$entity \%>\%
 
 }
 \references{
-Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bethard, and
-  David McClosky. 2014. \href{http://nlp.stanford.edu/pubs/StanfordCoreNlp2014.pdf}{The Stanford CoreNLP Natural Language Processing Toolkit}.
-  In: \emph{Proceedings of the 52nd Annual Meeting of the Association for Computational Linguistics: System Demonstrations, pp. 55-60.}
+Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel,
+  Steven J. Bethard, and David McClosky. 2014.
+  \href{http://nlp.stanford.edu/pubs/StanfordCoreNlp2014.pdf}{
+  The Stanford CoreNLP Natural Language Processing Toolkit}.
+  In: \emph{Proceedings of the 52nd Annual Meeting of the
+  Association for Computational Linguistics: System Demonstrations,
+  pp. 55-60.}
 
-  Jenny Rose Finkel, Trond Grenager, and Christopher Manning. 2005. Incorporating Non-local Information into Information Extraction Systems by
-  Gibbs Sampling. In: \emph{Proceedings of the 43nd Annual Meeting of the Association for Computational Linguistics (ACL 2005), pp. 363-370.}
+  Jenny Rose Finkel, Trond Grenager, and Christopher Manning. 2005.
+  Incorporating Non-local Information into Information Extraction
+  Systems by Gibbs Sampling. In: \emph{Proceedings of the 43nd
+  Annual Meeting of the Association for Computational Linguistics
+  (ACL 2005), pp. 363-370.}
 }
 \author{
 Taylor B. Arnold, \email{taylor.arnold@acm.org}

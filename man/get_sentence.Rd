@@ -13,7 +13,7 @@ get_sentence(annotation)
 Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}
  containing one row for every sentence in the corpus.
 
- The returned data frame includes at a minimum following columns:
+ The returned data frame includes at a minimum the following columns:
 
 \itemize{
  \item{"id"}{ - integer. Id of the source document.}
@@ -21,8 +21,8 @@ Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}
 }
 
 The coreNLP backend also currently returns a column "sentiment" that
-gives a score from 0 (worst) to 4 (best) for how positive the
-tone of the sentence is predicted to be.
+gives a score from 0 (most negative) to 4 (most positive) for how
+positive the tone of the sentence is predicted to be.
 }
 \description{
 Access sentence-level annotations
@@ -30,18 +30,25 @@ Access sentence-level annotations
 \examples{
 
 # how do the predicted sentiment scores change across the years?
+require(dplyr)
 get_sentence(obama) \%>\%
   group_by(id) \%>\%
   summarize(mean(sentiment), se = sd(sentiment) / sqrt(n()))
 
 }
 \references{
-Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bethard, and
-  David McClosky. 2014. \href{http://nlp.stanford.edu/pubs/StanfordCoreNlp2014.pdf}{The Stanford CoreNLP Natural Language Processing Toolkit}.
-  In: \emph{Proceedings of the 52nd Annual Meeting of the Association for Computational Linguistics: System Demonstrations, pp. 55-60.}
+Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel,
+  Steven J. Bethard, and David McClosky. 2014.
+  \href{http://nlp.stanford.edu/pubs/StanfordCoreNlp2014.pdf}{
+  The Stanford CoreNLP Natural Language Processing Toolkit}.
+  In: \emph{Proceedings of the 52nd Annual Meeting of the
+  Association for Computational Linguistics: System Demonstrations,
+  pp. 55-60.}
 
-  Socher, Richard, et al. "Recursive deep models for semantic compositionality over a sentiment treebank." Proceedings of the conference on
-  empirical methods in natural language processing (EMNLP). Vol. 1631. 2013.
+  Socher, Richard, et al. "Recursive deep models for semantic
+  compositionality over a sentiment treebank." Proceedings of the
+  conference on empirical methods in natural language processing
+  (EMNLP). Vol. 1631. 2013.
 }
 \author{
 Taylor B. Arnold, \email{taylor.arnold@acm.org}

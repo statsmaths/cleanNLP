@@ -7,14 +7,16 @@
 read_annotation(input_dir)
 }
 \arguments{
-\item{input_dir}{path to the directory where the files are stored}
+\item{input_dir}{path to the directory where the files
+are stored}
 }
 \value{
 an object of class \code{annotation}
 }
 \description{
-Loads an annotation that has been stored as a set of csv files in a local directory.
-This is typically created by a call to \code{\link{annotate}} or \code{\link{write_annotation}}.
+Loads an annotation that has been stored as a set of csv files in a
+local directory. This is typically created by a call to
+\code{\link{run_annotators}} or \code{\link{write_annotation}}.
 }
 \examples{
 \dontrun{

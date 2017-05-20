@@ -10,41 +10,60 @@ get_tfidf(object, type = c("tfidf", "tf", "idf", "vocab", "all"),
   doc_var = "id", token_var = "lemma", vocabulary = NULL)
 }
 \arguments{
-\item{object}{either an annotation object or a data frame with columns equal to
-the inputs given to \code{doc_var} and \code{token_var}}
+\item{object}{either an annotation object or a data frame with
+columns equal to the inputs given to
+\code{doc_var} and \code{token_var}}
 
-\item{type}{the desired return type. The options \code{tfidf}, \code{tf}, and \code{idf}
-return a list with the desired matrix, the document ids, and the vocabulary set.
-The option \code{all} returns a list with all three as well as the ids and vocabulary.
-For consistency, \code{vocab} all returns a list but this only contains the ids
+\item{type}{the desired return type. The options \code{tfidf},
+\code{tf}, and \code{idf} return a list with
+the desired matrix, the document ids, and the
+vocabulary set. The option \code{all} returns
+a list with all three as well as the ids and
+vocabulary. For consistency, \code{vocab} all
+returns a list but this only contains the ids
 and vocabulary set.}
 
-\item{tf_weight}{the weighting scheme for the term frequency matrix. The selection \code{lognorm} takes one plus
-the log of the raw frequency (or zero if zero), \code{binary} encodes a zero one matrix
-indicating simply whether the token exists at all in the document, \code{raw} returns
-raw counts, and \code{dnorm} uses double normalization.}
+\item{tf_weight}{the weighting scheme for the term frequency matrix.
+The selection \code{lognorm} takes one plus
+the log of the raw frequency (or zero if zero),
+\code{binary} encodes a zero one matrix
+indicating simply whether the token exists at all
+in the document, \code{raw} returns raw counts,
+and \code{dnorm} uses double normalization.}
 
-\item{idf_weight}{the weighting scheme for the inverse document matrix. The selection \code{idf} gives the
-logarithm of the simple inverse frequency, \code{smooth} gives the logarithm of one plus
-the simple inverse frequency, and \code{prob} gives the log odds of the the token occurring
+\item{idf_weight}{the weighting scheme for the inverse document
+matrix. The selection \code{idf} gives the
+logarithm of the simple inverse frequency,
+\code{smooth} gives the logarithm of one plus
+the simple inverse frequency, and \code{prob}
+gives the log odds of the the token occurring
 in a randomly selected document.}
 
-\item{min_df}{the minimum proportion of documents a token should be in to be included in the vocabulary}
+\item{min_df}{the minimum proportion of documents a token
+should be in to be included in the vocabulary}
 
-\item{max_df}{the maximum proportion of documents a token should be in to be included in the vocabulary}
+\item{max_df}{the maximum proportion of documents a token
+should be in to be included in the vocabulary}
 
 \item{max_features}{the maximum number of tokens in the vocabulary}
 
-\item{doc_var}{character vector. The name of the column in \code{object} that contains the document ids,
-unless \code{object} is an annotation object, in which case it's the column of the token
+\item{doc_var}{character vector. The name of the column in
+\code{object} that contains the document ids,
+unless \code{object} is an annotation object,
+in which case it's the column of the token
 matrix to use as the document id.}
 
-\item{token_var}{character vector. The name of the column in \code{object} that contains the tokens,
-unless \code{object} is an annotation object, in which case it's the column of the token
-matrix to use as the tokens (generally either \code{lemma} or \code{word}).}
+\item{token_var}{character vector. The name of the column in
+\code{object} that contains the tokens,
+unless \code{object} is an annotation object,
+in which case it's the column of the token
+matrix to use as the tokens (generally either
+\code{lemma} or \code{word}).}
 
-\item{vocabulary}{character vector. The vocabulary set to use in constructing the matrices. Will be computed
-within the function if set to \code{NULL}. When supplied, the options \code{min_df}, \code{max_df},
+\item{vocabulary}{character vector. The vocabulary set to use in
+constructing the matrices. Will be computed
+within the function if set to \code{NULL}. When
+supplied, the options \code{min_df}, \code{max_df},
 and \code{max_features} are ignored.}
 }
 \value{
@@ -53,18 +72,22 @@ a named list, including some of the following:
 \item{tf}{ the term frequency matrix}
 \item{idf}{ the inverse document frequency matrix}
 \item{tfidf}{ the produce of the tf and idf matrices}
-\item{vocab}{ a character vector giving the vocabulary used in the function, corresponding to the columns of the matrices}
-\item{id}{ a vector of the doc ids, corresponding to the rows of the matrices}
-\item{tf}{}
+\item{vocab}{ a character vector giving the vocabulary used in
+              the function, corresponding to the columns of the
+              matrices}
+\item{id}{ a vector of the doc ids, corresponding to the rows of
+               the matrices}
 }
 }
 \description{
-Given an annotation object, this function returns the term-frequency inverse document
-frequency (tf-idf) matrix from the extracted lemmas. A data frame with a document id
-column and token column can be also be given, which allows the user to preprocess and
-filter the desired tokens to include.
+Given an annotation object, this function returns the term-frequency
+inverse document frequency (tf-idf) matrix from the extracted lemmas.
+A data frame with a document id column and token column can be also
+be given, which allows the user to preprocess and filter the desired
+tokens to include.
 }
 \examples{
+require(dplyr)
 data(obama)
 
 # Top words in the first Obama S.O.T.U., using all tokens

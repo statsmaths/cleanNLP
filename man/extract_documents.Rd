@@ -15,8 +15,8 @@ extract_documents(annotation, ids)
 a new annotation object
 }
 \description{
-Takes an annotation object and returns an annotation object containing only
-a subset of the documents.
+Takes an annotation object and returns an annotation object containing
+only a subset of the documents.
 }
 \examples{
 \dontrun{

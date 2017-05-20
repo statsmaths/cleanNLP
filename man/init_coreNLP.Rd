@@ -2,38 +2,44 @@
 % Please edit documentation in R/backend_coreNLP.R
 \name{init_coreNLP}
 \alias{init_coreNLP}
-\title{Interface for initializingthe coreNLP backend}
+\title{Interface for initializing the coreNLP backend}
 \usage{
 init_coreNLP(language, anno_level = 2, lib_location = NULL, mem = "6g",
   verbose = FALSE)
 }
 \arguments{
 \item{language}{a character vector describing the desired language;
-should be one of: "ar", "de", "en", "es", "fr", or "zh".}
+should be one of: "ar", "de", "en", "es", "fr",
+or "zh".}
 
-\item{anno_level}{integer code. Sets which annotators should be loaded, based on
-on how long they take to load and run. anno_level 0 is the fastest,
-and anno_level 8 is the slowest. See Details for a full description
-of the levels}
+\item{anno_level}{integer code. Sets which annotators should be
+loaded, based on on how long they take to load
+and run. anno_level 0 is the fastest,
+and anno_level 8 is the slowest. See Details for a
+full description of the levels}
 
 \item{lib_location}{a string giving the location of the CoreNLP java
 files. This should point to a directory which
-contains, for example the file "stanford-corenlp-*.jar",
-where "*" is the version number. If missing, the function
-will try to find the library in the environment variable
-CORENLP_HOME, and otherwise will fail. (Java model only)}
+contains, for example the file
+"stanford-corenlp-*.jar",
+where "*" is the version number. If missing, the
+function will try to find the library in the
+environment variable CORENLP_HOME, and otherwise
+will fail. (Java model only)}
 
-\item{mem}{a string giving the amount of memory to be assigned to the rJava
-engine. For example, "6g" assigned 6 gigabytes of memory. At least
-2 gigabytes are recommended at a minimum for running the CoreNLP
-package. On a 32bit machine, where this is not possible, setting
-"1800m" may also work. This option will only have an effect the first
-time \code{init_backend} is called for the coreNLP backend, and also
-will not have an effect if the java engine is already started by
-another process.}
+\item{mem}{a string giving the amount of memory to be assigned
+to the rJava engine. For example, "6g" assigned 6
+gigabytes of memory. At least 2 gigabytes are
+recommended at a minimum for running the CoreNLP
+package. On a 32bit machine, where this is not
+possible, setting "1800m" may also work. This
+option will only have an effect the first
+time \code{init_backend} is called for the coreNLP
+backend, and also will not have an effect if the
+java engine is already started by another process.}
 
-\item{verbose}{boolean. Should messages from the pipeline be written to the console or
-suppressed?}
+\item{verbose}{boolean. Should messages from the pipeline be
+written to the console or suppressed?}
 }
 \description{
 This function must be run before annotating text with
@@ -43,24 +49,37 @@ interface provided by reticulate. See Details for more
 information about the anno_level codes.
 }
 \details{
-Currently available anno_level codes are integers from 0 to 8. Setting anno_level above 2
-         has no additional effect on the German and Spanish models. Setting above 1 has
-         no effect on the French model. The available anno_level codes are:
+Currently available anno_level codes are integers from 0 to 8.
+         Setting anno_level above 2
+         has no additional effect on the German and Spanish models.
+         Setting above 1 has
+         no effect on the French model. The available anno_level
+         codes are:
 \itemize{
- \item{"0"}{ runs just the tokenizer, sentence splitter, and part of speech tagger. Extremely fast.}
- \item{"1"}{ includes the dependency parsers and, for English, the sentiment tagger. Often 20-30x
+ \item{"0"}{ runs just the tokenizer, sentence splitter, and part of
+              speech tagger. Extremely fast.}
+ \item{"1"}{ includes the dependency parsers and, for English, the
+             sentiment tagger. Often 20-30x
              slower than anno_level 0.}
- \item{"2"}{ adds the named entity annotator to the parser and sentiment tagger (when available).
-             For English models, it also includes the mentions and natlog annotators. Usually no
+ \item{"2"}{ adds the named entity annotator to the parser and
+             sentiment tagger (when available).
+             For English models, it also includes the mentions and
+             natlog annotators. Usually no
              more than twice as slow as anno_level 1.}
- \item{"3"}{ add the coreference resolution annotator to the anno_level 2 annotators. Depending on the corpus,
-             this takes about 2-4x longer than the anno_level 2 annotators}
+ \item{"3"}{ add the coreference resolution annotator to the anno_level
+             2 annotators. Depending on the corpus,
+             this takes about 2-4x longer than the anno_level 2
+             annotators}
 }
 
-We suggest starting at anno_level 2 and down grading to 0 if your corpus is particularly large, or upgrading
-to 3 if you sacrifice the slowdown. If your text is not formal written text (i.e., tweets or text messages),
-the anno_level 0 annotator should still work well but anything beyond that may be difficult. Semi-formal text
-such as e-mails or transcribed speech are generally okay to run for all of the levels.
+We suggest starting at anno_level 2 and down grading to 0 if your
+corpus is particularly large, or upgrading
+to 3 if you sacrifice the slowdown. If your text is not formal written
+text (i.e., tweets or text messages),
+the anno_level 0 annotator should still work well but anything beyond
+that may be difficult. Semi-formal text
+such as e-mails or transcribed speech are generally okay to run for all
+of the levels.
 }
 \examples{
 \dontrun{

@@ -5,7 +5,8 @@
 \alias{obama}
 \title{Annotation of Barack Obama's State of the Union Addresses}
 \description{
-Parsed text from all eight State of the Union addresses given by Barack Obama.
+Parsed text from all eight State of the Union addresses given by
+Barack Obama.
 }
 \references{
 \url{http://www.presidency.ucsb.edu/sou.php}

@@ -7,16 +7,16 @@
 combine_documents(...)
 }
 \arguments{
-\item{...}{annotation objects to combine; either a single list item or all of
-the objects as individual inputs}
+\item{...}{annotation objects to combine; either a single list item
+or all of the objects as individual inputs}
 }
 \value{
 a single annotation object containing all of the input documents
 }
 \description{
 Takes an arbitrary set of annotations and efficiently combines them into
-a single object. All document ids are reset so that they are contiguous integers
-starting at zero.
+a single object. All document ids are reset so that they are contiguous
+integers starting at zero.
 }
 \examples{
 \dontrun{
