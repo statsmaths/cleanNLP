@@ -77,7 +77,7 @@ annotate <- function(input, file = NULL, output_dir = NULL, load = TRUE, keep = 
 
   if (as_strings) {
     new_input <- NULL
-    for (i in 1:length(input)) {
+    for (i in seq_along(input)) {
       this_file <- tempfile()
       new_input <- c(new_input, this_file)
       writeLines(input[i], this_file)

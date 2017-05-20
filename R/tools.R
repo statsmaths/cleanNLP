@@ -235,3 +235,4 @@ get_tfidf <- function(object, type = c("tfidf", "tf", "idf", "vocab", "all"),
   return(out)
 
 }
+

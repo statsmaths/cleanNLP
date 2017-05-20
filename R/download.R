@@ -29,7 +29,7 @@
 #'download_core_nlp(type="spanish")
 #'}
 #' @export
-download_core_nlp = function(type = c("default", "base", "en", "fr", "de", "es"),
+download_core_nlp <- function(type = c("default", "base", "en", "fr", "de", "es"),
     output_loc, url = NULL, url_core = TRUE) {
 
   if (!requireNamespace("RCurl"))

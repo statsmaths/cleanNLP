@@ -1,7 +1,7 @@
 Package: cleanNLP
 Type: Package
 Title: A Tidy Data Model for Natural Language Processing
-Version: 1.5.3
+Version: 1.6.0
 Authors@R: c(person(given = "Taylor B.", family = "Arnold", email = "taylor.arnold@acm.org", role = c("aut", "cre")))
 Author: Taylor B. Arnold [aut, cre]
 Maintainer: Taylor B. Arnold <taylor.arnold@acm.org>
@@ -26,6 +26,7 @@ Suggests:
 SystemRequirements: Python (>= 2.7.0); spaCy <https://spacy.io/> (>= 1.7); Java (>= 7.0); Stanford CoreNLP <http://nlp.stanford.edu/software/corenlp.shtml> (>= 3.7.0)
 License: GPL-3
 URL: https://statsmaths.github.io/cleanNLP/
+BugReports: http://github.com/statsmaths/cleanNLP/issues
 LazyData: true
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1

@@ -207,11 +207,11 @@ write_annotation <- function(annotation, output_dir) {
 #' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
 #' @examples
 #'\dontrun{
-#'from_CoNLLU(annotation, "/path/to/file.conllu")
+#'from_CoNLL(annotation, "/path/to/file.conll")
 #'}
 #'
 #' @export
-from_CoNLLU <- function(file) {
+from_CoNLL <- function(file) {
 
   # extract data
   x <- readr::read_delim(file, delim = "\t", col_types = "iccccciccc", col_names = FALSE, na = c("_"))
@@ -430,15 +430,17 @@ combine_documents <- function(...) {
   if (length(obj) == 1 && class(obj) == "list")
     obj <- obj[[1]]
 
-  if (!all( sapply(obj, class) == "annotation"))
+  if (!all( as.character(lapply(obj, class)) == "annotation"))
     stop("can only combine annotation objects")
 
-  num_docs <- sapply(obj, function(anno) length(unique(anno$document$id)) )
+  num_docs <- as.character(lapply(obj,
+                function(anno) length(unique(anno$document$id))))
 
   offset <- cumsum(num_docs)
   offset <- c(0, offset[-length(offset)])
 
-  temp <- mapply(function(anno, os) doc_id_reset(anno, os), obj, offset, SIMPLIFY = FALSE)
+  temp <- mapply(function(anno, os) doc_id_reset(anno, os),
+                 obj, offset, SIMPLIFY = FALSE)
 
   anno <- structure(list(
        coreference = dplyr::bind_rows(lapply(temp, getElement, "coreference")),
@@ -533,8 +535,8 @@ print.annotation <- function(x, ...) {
     y <- lapply(y, tokenizers::tokenize_words, lowercase = FALSE)
     y <- lapply(y, function(v) c("ROOT", v[[1]]))
 
-    sid <- mapply(function(u, v) rep(u, length(v)), 1:length(y), y, SIMPLIFY = FALSE)
-    tid <- mapply(function(u) 0:(length(u)-1), y, SIMPLIFY = FALSE)
+    sid <- mapply(function(u, v) rep(u, length(v)), seq_along(y), y, SIMPLIFY = FALSE)
+    tid <- mapply(function(u) seq_along(u) - 1, y, SIMPLIFY = FALSE)
 
     df <- data_frame(id = id, sid = unlist(sid), tid = unlist(tid), word = unlist(y),
                      lemma = NA_character_, upos = NA_character_, pos = NA_character_,

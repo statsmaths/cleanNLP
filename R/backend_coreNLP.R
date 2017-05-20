@@ -170,7 +170,7 @@ init_coreNLP <- function(language, speed = 2, lib_location = NULL, mem = "6g", v
   } else prop <- list()
 
   # insert new keys and values
-  for (i in 1:length(keys))
+  for (i in seq_along(keys))
     prop[[keys[i]]] <- values[i]
 
   # save new parameter file
@@ -236,7 +236,7 @@ init_coreNLP <- function(language, speed = 2, lib_location = NULL, mem = "6g", v
 
   # Apply properties to a java properties object
   prop <- rJava::.jnew("java.util.Properties")
-  for (i in 1:length(keys))
+  for (i in seq_along(keys))
     prop$setProperty(keys[i], values[i])
 
   # Load the NLP pipeline (quietly, if desired)
@@ -262,5 +262,3 @@ init_coreNLP <- function(language, speed = 2, lib_location = NULL, mem = "6g", v
 
   invisible(NULL)
 }
-
-

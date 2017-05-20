@@ -1,4 +1,4 @@
-[![CRAN Version](http://www.r-pkg.org/badges/version/cleanNLP)](https://CRAN.R-project.org/package=cleanNLP) ![Downloads](http://cranlogs.r-pkg.org/badges/cleanNLP)
+[![CRAN Version](http://www.r-pkg.org/badges/version/cleanNLP)](https://CRAN.R-project.org/package=cleanNLP) ![Downloads](http://cranlogs.r-pkg.org/badges/cleanNLP) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/NA/NA?branch=master&svg=true)](https://ci.appveyor.com/project/NA/NA)
 
 ## Installation
 

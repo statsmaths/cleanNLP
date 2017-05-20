@@ -52,6 +52,7 @@ vector <- get_vector(annotation)
 Useful links:
 \itemize{
   \item \url{https://statsmaths.github.io/cleanNLP/}
+  \item Report bugs at \url{http://github.com/statsmaths/cleanNLP/issues}
 }
 
 }
