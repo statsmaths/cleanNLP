@@ -22,7 +22,8 @@ Suggests:
     RCurl,
     knitr,
     rmarkdown,
-    testthat
+    testthat,
+    covr
 SystemRequirements: Python (>= 2.7.0); spaCy <https://spacy.io/> (>= 1.7); Java (>= 7.0); Stanford CoreNLP <http://nlp.stanford.edu/software/corenlp.shtml> (>= 3.7.0)
 License: GPL-3
 URL: https://statsmaths.github.io/cleanNLP/
