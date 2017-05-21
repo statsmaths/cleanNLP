@@ -511,12 +511,12 @@ extract_documents <- function(annotation, ids) {
   if (!is.null(new_vector))
     new_vector <- new_vector[new_vector[,1] %in% ids,]
   anno <- structure(list(
-       coreference = dplyr::filter(get_coreference(annotation), id %in% ids),
-       dependency  = dplyr::filter(get_dependency(annotation), id %in% ids),
-       document    = dplyr::filter(get_document(annotation), id %in% ids),
-       entity      = dplyr::filter(get_entity(annotation), id %in% ids),
-       sentence   = dplyr::filter(get_sentence(annotation), id %in% ids),
-       token       = dplyr::filter(get_token(annotation), id %in% ids),
+       coreference = dplyr::filter_(get_coreference(annotation), ~ id %in% ids),
+       dependency  = dplyr::filter_(get_dependency(annotation), ~ id %in% ids),
+       document    = dplyr::filter_(get_document(annotation), ~ id %in% ids),
+       entity      = dplyr::filter_(get_entity(annotation), ~ id %in% ids),
+       sentence    = dplyr::filter_(get_sentence(annotation), ~ id %in% ids),
+       token       = dplyr::filter_(get_token(annotation), ~ id %in% ids),
        vector      = new_vector
   ), class = "annotation")
 

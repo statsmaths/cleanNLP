@@ -4,20 +4,33 @@
 \alias{get_token}
 \title{Access tokens from an annotation object}
 \usage{
-get_token(annotation, include_root = FALSE)
+get_token(annotation, include_root = FALSE, combine = FALSE,
+  remove_na = combine)
 }
 \arguments{
 \item{annotation}{an annotation object}
 
 \item{include_root}{boolean. Should the sentence root be included?
 Set to FALSE by default.}
+
+\item{combine}{boolean. Should other tables (dependencies,
+sentences, and entites) by merge with the tokens?
+Set to FALSE by default.}
+
+\item{remove_na}{boolean. Should columns with only non-missing
+values be removed? This is mostly useful when
+working with the combine options, and by default
+is equal to whatever \code{combine} is set to.}
 }
 \value{
 Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}
  containing one row for every token in the corpus. The root of each
  sentence is included as its own token.
 
- The returned data frame includes at a minimum the following columns:
+ The returned data frame includes at a minimum the following columns,
+ unless \code{remove_na} has been selected in which case only the
+ first four columns are guaranteed to be in the output depending on
+ which annotators were run:
 
 \itemize{
  \item{"id"}{ - integer. Id of the source document.}

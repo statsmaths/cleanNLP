@@ -9,6 +9,13 @@
 #' @param annotation    an annotation object
 #' @param include_root  boolean. Should the sentence root be included?
 #'                      Set to FALSE by default.
+#' @param combine       boolean. Should other tables (dependencies,
+#'                      sentences, and entites) by merge with the tokens?
+#'                      Set to FALSE by default.
+#' @param remove_na     boolean. Should columns with only non-missing
+#'                      values be removed? This is mostly useful when
+#'                      working with the combine options, and by default
+#'                      is equal to whatever \code{combine} is set to.
 #'
 #' @return
 #'
@@ -16,7 +23,10 @@
 #'  containing one row for every token in the corpus. The root of each
 #'  sentence is included as its own token.
 #'
-#'  The returned data frame includes at a minimum the following columns:
+#'  The returned data frame includes at a minimum the following columns,
+#'  unless \code{remove_na} has been selected in which case only the
+#'  first four columns are guaranteed to be in the output depending on
+#'  which annotators were run:
 #'
 #' \itemize{
 #'  \item{"id"}{ - integer. Id of the source document.}
@@ -64,10 +74,31 @@
 #'   summarize(sentence_length = max(tid)) %>%
 #'   summarize(avg_sentence_length = mean(sentence_length))
 #' @export
-get_token <- function(annotation, include_root = FALSE) {
+get_token <- function(annotation, include_root = FALSE,
+                      combine = FALSE, remove_na = combine) {
   res <- annotation$token
+
+  id <- sid <- tid <- word <- lemma <- tid_end <- tid_target <- NULL
+
+  if (combine) {
+    dep <- get_dependency(annotation)
+    dep <- dplyr::left_join(dep, dplyr::select_(res, "id", "sid", "tid", "word", "lemma"),
+              by = c("id", "sid", "tid"))
+    dep <- dplyr::select_(dep, "id", "sid", source = "tid", tid = "tid_target",
+              "relation", word_source = "word", lemma_source = "lemma")
+    res <- dplyr::left_join(res, dep, by = c("id", "sid", "tid"))
+    res <- dplyr::left_join(res, get_sentence(annotation),
+              by = c("id", "sid"))
+    res <- dplyr::left_join(res, dplyr::select_(get_entity(annotation), "-tid_end"),
+              by = c("id", "sid", "tid"))
+  }
+
   if (!include_root)
     res <- res[res$tid > 0,]
+
+  if (remove_na) {
+    res <- res[, colSums(is.na(res)) != nrow(res)]
+  }
 
   return(res)
 }
@@ -169,12 +200,12 @@ get_dependency <- function(annotation, get_token = FALSE) {
   if (get_token) {
     token <- get_token(annotation, include_root = TRUE)
     dep <- dplyr::left_join(dep,
-                   dplyr::select(token, id, sid, tid, word, lemma),
+                   dplyr::select_(token, "id", "sid", "tid", "word", "lemma"),
                    by = c("id", "sid", "tid"))
     dep <- dplyr::left_join(dep,
-                   dplyr::select(token, id, sid, tid_target = tid,
-                      word_target = word,
-                      lemma_target = lemma),
+                   dplyr::select_(token, "id", "sid", tid_target = "tid",
+                      word_target = "word",
+                      lemma_target = "lemma"),
                    by = c("id", "sid", "tid_target"))
   }
 

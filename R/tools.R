@@ -156,15 +156,16 @@ get_tfidf <- function(object, type = c("tfidf", "tf", "idf", "vocab", "all"),
 
     possible_vocab <- unique(x)
     possible_vocab <- dplyr::group_by_(possible_vocab, "token")
-    possible_vocab <- dplyr::summarize(possible_vocab, prop = n() / N)
-    possible_vocab <- dplyr::filter(possible_vocab, prop > min_df &
-                                    prop < max_df)
+    possible_vocab <- dplyr::summarize_(possible_vocab, prop = "n()")
+    possible_vocab$prop <- possible_vocab$prop / N
+    possible_vocab <- dplyr::filter_(possible_vocab, ~ prop > min_df,
+                                     ~ prop < max_df)
     possible_vocab <- possible_vocab$token
 
-    vocabulary <- dplyr::filter(x, token %in% possible_vocab)
+    vocabulary <- dplyr::filter_(x, ~ token %in% possible_vocab)
     vocabulary <- dplyr::group_by_(vocabulary, "token")
-    vocabulary <- dplyr::summarize(vocabulary, n = n())
-    vocabulary <- dplyr::arrange(vocabulary, dplyr::desc(n))
+    vocabulary <- dplyr::summarize_(vocabulary, n = "n()")
+    vocabulary <- dplyr::arrange_(vocabulary, "dplyr::desc(n)")
 
     index <- 1:min(c(max_features, nrow(vocabulary)))
     vocabulary <- vocabulary[["token"]][index]
@@ -176,8 +177,8 @@ get_tfidf <- function(object, type = c("tfidf", "tf", "idf", "vocab", "all"),
   }
 
   # create counts
-  x <- dplyr::filter(x, token %in% vocabulary)
-  x <- dplyr::mutate(x, token = factor(token, levels = vocabulary))
+  x <- dplyr::filter_(x, ~ token %in% vocabulary)
+  x$token <- factor(x$token, levels = vocabulary)
   doc <- x[["doc"]]
   doc_set <- unique(doc)
   N <- length(doc_set)
@@ -187,7 +188,7 @@ get_tfidf <- function(object, type = c("tfidf", "tf", "idf", "vocab", "all"),
 
   df <- dplyr::data_frame(id = id[mat@i + 1], lid = mat@j, count = mat@x)
   df <- dplyr::group_by_(df, "id", "lid")
-  df <- dplyr::summarize(df, count = sum(count))
+  df <- dplyr::summarize_(df, count = "sum(count)")
 
   term_counts <- Matrix::spMatrix(nrow = length(doc_set), ncol = ncol(mat),
                                   i = df$id, j = df$lid + 1, x = df$count)
