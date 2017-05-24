@@ -79,7 +79,7 @@ class SpacyCleanNLP:
 
 
 def save_doc_meta(mfile, id, language, fname):
-    st = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%SZ')
+    st = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%SZ')
     orow = u'{:d},"{:s}","{:s}","{:s}","{:s}"\n'.format(id, st, spacy.about.__version__, language, fname)
     _ = mfile.write(orow)
 
