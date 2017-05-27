@@ -19,9 +19,8 @@ backend. Detailed instructions for doing this are included below.
 
 ## Basic usage
 
-The **cleanNLP** package is designed to make it as painless as possible
-to turn raw text into feature-rich data frames. Take for example the
-opening lines of Douglas Adam's *Life, the Universe and Everything*:
+We take as an example the opening lines of Douglas Adam's
+*Life, the Universe and Everything*:
 
 ```{r}
 text <- c("The regular early morning yell of horror was the sound of",
@@ -45,7 +44,7 @@ init_spaCy()
 obj <- run_annotators(text, as_strings = TRUE)
 ```
 
-Here, we used the spaCy backend. A discussion of the various backend that
+Here, we used the spaCy backend. A discussion of the various backends that
 are available are given the following section. The returned annotation
 object is nothing more than a list of data frames (and one matrix),
 similar to a set of tables within a database. The names of these tables
@@ -137,7 +136,7 @@ command line and GUI installers for all major platforms; these include
 many of the basic scientific Python modules (these can be troublesome
 to install otherwise). Make sure that you have at least version 3.6.1
 or greater. Of particular note, we do not recommend or support
-using the default system installation of Python that is bundled with 
+using the default system installation of Python that is bundled with
 MacOS, Ubuntu, and many other linux distributions. This version is often
 out-of-date, almost impossible to update, and causes permissions issues
 when installing modules.
@@ -174,7 +173,7 @@ with the default settings, for example, the following should be correct:
 use_python("/Users/USER/anaconda3/bin/python")
 ```
 
-Generally, we have found that the only difficult step in this process 
+Generally, we have found that the only difficult step in this process
 is installing spaCy. Getting Python is almost always issue free as well
 as install the **reticulate** package. On a Mac, we've found that best
 solution is to start with a fresh version of Anaconda 3.6 (the 2.7
@@ -195,7 +194,7 @@ In order to make use of the Java-based coreNLP backend, a version of
 Java >= 7.0 must be installed and the **rJava** package must be set up.
 This should be straightforward, and generally runs without issue on
 Linux and Windows. On Mac, there are issues arising from conflicts with
-the system version of Java. The detailed instructions 
+the system version of Java. The detailed instructions
 [Problem With rJava On Mac OS X El Capitan](http://charlotte-ngs.github.io/2016/01/MacOsXrJavaProblem.html) from
 from Peter von Rohr have solved these issues on all of our test systems.
 For additional help, see the GitHub issues tracker and submit any new
