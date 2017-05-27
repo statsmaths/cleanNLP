@@ -273,13 +273,13 @@ functions available to make working with textual data as easy as working with
 tabular datasets. For a full example of using the package to do an analysis
 of a corpus see the vignette:
 
- - [Exploring the State of the Union Addresses: A Case Study with cleanNLP](https://cran.r-project.org/package=cleanNLP/https://cran.r-project.org/web/packages/cleanNLP/vignettes/case_study.html).
+ - [Exploring the State of the Union Addresses: A Case Study with cleanNLP](https://cran.r-project.org/package=cleanNLP/vignettes/case_study.html).
 
 For more detailed information about the fields in each of the tables, users
 can consult the help pages for the `get_` functions. An even more detailed
 guide to the fields and the underlying philosophy is given in the vignette
 
-- [A Data Model for the NLP Pipeline](https://cran.r-project.org/web/packages/cleanNLP/vignettes/schema.html).
+- [A Data Model for the NLP Pipeline](https://cran.r-project.org/package=cleanNLP/vignettes/schema.html).
 
 ## Note
 
