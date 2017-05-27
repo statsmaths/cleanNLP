@@ -1,6 +1,6 @@
 [![CRAN Version](http://www.r-pkg.org/badges/version/cleanNLP)](https://CRAN.R-project.org/package=cleanNLP) ![Downloads](http://cranlogs.r-pkg.org/badges/cleanNLP) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/statsmaths/cleanNLP?branch=master&svg=true)](https://ci.appveyor.com/project/statsmaths/cleanNLP) [![Coverage Status](https://img.shields.io/codecov/c/github/statsmaths/cleanNLP/master.svg)](https://codecov.io/github/statsmaths/cleanNLP?branch=master) [![Travis-CI Build Status](https://travis-ci.org/statsmaths/cleanNLP.svg?branch=master)](https://travis-ci.org/statsmaths/cleanNLP)
 
-## Installation
+## A Tidy Data Model for Natural Language Processing
 
 The **cleanNLP** package is designed to make it as painless as possible
 to turn raw text into feature-rich data frames. You can download the
@@ -15,13 +15,7 @@ devtools::install_github("statsmaths/cleanNLP")
 As described in detail below, the package has a bare-bones parser that
 does not require any additional system dependencies. However, to benefit
 from the package most users will want to load either a Python or Java
-backend. The Python backend uses the spaCy module, which can be installed
-by running the following in a terminal:
-```{sh}
-pip install -U spacy
-python -m spacy download en
-```
-Further instructions are available at [spacy.io](https://spacy.io/docs/usage/models).
+backend. Detailed instructions for doing this are included below.
 
 ## Basic usage
 
@@ -135,27 +129,88 @@ is required or when parsing in languages not yet available in spaCy.
 
 ### spaCy backend (python)
 
-To use the Python-based backend spaCy, we first need to install Python and spaCy
-on our system. The package **reticulate** must also be installed; see the
-[spaCy website](https://spacy.io/docs/usage/) for download instructions on
-your platform. After this is done, we can run the code snippet given in the
-prior section
+To use the Python based backend spaCy, users must first install an up to
+date version of Python. For users without prior experience, we recommend
+installing the Python 3.6 version of
+[Anaconda Python](https://www.continuum.io/downloads). Anaconda has both
+command line and GUI installers for all major platforms; these include
+many of the basic scientific Python modules (these can be troublesome
+to install otherwise). Make sure that you have at least version 3.6.1
+or greater. Of particular note, we do not recommend or support
+using the default system installation of Python that is bundled with 
+MacOS, Ubuntu, and many other linux distributions. This version is often
+out-of-date, almost impossible to update, and causes permissions issues
+when installing modules.
+
+Once Python is installed, the next step is to install the spaCy module
+and its associated models. There are detailed instructions for doing
+this on the [spaCy website](https://spacy.io/docs/usage/) that support
+many different platforms and versions of Python. Note that on windows
+you must also have a working version of Virtual Studio Express
+(preferably the 2015 version). If you installed the
+most recent version of Anaconda Python 3.6 as directed above, simply
+run the following commands in the terminal (Mac/Linux) or shell (Windows):
+
+```
+conda config --add channels conda-forge
+conda install spacy
+python -m spacy download en
+```
+
+The last line downloads the English models ("en"); repeat or replace
+with French ("fr") or German ("de") based on your needs.
+
+Finally, the R package **reticulate** must also be installed, which
+can be downloaded from CRAN:
+```{r}
+install.packages("reticulate")
+```
+
+And, before running any cleanNLP command, run `use_python` to set the
+location of the Python executable. If using Anaconda Python on a Mac
+with the default settings, for example, the following should be correct:
+
+```{r}
+use_python("/Users/USER/anaconda3/bin/python")
+```
+
+Generally, we have found that the only difficult step in this process 
+is installing spaCy. Getting Python is almost always issue free as well
+as install the **reticulate** package. On a Mac, we've found that best
+solution is to start with a fresh version of Anaconda 3.6 (the 2.7
+series causes problem even though it technically should work). We have
+not had an issue getting the library installed when doing this.
+On Windows, a fresh version of Anacond also helps, but even then there
+can be futher issues. On Windows, it seems that there is no
+general solution that works for everyone, unfortunately. Your best bet
+is to follow the instructions above and then look up your particular
+warning on the [spaCY issues page](https://github.com/explosion/spaCy/issues).
+
+After the backend is install, you should be able to run the code in the
+preceeding section "Basic usage" as given.
 
 ### coreNLP backend (Java)
 
-In order to make use of the Java-based coreNLP backend, a version of Java >= 7.0 must be
-installed and the **rJava** package must be set up. This should be
-straightforward, but this has caused problems on some machines, particularly
-with macOS. For help, see the GitHub issues tracker. Once these system
-requirements are met, we can install the ".jar" files with
+In order to make use of the Java-based coreNLP backend, a version of
+Java >= 7.0 must be installed and the **rJava** package must be set up.
+This should be straightforward, and generally runs without issue on
+Linux and Windows. On Mac, there are issues arising from conflicts with
+the system version of Java. The detailed instructions 
+[Problem With rJava On Mac OS X El Capitan](http://charlotte-ngs.github.io/2016/01/MacOsXrJavaProblem.html) from
+from Peter von Rohr have solved these issues on all of our test systems.
+For additional help, see the GitHub issues tracker and submit any new
+bugs that arise.
+
+Once these system requirements are met, we can install the ".jar" files
+inside of R with the following function:
 
 ```{r}
 download_core_nlp()
 ```
 
 These files are large and may take several minutes to download. The Java
-backend is then configured with `setup_coreNLP_backend`. The easiest
-interface is to specify a speed code from 0 to 3, with higher numbers
+backend is then configured with `init_coreNLP`. The easiest
+interface is to specify an annotation level from 0 to 3, with higher numbers
 including more models but taking increasingly long to parse the text.
 Setting it equal to 2 is a good balance between time and
 feature-richness:
@@ -218,13 +273,13 @@ functions available to make working with textual data as easy as working with
 tabular datasets. For a full example of using the package to do an analysis
 of a corpus see the vignette:
 
- - [Exploring the State of the Union Addresses: A Case Study with cleanNLP](case_study.html).
+ - [Exploring the State of the Union Addresses: A Case Study with cleanNLP](https://cran.r-project.org/package=cleanNLP/https://cran.r-project.org/web/packages/cleanNLP/vignettes/case_study.html).
 
 For more detailed information about the fields in each of the tables, users
 can consult the help pages for the `get_` functions. An even more detailed
 guide to the fields and the underlying philosophy is given in the vignette
 
-- [A Data Model for the NLP Pipeline](schema.html).
+- [A Data Model for the NLP Pipeline](https://cran.r-project.org/web/packages/cleanNLP/vignettes/schema.html).
 
 ## Note
 
