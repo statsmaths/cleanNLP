@@ -18,7 +18,8 @@ init_tokenizers <- function() {
 .init_tokenizers_backend <- function() {
 
   if (!requireNamespace("tokenizers")) {
-    stop("The tokenizers package is required to use the tokenizers backend.")
+    stop("The tokenizers package is required to", # nocov
+         "use the tokenizers backend.")           # nocov
   }
 
   volatiles$tokenizers$init <- TRUE

@@ -55,7 +55,8 @@ test_that("output of tokenizers", {
 test_that("run_annotators options", {
   init_tokenizers()
 
-  anno <- run_annotators(input_files, doc_id_offset = 137, backend = "tokenizers")
+  anno <- run_annotators(input_files, doc_id_offset = 137,
+                         backend = "tokenizers")
   token <- get_token(anno)
   expect_equal(unique(token$id), 138L:140L)
 

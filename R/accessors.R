@@ -82,14 +82,16 @@ get_token <- function(annotation, include_root = FALSE,
 
   if (combine) {
     dep <- get_dependency(annotation)
-    dep <- dplyr::left_join(dep, dplyr::select_(res, "id", "sid", "tid", "word", "lemma"),
+    dep <- dplyr::left_join(dep,
+              dplyr::select_(res, "id", "sid", "tid", "word", "lemma"),
               by = c("id", "sid", "tid"))
     dep <- dplyr::select_(dep, "id", "sid", source = "tid", tid = "tid_target",
               "relation", word_source = "word", lemma_source = "lemma")
     res <- dplyr::left_join(res, dep, by = c("id", "sid", "tid"))
     res <- dplyr::left_join(res, get_sentence(annotation),
               by = c("id", "sid"))
-    res <- dplyr::left_join(res, dplyr::select_(get_entity(annotation), "-tid_end"),
+    res <- dplyr::left_join(res,
+              dplyr::select_(get_entity(annotation), "-tid_end"),
               by = c("id", "sid", "tid"))
   }
 

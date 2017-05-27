@@ -4,7 +4,7 @@ author: Taylor Arnold
 output:
   rmarkdown::html_vignette: default
 vignette: >
-  %\VignetteIndexEntry{Introduction to the cleanNLP package}
+  %\VignetteIndexEntry{Exploring the State of the Union Addresses: A Case Study with cleanNLP}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

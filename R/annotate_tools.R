@@ -19,8 +19,8 @@
 read_annotation <- function(input_dir) {
 
   if (!file.exists(file.path(input_dir, "document.csv"))) {
-    stop(sprintf("Cannot find the file \"%s.csv\"",
-                 file.path(input_dir, "document")))
+    stop(sprintf("Cannot find the file \"%s.csv\"",  # nocov
+                 file.path(input_dir, "document")))  # nocov
   }
 
   if (file.exists(fn <- file.path(input_dir, "coreference.csv"))) {
@@ -460,7 +460,7 @@ combine_documents <- function(...) {
     obj <- obj[[1]]
 
   if (!all( as.character(lapply(obj, class)) == "annotation"))
-    stop("can only combine annotation objects")
+    stop("can only combine annotation objects") # nocov
 
   num_docs <- as.character(lapply(obj,
                 function(anno) length(unique(anno$document$id))))
@@ -504,7 +504,7 @@ combine_documents <- function(...) {
 extract_documents <- function(annotation, ids) {
 
   if (missing(ids))
-    stop("You must supply a list of ids to extract")
+    stop("You must supply a list of ids to extract") # nocov
 
   id <- NULL # silence check
   new_vector <- get_vector(annotation)
