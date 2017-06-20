@@ -1,3 +1,16 @@
+# cleanNLP 1.9.0
+
+In this version, the internal mechanisms for running
+the tokenizers backend have been changed. We are now
+directly calling the stringi functions with options
+that better mimic those of the the spaCy and CoreNLP
+backends. Despite the lack of dependency on the
+tokenizers package, we will continue to use the
+name "tokenizers" for the backend to maintain
+backwards consistency.
+
+
+
 # cleanNLP 1.8.0
 
 This version contains many internal changes to the way

@@ -5,7 +5,7 @@
 \title{Access tokens from an annotation object}
 \usage{
 get_token(annotation, include_root = FALSE, combine = FALSE,
-  remove_na = combine)
+  remove_na = combine, spaces = FALSE)
 }
 \arguments{
 \item{annotation}{an annotation object}
@@ -21,6 +21,10 @@ Set to FALSE by default.}
 values be removed? This is mostly useful when
 working with the combine options, and by default
 is equal to whatever \code{combine} is set to.}
+
+\item{spaces}{should a column be included that gives the spaces
+that should come after the word. Useful for
+reconstructing the original text.}
 }
 \value{
 Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}

@@ -1,3 +1,41 @@
+#' One Table Summary of an Annotation Object
+#'
+#' This function pulls together several tables to provide
+#' a one table, denormalized version of the annotation object.
+#'
+#' @param annotation    an annotation object
+#'
+#' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
+#' @references
+#'
+#'   Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel,
+#'   Steven J. Bethard, and David McClosky. 2014.
+#'   \href{http://nlp.stanford.edu/pubs/StanfordCoreNlp2014.pdf}{
+#'   The Stanford CoreNLP Natural Language Processing Toolkit}.
+#'   In: \emph{Proceedings of the 52nd Annual Meeting of the
+#'   Association for Computational Linguistics: System Demonstrations,
+#'   pp. 55-60.}
+#'
+#'   Kristina Toutanova and Christopher D. Manning. 2000. Enriching
+#'   the Knowledge Sources Used in a Maximum Entropy Part-of-Speech
+#'   Tagger. In: \emph{Proceedings of the Joint SIGDAT Conference on
+#'   Empirical Methods in Natural Language Processing and Very Large
+#'   Corpora (EMNLP/VLC-2000), pp. 63-70}.
+#'
+#'   Kristina Toutanova, Dan Klein, Christopher Manning, and Yoram
+#'   Singer. 2003. Feature-Rich Part-of-Speech Tagging with a Cyclic
+#'   Dependency Network. In: \emph{Proceedings of HLT-NAACL 2003,
+#'   pp. 252-259.}
+#'
+#' @export
+get_combine <- function(annotation) {
+
+  get_token(annotation, include_root = FALSE,
+            combine = TRUE, remove_na = TRUE,
+            spaces = TRUE)
+
+}
+
 #' Access tokens from an annotation object
 #'
 #' This function grabs the table of tokens from an annotation object. There
@@ -16,6 +54,9 @@
 #'                      values be removed? This is mostly useful when
 #'                      working with the combine options, and by default
 #'                      is equal to whatever \code{combine} is set to.
+#' @param spaces        should a column be included that gives the spaces
+#'                      that should come after the word. Useful for
+#'                      reconstructing the original text.
 #'
 #' @return
 #'
@@ -75,10 +116,12 @@
 #'   summarize(avg_sentence_length = mean(sentence_length))
 #' @export
 get_token <- function(annotation, include_root = FALSE,
-                      combine = FALSE, remove_na = combine) {
+                      combine = FALSE, remove_na = combine,
+                      spaces = FALSE) {
   res <- annotation$token
 
-  id <- sid <- tid <- word <- lemma <- tid_end <- tid_target <- NULL
+  id <- sid <- tid <- word <- lemma <- tid_end <- NULL
+  tid_target <- cid <- NULL
 
   if (combine) {
     dep <- get_dependency(annotation)
@@ -98,12 +141,26 @@ get_token <- function(annotation, include_root = FALSE,
   if (!include_root)
     res <- res[res$tid > 0,]
 
+  if (spaces) {
+    res <- dplyr::group_by_(res, "id")
+    res <- dplyr::mutate(res,
+            spaces = dplyr::lead(cid, default = 0) - cid -
+            stringi::stri_length(word))
+    res <- dplyr::ungroup(res)
+    res <- dplyr::mutate(res, spaces = ifelse(spaces < 0, 0, spaces))
+    res <- dplyr::mutate(res, spaces = ifelse(is.na(spaces), 0, spaces))
+
+    res$spaces <- unlist(lapply(res$spaces,
+                      function(v) ifelse(v == 0, "", rep(" ", v))))
+  }
+
   if (remove_na) {
     res <- res[, colSums(is.na(res)) != nrow(res)]
   }
 
   return(res)
 }
+
 
 #' Access dependencies from an annotation object
 #'
