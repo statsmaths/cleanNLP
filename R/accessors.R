@@ -158,6 +158,9 @@ get_token <- function(annotation, include_root = FALSE,
     res <- res[, colSums(is.na(res)) != nrow(res)]
   }
 
+  index <- which(!is.na(res$word))
+  res <- res[index,]
+
   return(res)
 }
 

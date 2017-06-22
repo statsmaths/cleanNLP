@@ -4,7 +4,13 @@
 \alias{init_tokenizers}
 \title{Interface for initializing the tokenizers backend}
 \usage{
-init_tokenizers()
+init_tokenizers(locale = NULL)
+}
+\arguments{
+\item{locale}{string giving the locale name to
+pass to the stringi functions. If
+\code{NULL}, the default locale is
+selected}
 }
 \description{
 This function must be run before annotating text with

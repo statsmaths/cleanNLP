@@ -542,6 +542,11 @@ print.annotation <- function(x, ...) {
 .annotate_with_r <- function(input, output_dir, doc_id_offset) {
   dir.create(output_dir, FALSE)
 
+  # SET LOCALE (reset to old value on exit)
+  old_locale <- stringi::stri_locale_get()
+  stringi::stri_locale_set(volatiles$tokenizers$locale)
+  on.exit(stringi::stri_locale_set(old_locale))
+
   # FILE HEADERS
   fp <- file.path(output_dir, "token.csv")
   writeLines("id,sid,tid,word,lemma,upos,pos,cid", fp)
@@ -555,7 +560,8 @@ print.annotation <- function(x, ...) {
     df <- dplyr::data_frame(id = id,
                      time = format(Sys.time(), fmt = "%dZ", tz = "UTC"),
                      version = as.character(utils::packageVersion("cleanNLP")),
-                     language = "n/a", uri = x)
+                     language = volatiles$tokenizers$locale,
+                     uri = x)
     readr::write_csv(df, file.path(output_dir, "document.csv"),
                       append = TRUE, na = "")
 

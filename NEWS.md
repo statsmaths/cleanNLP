@@ -9,7 +9,11 @@ tokenizers package, we will continue to use the
 name "tokenizers" for the backend to maintain
 backwards consistency.
 
-
+As part of the change to custom stringi function, we
+now also support setting the locale as part of initalizing
+the tokenizers backend. This allows for an easy way of
+tokenizing text where custom spaCy or coreNLP models
+do not yet exist.
 
 # cleanNLP 1.8.0
 
