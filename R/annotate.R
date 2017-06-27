@@ -103,6 +103,7 @@ run_annotators <- function(input, file = NULL, output_dir = NULL, load = TRUE,
     stop("base of the file argument does not point to a known directory")
 
   output_dir <- file.path(Sys.glob(output_dir), "")
+  output_dir <- gsub("\\", "/", output_dir, fixed = TRUE)
 
   if (as_strings) {
     new_input <- NULL
