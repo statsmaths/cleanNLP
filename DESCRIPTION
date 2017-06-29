@@ -33,7 +33,7 @@ Suggests:
     testthat (>= 1.0.1),
     covr (>= 2.2.2)
 SystemRequirements: Python (>= 2.7.0); spaCy <https://spacy.io/> (>= 1.8); Java (>= 7.0); Stanford CoreNLP <http://nlp.stanford.edu/software/corenlp.shtml> (>= 3.7.0)
-License: GPL-3
+License: LGPL-2
 URL: https://statsmaths.github.io/cleanNLP/
 BugReports: http://github.com/statsmaths/cleanNLP/issues
 LazyData: true
