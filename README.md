@@ -1,4 +1,4 @@
-# cleanNLP: A Tidy Data Model for Natural Language Processing
+## cleanNLP: A Tidy Data Model for Natural Language Processing
 
 **Author:** Taylor B. Arnold<br/>
 **License:** [LGPL-2](https://opensource.org/licenses/LGPL-2.1)
