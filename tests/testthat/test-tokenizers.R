@@ -74,7 +74,10 @@ test_that("run_annotators options", {
   anno <- run_annotators(input_files, output_dir = od, load = FALSE,
     backend = "tokenizers")
   od <- file.path(Sys.glob(od), "")
+
   od <- gsub("\\", "/", od, fixed = TRUE)
+  od <- gsub("//", "/", od, fixed = TRUE)
+  anno <- gsub("//", "/", anno, fixed = TRUE)
   expect_equal(anno, od)
 })
 
