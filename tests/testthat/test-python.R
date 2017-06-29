@@ -121,6 +121,7 @@ test_that("run_annotators options", {
 
   init_spaCy(vector_flag = TRUE)
   od <- file.path(tempdir(), "test_dir")
+  od <- gsub("//", "/", od, fixed = TRUE)
   anno <- run_annotators(input_files, output_dir = od)
   anno2 <- read_annotation(od)
   expect_equal(anno, anno2)
@@ -133,6 +134,8 @@ test_that("run_annotators options", {
   od <- tempfile()
   anno <- run_annotators(input_files, output_dir = od, load = FALSE)
   od <- file.path(Sys.glob(od), "")
+  od <- gsub("//", "/", od, fixed = TRUE)
+  anno <- gsub("//", "/", anno, fixed = TRUE)
   expect_equal(anno, od)
 })
 

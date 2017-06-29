@@ -250,19 +250,24 @@ test_that("run_annotators options", {
   expect_equal(dim(token), c(9L, 8L))
 
   od <- file.path(tempdir(), "test_dir")
+  od <- gsub("//", "/", od, fixed = TRUE)
   anno <- run_annotators(input_files, output_dir = od, , backend = "coreNLP")
   anno2 <- read_annotation(od)
   expect_equal(anno, anno2)
 
   od <- file.path(tempdir(), "test_dir")
+  od <- gsub("//", "/", od, fixed = TRUE)
   anno <- run_annotators(input_files, output_dir = od, keep = FALSE,
     backend = "coreNLP")
   expect_error({ anno2 <- read_annotation(od) })
 
   od <- file.path(tempdir(), "test_dir")
+  od <- gsub("//", "/", od, fixed = TRUE)
   anno <- run_annotators(input_files, output_dir = od, load = FALSE,
     backend = "coreNLP")
   od <- file.path(Sys.glob(od), "")
+  od <- gsub("//", "/", od, fixed = TRUE)
+  anno <- gsub("//", "/", anno, fixed = TRUE)
   expect_equal(anno, od)
 })
 
