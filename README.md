@@ -1,6 +1,11 @@
+## cleanNLP: A Tidy Data Model for Natural Language Processing
+
+**Author:** Taylor B. Arnold<br/>
+**License:** [LGPL-2](https://opensource.org/licenses/LGPL-2.1)
+
 [![CRAN Version](http://www.r-pkg.org/badges/version/cleanNLP)](https://CRAN.R-project.org/package=cleanNLP)  [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/statsmaths/cleanNLP?branch=master&svg=true)](https://ci.appveyor.com/project/statsmaths/cleanNLP) [![Travis-CI Build Status](https://travis-ci.org/statsmaths/cleanNLP.svg?branch=master)](https://travis-ci.org/statsmaths/cleanNLP) [![Coverage Status](https://img.shields.io/codecov/c/github/statsmaths/cleanNLP/master.svg)](https://codecov.io/github/statsmaths/cleanNLP?branch=master) ![Downloads](http://cranlogs.r-pkg.org/badges/cleanNLP)
 
-## A Tidy Data Model for Natural Language Processing
+## Overview
 
 The **cleanNLP** package is designed to make it as painless as possible
 to turn raw text into feature-rich data frames. You can download the
