@@ -1,4 +1,4 @@
-# cleanNLP 1.9.0
+# cleanNLP 1.9.3
 
 In this version, the internal mechanisms for running
 the tokenizers backend have been changed. We are now
@@ -14,6 +14,13 @@ now also support setting the locale as part of initalizing
 the tokenizers backend. This allows for an easy way of
 tokenizing text where custom spaCy or coreNLP models
 do not yet exist.
+
+There is currently a pre-release version of spaCy
+version 2.0.0. The current version has been tested and
+runs smoothly with cleanNLP. The new neural network models
+are sufficently faster and more accurate; we suggest
+migrating to the version 2 series as it becomes stable
+for production.
 
 # cleanNLP 1.8.0
 

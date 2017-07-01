@@ -38,7 +38,8 @@ class SpacyCleanNLP:
         for this_file in input_files:
             with io.open(this_file, 'r', errors = 'replace') as ifile:
                 text = ifile.read().replace(u'\r\n', u' ').replace(u'\n', u' ')
-            doc = self.nlp(text, tag = True, parse = True, entity = self.entity_flag)
+            #doc = self.nlp(text, tag = True, parse = True, entity = self.entity_flag)
+            doc = self.nlp(text)
 
             self.createSentDict(doc)
             save_doc_meta(mfile, id, self.language, this_file)
