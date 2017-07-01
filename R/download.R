@@ -55,14 +55,15 @@ download_core_nlp <- function(
   }
 
   if (!dir.exists(output_loc)) {
-    stop("The output directory '%s' does not exist", output_loc)
+    stop(sprintf("The output directory '%s' does not exist",
+      output_loc))
   }
 
   # if url is given, simply download the specified files as required
   if (!is.null(url)) {
     if (url_core) {
       fp <- .check_file_exists(file.path(output_loc,
-                                         paste0(coreFile, ".zip")),
+                                         coreFile),
                                force = force)
       f <- RCurl::CFILE(fp, mode="wb")
       ret <- RCurl::curlPerform(url = url, writedata = f@ref,
@@ -89,8 +90,7 @@ download_core_nlp <- function(
   type <- match.arg(type)
 
   if (type %in% c("default", "base")) {
-    fp <- .check_file_exists(file.path(output_loc,
-                             paste0(coreFile, ".zip")),
+    fp <- .check_file_exists(file.path(output_loc, coreFile),
                              force = force)
     f <- RCurl::CFILE(fp, mode="wb")
     ret <- RCurl::curlPerform(url = paste0(baseURL, coreFile, ".zip"),
