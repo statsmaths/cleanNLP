@@ -1,4 +1,4 @@
-# cleanNLP 1.9.3
+# cleanNLP 1.10
 
 In this version, the internal mechanisms for running
 the tokenizers backend have been changed. We are now
