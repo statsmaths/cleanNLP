@@ -54,6 +54,10 @@ download_core_nlp <- function(
            "location with output_loc.")
   }
 
+  if (!dir.exists(output_loc)) {
+    stop("The output directory '%s' does not exist", output_loc)
+  }
+
   # if url is given, simply download the specified files as required
   if (!is.null(url)) {
     if (url_core) {

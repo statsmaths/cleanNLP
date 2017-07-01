@@ -22,8 +22,8 @@ values be removed? This is mostly useful when
 working with the combine options, and by default
 is equal to whatever \code{combine} is set to.}
 
-\item{spaces}{should a column be included that gives the spaces
-that should come after the word. Useful for
+\item{spaces}{should a column be included that gives the number of
+spaces that should come after the word. Useful for
 reconstructing the original text.}
 }
 \value{

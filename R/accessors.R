@@ -54,8 +54,8 @@ get_combine <- function(annotation) {
 #'                      values be removed? This is mostly useful when
 #'                      working with the combine options, and by default
 #'                      is equal to whatever \code{combine} is set to.
-#' @param spaces        should a column be included that gives the spaces
-#'                      that should come after the word. Useful for
+#' @param spaces        should a column be included that gives the number of
+#'                      spaces that should come after the word. Useful for
 #'                      reconstructing the original text.
 #'
 #' @return
@@ -150,8 +150,8 @@ get_token <- function(annotation, include_root = FALSE,
     res <- dplyr::mutate(res, spaces = ifelse(spaces < 0, 0, spaces))
     res <- dplyr::mutate(res, spaces = ifelse(is.na(spaces), 0, spaces))
 
-    res$spaces <- unlist(lapply(res$spaces,
-                      function(v) ifelse(v == 0, "", rep(" ", v))))
+    # res$spaces <- unlist(lapply(res$spaces,
+    #                   function(v) ifelse(v == 0, "", rep(" ", v))))
   }
 
   if (remove_na) {
