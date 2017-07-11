@@ -62,19 +62,21 @@ download_core_nlp <- function(
   # if url is given, simply download the specified files as required
   if (!is.null(url)) {
     if (url_core) {
-      fp <- .check_file_exists(file.path(output_loc,
-                                         coreFile),
-                               force = force)
-      f <- RCurl::CFILE(fp, mode="wb")
-      ret <- RCurl::curlPerform(url = url, writedata = f@ref,
-                                noprogress=FALSE)
-      RCurl::close(f)
-      if (ret != 0) stop("Download error!")
+      if (!dir.exists(file.path(output_loc, coreFile))) {
+        fp <- .check_file_exists(file.path(output_loc,
+                                           paste0(coreFile, ".zip")),
+                                 force = force)
+        f <- RCurl::CFILE(fp, mode="wb")
+        ret <- RCurl::curlPerform(url = url, writedata = f@ref,
+                                  noprogress=FALSE)
+        RCurl::close(f)
+        if (ret != 0) stop("Download error!")
 
-      utils::unzip(file.path(output_loc, paste0(coreFile, ".zip")),
-                   exdir = output_loc)
-      file.remove(file.path(output_loc, paste0(coreFile, ".zip")))
-      return(0L)
+        utils::unzip(file.path(output_loc, paste0(coreFile, ".zip")),
+                     exdir = output_loc)
+        file.remove(file.path(output_loc, paste0(coreFile, ".zip")))
+        return(0L)
+      }
     } else {
       fname <- basename(url)
       fp <- .check_file_exists(file.path(output_loc, coreFile, fname),
@@ -90,18 +92,20 @@ download_core_nlp <- function(
   type <- match.arg(type)
 
   if (type %in% c("default", "base")) {
-    fp <- .check_file_exists(file.path(output_loc, coreFile),
-                             force = force)
-    f <- RCurl::CFILE(fp, mode="wb")
-    ret <- RCurl::curlPerform(url = paste0(baseURL, coreFile, ".zip"),
-                              writedata = f@ref, noprogress=FALSE)
-    RCurl::close(f)
-    if (ret != 0) stop("Download error!")
+    if (!dir.exists(file.path(output_loc, coreFile))) {
+      fp <- .check_file_exists(file.path(output_loc, paste0(coreFile, ".zip")),
+                               force = force)
+      f <- RCurl::CFILE(fp, mode="wb")
+      ret <- RCurl::curlPerform(url = paste0(baseURL, coreFile, ".zip"),
+                                writedata = f@ref, noprogress=FALSE)
+      RCurl::close(f)
+      if (ret != 0) stop("Download error!")
 
-    utils::unzip(file.path(output_loc, paste0(coreFile, ".zip")),
-                 exdir = output_loc)
-    file.remove(file.path(output_loc, paste0(coreFile, ".zip")))
-    ret <- 0L
+      utils::unzip(file.path(output_loc, paste0(coreFile, ".zip")),
+                   exdir = output_loc)
+      file.remove(file.path(output_loc, paste0(coreFile, ".zip")))
+      ret <- 0L
+    }
   }
 
   if (!file.exists(file.path(output_loc)))
