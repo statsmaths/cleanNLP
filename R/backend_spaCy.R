@@ -37,10 +37,7 @@ init_spaCy <- function(entity_flag = TRUE, vector_flag = FALSE,
     stop("The reticulate package is required to use the spaCy backend.")
   }
 
-  if (!reticulate::py_module_available("spacy")) {
-    stop("The spaCy module must be installed in python before",
-         "using as a backend.")
-  }
+  .spacy_check()
 
   output_loc <- system.file("py", package="cleanNLP")
   volatiles$spaCy$py_file <- reticulate::py_run_file(file.path(output_loc,
@@ -71,3 +68,42 @@ init_spaCy <- function(entity_flag = TRUE, vector_flag = FALSE,
 
   return(NULL)
 }
+
+#' Called to check if spaCy is installed and loaded
+#'
+.spacy_check <- function() {
+
+  error_flag <- 0L
+
+  if(!reticulate::py_available(initialize = TRUE)) {
+
+    error_flag <- 1L
+    msg <- c("Python not available", "\n",
+            "See reticulate::use_python() to set python path, ", "\n",
+            "then retry")
+
+  } else if(!reticulate::py_module_available("spacy")) {
+
+    error_flag <- 2L
+    py_path <- reticulate::py_config()$python
+    msg <-
+          c("The spacy module is not available from the Python\n",
+            "executable located here:",
+            "\n\n   ",
+            py_path, "\n\n",
+            "This can be installed with pip by running the following:\n",
+            "\n  pip install spacy\n\n",
+            "If you believe it is already installed, you may be linking \n",
+            "to the wrong version of Python. See reticulate::use_python()\n",
+            "to set the Python path, then retry. You may need to restart\n",
+            "R before use_python takes effect.")
+
+  }
+
+  if (error_flag > 0L)
+    stop(msg, call. = FALSE)
+  else
+    invisible(error_flag)
+
+}
+
