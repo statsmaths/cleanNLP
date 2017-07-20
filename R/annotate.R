@@ -154,8 +154,8 @@ run_annotators <- function(input, file = NULL, output_dir = NULL, load = TRUE,
                   rJava::.jarray(input), volatiles$coreNLP$coreNLP)
 
   } else if (backend == "tokenizers") {
-    if (!requireNamespace("tokenizers")) {
-      stop("The tokenizers package is required to use the",
+    if (!requireNamespace("stringi")) {
+      stop("The stringi package is required to use the",
            "tokenizers backend.")
     }
 

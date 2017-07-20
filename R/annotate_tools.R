@@ -544,8 +544,8 @@ print.annotation <- function(x, ...) {
 
   # SET LOCALE (reset to old value on exit)
   old_locale <- stringi::stri_locale_get()
-  stringi::stri_locale_set(volatiles$tokenizers$locale)
-  on.exit(stringi::stri_locale_set(old_locale))
+  suppressMessages(stringi::stri_locale_set(volatiles$tokenizers$locale))
+  on.exit(suppressMessages(stringi::stri_locale_set(old_locale)))
 
   # FILE HEADERS
   fp <- file.path(output_dir, "token.csv")
@@ -581,8 +581,19 @@ print.annotation <- function(x, ...) {
 
     word <- stringi::stri_split_boundaries(sent, type = "word",
                     skip_word_none = FALSE)
+
+    # remove white space "words"
+    index <- lapply(word, stringi::stri_detect, regex = "^[ ]+$")
+    cid <- mapply(function(u, v) u[!v], cid, index)
+    word <- mapply(function(u, v) u[!v], word, index)
+
+    # add ROOT to each sentence
+    cid <- lapply(cid, function(v) c(NA_integer_, v))
+    word <- lapply(word, function(v) c("ROOT", v))
+
+    # create ids
     sid <- mapply(function(u, v) rep(u, length(v)), seq_along(word), word)
-    tid <- mapply(function(u) seq(length(u)), word)
+    tid <- mapply(function(u) seq(length(u)) - 1L, word)
 
     cid <- unlist(cid)
     word <- unlist(word)
@@ -596,8 +607,9 @@ print.annotation <- function(x, ...) {
                             pos = NA_character_,
                             cid = as.integer(cid))
 
-    index <- which(!stringi::stri_detect(word, regex = "^[ ]+$"))
-    df <- df[index,]
+    # OLD: taken care of being; do we still need it here now?
+    # index <- which(!stringi::stri_detect(word, regex = "^[ ]+$"))
+    # df <- df[index,]
 
     # ADD LINE TO TOKEN FILE
     readr::write_csv(df, file.path(output_dir, "token.csv"),
