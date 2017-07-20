@@ -569,6 +569,8 @@ print.annotation <- function(x, ...) {
     x <- iconv(x, sub = "")
     x <- paste(x, collapse = " ")
 
+    if (stringi::stri_length(x) == 0L) next
+
     sent <- stringi::stri_split_boundaries(x, type = "sentence",
                     skip_word_none = FALSE)
     sent <- sent[[1]]
@@ -600,6 +602,8 @@ print.annotation <- function(x, ...) {
     sid <- as.numeric(unlist(sid))
     tid <- as.numeric(unlist(tid))
     cid <- cid + sent_len[sid]
+
+    if (length(word) == 0L) next
 
     df <- dplyr::data_frame(id = id, sid = sid, tid = tid,
                             word = word, lemma = NA_character_,
