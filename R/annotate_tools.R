@@ -557,7 +557,7 @@ print.annotation <- function(x, ...) {
   id <- doc_id_offset
   for (x in input) {
     # ADD DOC TO DOC TABLE
-    df <- dplyr::data_frame(id = id,
+    df <- dplyr::data_frame(id = as.integer(id),
                      time = format(Sys.time(), fmt = "%dZ", tz = "UTC"),
                      version = as.character(utils::packageVersion("cleanNLP")),
                      language = volatiles$tokenizers$locale,
@@ -605,7 +605,8 @@ print.annotation <- function(x, ...) {
 
     if (length(word) == 0L) next
 
-    df <- dplyr::data_frame(id = id, sid = sid, tid = tid,
+    df <- dplyr::data_frame(id = as.integer(id), sid = as.integer(sid),
+                            tid = as.integer(tid),
                             word = word, lemma = NA_character_,
                             upos = NA_character_,
                             pos = NA_character_,
