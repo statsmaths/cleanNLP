@@ -41,7 +41,7 @@ tif_annotation <- function(input) {
 
   # if other columns, combine those as well
   if (ncol(input) > 2) {
-    dplyr::left_join(comb, input[,-2], by = "doc_id")
+    comb <- dplyr::left_join(comb, input[,-2], by = "doc_id")
   }
 
   return(comb)
