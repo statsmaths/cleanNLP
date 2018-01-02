@@ -13,13 +13,12 @@ identifier and the second should contain the raw
 text.}
 }
 \value{
-a data frame containing the parsed text, with one row for
-         each token
+an annotation object
 }
 \description{
 Runs annotations over a corpus object and returns results as
-a single data frame. See parameters below for the specific
-input parameters. For more control, see the function
+an annotation object. See parameters below for the specific
+input format For more control, see the function
 \code{\link{cnlp_annotate}}.
 }
 \examples{

@@ -111,6 +111,62 @@ head(cnlp_get_token(obj))
 The output from the `cnlp_get` functions are (mostly) pre-calculated.
 All of the hard work is done in the `cnlp_annotate` function.
 
+## Text Interchange Format (TIF)
+
+The **cleanNLP** package supports the text-interchange formats (see:
+[tif](https://github.com/ropensci/tif)), agreed formats for the input
+and output of textual data developed at the 2017 rOpenSci Text Workshop
+hosted at LSE.
+
+To use the text interchange format as an input, first construct the
+input data as a data frame with the first column containing document ids,
+the second the raw text, and other columns containing metadata:
+
+```{r}
+text <- c("It is better to be looked over than overlooked.",
+         "Real stupidity beats artificial intelligence every time.",
+         "The secret of getting ahead is getting started.")
+tif_input <- data.frame(doc_id = c("West", "Pratchett", "Twain"),
+                        text = text,
+                        full_name = c("Mae West",
+                                      "Terry Pratchett",
+                                      "Mark Twain"),
+                        stringsAsFactors = FALSE)
+```
+
+And then run the function `cnlp_annotate_tif` on in the input:
+
+```{r}
+library(cleanNLP)
+cnlp_init_udpipe()
+obj <- cnlp_annotate_tif(tif_input)
+```
+
+The object `obj` is a cleanNLP list of tables. To get the tif output
+format, which is a good starting format for working with the annotated
+data, run `cnlp_get_tif`:
+
+```{r}
+head(cnlp_get_tif(obj))
+```
+```
+# A tibble: 6 x 13
+  doc_id   sid   tid   word  lemma  upos   pos   cid source relation
+   <chr> <int> <int>  <chr>  <chr> <chr> <chr> <dbl>  <int>    <chr>
+1   West     1     1     It     it  PRON   PRP     0      3     expl
+2   West     1     2     is     be   AUX   VBZ     3      3      cop
+3   West     1     3 better better   ADJ   JJR     6      0     root
+4   West     1     4     to     to  PART    TO    13      6     mark
+5   West     1     5     be     be   AUX    VB    16      6 aux:pass
+6   West     1     6 looked   look  VERB   VBN    19      3    csubj
+# ... with 3 more variables: word_source <chr>, lemma_source <chr>,
+#   spaces <dbl>
+```
+
+The output is now a single data frame that can be saved to disk or
+used in models and plots. When possible, we recommend using the tif
+input format for annotating text.
+
 ## Backends
 
 Installation details for the spacy and corenlp backends, both of which
