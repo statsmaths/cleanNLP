@@ -8,9 +8,9 @@ input_files <- file.path(input_dir,
 
 test_that("annotation uses tokenizers by default", {
   cleanNLP:::.onLoad()
-  init_tokenizers()
-  anno1 <- run_annotators(input_files)
-  anno2 <- run_annotators(input_files, backend = "tokenizers")
+  cnlp_init_tokenizers()
+  anno1 <- cnlp_annotate(input_files)
+  anno2 <- cnlp_annotate(input_files, backend = "tokenizers")
 
   # the times of course will not match
   anno1$document$time <- anno2$document$time
@@ -19,19 +19,19 @@ test_that("annotation uses tokenizers by default", {
 
 
 test_that("output of tokenizers", {
-  init_tokenizers()
-  anno <- run_annotators(input_files)
+  cnlp_init_tokenizers()
+  anno <- cnlp_annotate(input_files)
 
   # check tokens
-  token <- get_token(anno)
+  token <- cnlp_get_token(anno)
 
   expect_equal(class(token), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(token), c("id", "sid", "tid", "word", "lemma",
+  expect_equal(names(token), c("doc_id", "sid", "tid", "word", "lemma",
                                 "upos", "pos", "cid"))
-  expect_equal(token$id, sort(token$id))
-  expect_equal(token$sid[token$id == 0], sort(token$sid[token$id == 0]))
-  expect_equal(token$sid[token$id == 1], sort(token$sid[token$id == 1]))
-  expect_equal(token$sid[token$id == 2], sort(token$sid[token$id == 2]))
+  expect_equal(token$doc_id, sort(token$doc_id))
+  expect_equal(token$sid[token$doc_id == "doc1"], sort(token$sid[token$doc_id == "doc1"]))
+  expect_equal(token$sid[token$doc_id == "doc2"], sort(token$sid[token$doc_id == "doc2"]))
+  expect_equal(token$sid[token$doc_id == "doc3"], sort(token$sid[token$doc_id == "doc3"]))
 
   any_missing <- apply(is.na(token), 2, any)
   expect_true(!any(any_missing[c(1:4,8)]))
@@ -39,48 +39,31 @@ test_that("output of tokenizers", {
   expect_true(all(all_missing[6:7]))
 
   # check document
-  doc <- get_document(anno)
+  doc <- cnlp_get_document(anno)
   expect_equal(class(doc), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(doc), c("id", "time", "version", "language", "uri"))
+  expect_equal(names(doc), c("doc_id", "time", "version", "language", "uri"))
   expect_equal(nrow(doc), 3L)
 
   # check others empty
-  expect_equal(nrow(get_dependency(anno)), 0L)
-  expect_equal(nrow(get_coreference(anno)), 0L)
-  expect_equal(nrow(get_entity(anno)), 0L)
-  expect_equal(nrow(get_sentence(anno)), 0L)
+  expect_equal(nrow(cnlp_get_dependency(anno)), 0L)
+  expect_equal(nrow(cnlp_get_coreference(anno)), 0L)
+  expect_equal(nrow(cnlp_get_entity(anno)), 0L)
+  expect_equal(nrow(cnlp_get_sentence(anno)), 0L)
 })
 
 
 test_that("run_annotators options", {
-  init_tokenizers()
+  cnlp_init_tokenizers()
 
-  anno <- run_annotators(input_files, doc_id_offset = 137,
+  anno <- cnlp_annotate(input_files, doc_ids = c("bush", "clinton", "obama"),
                          backend = "tokenizers")
-  token <- get_token(anno)
-  expect_equal(unique(token$id), 138L:140L)
+  token <- cnlp_get_token(anno)
+  expect_equal(unique(token$doc_id), c("bush", "clinton", "obama"))
 
-  anno <- run_annotators(c("Hi duck.", "Hi bunny.", "Hello goose."),
+  anno <- cnlp_annotate(c("Hi duck.", "Hi bunny.", "Hello goose."),
     as_strings = TRUE, backend = "tokenizers")
-  token <- get_token(anno)
+  token <- cnlp_get_token(anno)
   expect_equal(dim(token), c(9L, 8L))
-
-  od <- file.path(tempdir(), "test_dir")
-  od <- gsub("//", "/", od, fixed = TRUE)
-  anno <- run_annotators(input_files, output_dir = od, backend = "tokenizers")
-  anno2 <- read_annotation(od)
-  expect_equal(anno, anno2)
-
-  od <- file.path(tempdir(), "test_dir")
-  od <- gsub("//", "/", od, fixed = TRUE)
-  anno <- run_annotators(input_files, output_dir = od, load = FALSE,
-    backend = "tokenizers")
-  od <- file.path(Sys.glob(od), "")
-
-  od <- gsub("\\", "/", sprintf("%s/", od), fixed = TRUE)
-  od <- gsub("//", "/", od, fixed = TRUE)
-  anno <- gsub("//", "/", anno, fixed = TRUE)
-  expect_equal(anno, od)
 })
 
 

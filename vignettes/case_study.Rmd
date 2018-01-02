@@ -39,8 +39,8 @@ the distribution of sentence length, the token table is grouped by the document
 and sentence id and the number of rows within each group are computed. The percentiles
 of these counts give a quick summary of the distribution.
 ```{r}
-get_token(sotu) %>%
-  group_by(id, sid) %>%
+cnlp_get_token(sotu) %>%
+  group_by(doc_id, sid) %>%
   summarize(sent_len = n()) %$%
   quantile(sent_len, seq(0,1,0.1))
 ```
@@ -56,7 +56,7 @@ by lemma, and the number of rows in each group are once again calculated. Sortin
 selecting the top $42$ nouns, yields a high level summary of the topics of interest within this
 corpus.
 ```{r}
-get_token(sotu) %>%
+cnlp_get_token(sotu) %>%
   filter(upos == "NOUN") %>%
   group_by(lemma) %>%
   summarize(count = n()) %>%
@@ -85,10 +85,10 @@ the document id level. The results can be joined with the document table to get 
 of the speech and then piped in a **ggplot2** command to illustrate how the length of
 the State of the Union has changed over time.
 ```{r}
-get_token(sotu) %>%
-  group_by(id) %>%
+cnlp_get_token(sotu) %>%
+  group_by(doc_id) %>%
   summarize(n = n()) %>%
-  left_join(get_document(sotu)) %>%
+  left_join(cnlp_get_document(sotu)) %>%
   ggplot(aes(year, n)) +
     geom_line(color = grey(0.8)) +
     geom_point(aes(color = sotu_type)) +
@@ -110,7 +110,7 @@ snippet used to find the top nouns in the dataset can be used to find the top en
 ``get_token`` function is replaced by ``get_entity`` and the table is filtered on ``entity_type``
 rather than the universal part of speech code.
 ```{r}
-get_entity(sotu) %>%
+cnlp_get_entity(sotu) %>%
   filter(entity_type == "LOCATION") %>%
   group_by(entity) %>%
   summarize(count = n()) %>%
@@ -153,14 +153,14 @@ included with **cleanNLP**, and pairs with a target occurring less than 0.5\% of
 are selected to give the final result. Here is an example of this using the first address made
 by George W. Bush in 2001:
 ```{r}
-get_dependency(sotu, get_token = TRUE) %>%
-  left_join(get_document(sotu)) %>%
+cnlp_get_dependency(sotu, get_token = TRUE) %>%
+  left_join(cnlp_get_document(sotu)) %>%
   filter(year == 2001) %>%
   filter(relation == "dobj") %>%
-  select(id = id, start = word, word = lemma_target) %>%
+  select(doc_id = doc_id, start = word, word = lemma_target) %>%
   left_join(word_frequency) %>%
   filter(frequency < 0.0005) %>%
-  select(id, start, word) %$%
+  select(doc_id, start, word) %$%
   sprintf("%s => %s", start, word)
 ```
 ```
@@ -176,14 +176,14 @@ under in the preceding 2000 election. Applying the same analysis to the 2002 Sta
 which came under the shadow of the September 11th terrorist attacks, shows a drastic shift
 in focus.
 ```{r}
-get_dependency(sotu, get_token = TRUE) %>%
-  left_join(get_document(sotu)) %>%
+cnlp_get_dependency(sotu, get_token = TRUE) %>%
+  left_join(cnlp_get_document(sotu)) %>%
   filter(year == 2002) %>%
   filter(relation == "dobj") %>%
-  select(id = id, start = word, word = lemma_target) %>%
+  select(doc_id = doc_id, start = word, word = lemma_target) %>%
   left_join(word_frequency) %>%
   filter(frequency < 0.0005) %>%
-  select(id, start, word) %$%
+  select(doc_id, start, word) %$%
   sprintf("%s => %s", start, word)
 ```
 ```
@@ -208,10 +208,10 @@ takes a matrix and returns a data frame containing the desired number of princip
 components. Dimension reduction involves piping the token table for a corpus
 into the ``get_tfidif`` function and passing the results to ``tidy_pca``.
 ```{r}
-pca <- get_token(sotu) %>%
+pca <- cnlp_get_token(sotu) %>%
   filter(pos %in% c("NN", "NNS")) %>%
-  get_tfidf(min_df = 0.05, max_df = 0.95, type = "tfidf", tf_weight = "dnorm") %$%
-  tidy_pca(tfidf, get_document(sotu))
+  cnlp_get_tfidf(min_df = 0.05, max_df = 0.95, type = "tfidf", tf_weight = "dnorm") %$%
+  cnlp__pca(tfidf, cnlp_get_document(sotu))
 ```
 In this example only non-proper nouns have been included in order to minimize the
 stylistic attributes of the speeches in order to focus more on their content.
@@ -229,9 +229,9 @@ counts, so the type variable in ``get_tfidf`` is set to ``tf``; the results may
 then be directly piped to ``LDA``.
 ```{r}
 library(topicmodels)
-tm <- get_token(sotu) %>%
+tm <- cnlp_get_token(sotu) %>%
   filter(pos %in% c("NN", "NNS")) %>%
-  get_tfidf(min_df = 0.05, max_df = 0.95, type = "tf", tf_weight = "raw") %$%
+  cnlp_get_tfidf(min_df = 0.05, max_df = 0.95, type = "tf", tf_weight = "raw") %$%
   LDA(tf, k = 16, control = list(verbose = 1))
 ```
 The topics, ordered by approximate time period, are visualized below:
@@ -257,19 +257,19 @@ corpus rather than the document as a whole. The ability to do this seamlessly wi
 additional ``mutate`` function defining a new id illustrates the flexibility of the
 ``get_tfidf`` function.
 ```{r}
-df <- get_token(sotu) %>%
-  left_join(get_document(sotu)) %>%
+df <- cnlp_get_token(sotu) %>%
+  left_join(cnlp_get_document(sotu)) %>%
   filter(year > 2000) %>%
-  mutate(new_id = paste(id, sid, sep = "-")) %>%
+  mutate(new_id = paste(doc_id, sid, sep = "-")) %>%
   filter(pos %in% c("NN", "NNS"))
-mat <- get_tfidf(df, min_df = 0, max_df = 1, type = "tf",
+mat <- cnlp_get_tfidf(df, min_df = 0, max_df = 1, type = "tf",
                  tf_weight = "raw", doc_var = "new_id")
 ```
 It will be necessary to define a response variable ``y`` indicating whether this is a
 speech made by President Obama as well as a training flag indicating which speeches were
 made in odd numbered years. This is done via a separate table join and a pair of mutations.
 ```{r}
-meta <- data_frame(new_id = mat$id) %>%
+meta <- data_frame(new_id = mat$doc_) %>%
   left_join(df[!duplicated(df$new_id),]) %>%
   mutate(y = as.numeric(president == "Barack Obama")) %>%
   mutate(train = year %in% seq(2001,2016, by = 2))

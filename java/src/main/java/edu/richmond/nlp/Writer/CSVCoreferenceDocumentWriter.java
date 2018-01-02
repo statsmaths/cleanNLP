@@ -19,7 +19,7 @@ public class CSVCoreferenceDocumentWriter {
 
   public CSVCoreferenceDocumentWriter(String docID) {
     this.docID = docID;
-    this.header = String.format("id,rid,mid,mention,mention_type,number,gender,animacy,sid,tid,tid_end,tid_head%n");
+    this.header = String.format("doc_id,rid,mid,mention,mention_type,number,gender,animacy,sid,tid,tid_end,tid_head%n");
   }
 
   public String print(Annotation doc) {
@@ -33,7 +33,7 @@ public class CSVCoreferenceDocumentWriter {
         for (CorefChain.CorefMention mention : chain.getMentionsInTextualOrder()) {
           int coref_representative = (mention == source) ? 1 : 0;
 
-          sb.append(String.format("%s,%d,%d,\"%s\",%s,%s,%s,%s,%d,%d,%d,%d%n", docID,
+          sb.append(String.format("doc%s,%d,%d,\"%s\",%s,%s,%s,%s,%d,%d,%d,%d%n", docID,
                     chain.getChainID(), mention.mentionID, mention.mentionSpan,
                     mention.mentionType.toString(), mention.number.toString(), mention.gender.toString(),
                     mention.animacy.toString(), mention.sentNum,

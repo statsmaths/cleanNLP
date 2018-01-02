@@ -282,7 +282,7 @@ public class CSVTokenDocumentWriter {
 
   public CSVTokenDocumentWriter(String docID) {
     this.docID = docID;
-    this.header = String.format("id,sid,tid,word,lemma,upos,pos,cid%n");
+    this.header = String.format("doc_id,sid,tid,word,lemma,upos,pos,cid%n");
   }
 
   public String print(CoreMap sentence) {
@@ -293,7 +293,7 @@ public class CSVTokenDocumentWriter {
 
     // add sentence root as a token
     if (tokens.size() > 0) {
-      sb.append(String.format("%s,%d,0,\"ROOT\",\"ROOT\",\"\",\"\",%n", docID, tokens.get(0).sentIndex() + 1));
+      sb.append(String.format("doc%s,%d,0,\"ROOT\",\"ROOT\",\"\",\"\",%n", docID, tokens.get(0).sentIndex() + 1));
     }
 
 
@@ -310,7 +310,7 @@ public class CSVTokenDocumentWriter {
         charOffsetStart = Integer.toString(token.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class));
       }
 
-      sb.append(String.format("%s,%d,%d,\"%s\",\"%s\",\"%s\",\"%s\",%s%n", docID,
+      sb.append(String.format("doc%s,%d,%d,\"%s\",\"%s\",\"%s\",\"%s\",%s%n", docID,
                               token.sentIndex() + 1, token.index(), word, lemma, upos, pos,
                               charOffsetStart));
     }

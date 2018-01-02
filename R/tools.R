@@ -1,6 +1,6 @@
 #' Compute Principal Components and store as a Data Frame
 #'
-#' Takes a matrix, perhaps from the output of \code{\link{get_tfidf}}, and
+#' Takes a matrix, perhaps from the output of \code{\link{cnlp_get_tfidf}}, and
 #' returns a data frame with the top principal components extracted. This
 #' is a simple but powerful technique for visualizing a corpus of documents.
 #'
@@ -23,17 +23,17 @@
 #' data(obama)
 #'
 #' # Get principal components from the non-proper noun lemmas
-#' res <- get_token(obama) %>%
+#' res <- cnlp_get_token(obama) %>%
 #'   filter(pos %in% c("NN", "NNS")) %>%
-#'   get_tfidf()
-#' pca_doc <- tidy_pca(res$tfidf, get_document(obama))
+#'   cnlp_get_tfidf()
+#' pca_doc <- cnlp_pca(res$tfidf, cnlp_get_document(obama))
 #'
 #' # Plot speeches using the first two principal components
 #' plot(pca_doc$PC1, pca_doc$PC2, col = "white")
 #' text(pca_doc$PC1, pca_doc$PC2, label = 2009:2016)
 #'
 #' @export
-tidy_pca <- function(x, meta = NULL, k = 2, center = TRUE, scale = TRUE) {
+cnlp_pca <- function(x, meta = NULL, k = 2, center = TRUE, scale = TRUE) {
 
   m <- stats::prcomp(x, center = center, scale. = scale)$x
   out <- dplyr::as_data_frame(m[,1:k])
@@ -117,30 +117,30 @@ tidy_pca <- function(x, meta = NULL, k = 2, center = TRUE, scale = TRUE) {
 #' data(obama)
 #'
 #' # Top words in the first Obama S.O.T.U., using all tokens
-#' tfidf <- get_tfidf(obama)
+#' tfidf <- cnlp_get_tfidf(obama)
 #' vids <- order(tfidf$tfidf[1,], decreasing = TRUE)[1:10]
 #' tfidf$vocab[vids]
 #'
 #' # Top words, only using non-proper nouns
-#' tfidf <- get_token(obama) %>%
+#' tfidf <- cnlp_get_token(obama) %>%
 #'   filter(pos %in% c("NN", "NNS")) %>%
-#'   get_tfidf()
+#'   cnlp_get_tfidf()
 #' vids <- order(tfidf$tfidf[1,], decreasing = TRUE)[1:10]
 #' tfidf$vocab[vids]
 #'
 #' @export
-get_tfidf <- function(object, type = c("tfidf", "tf", "idf", "vocab", "all"),
+cnlp_get_tfidf <- function(object, type = c("tfidf", "tf", "idf", "vocab", "all"),
                       tf_weight = c("lognorm", "binary", "raw", "dnorm"),
                       idf_weight = c("idf", "smooth", "prob"),
                       min_df = 0.1,
                       max_df = 0.9,
                       max_features = 1e4,
-                      doc_var = "id",
+                      doc_var = "doc_id",
                       token_var = "lemma",
                       vocabulary = NULL) {
 
   if (inherits(object, "annotation"))
-    object <- get_token(object)
+    object <- cnlp_get_token(object)
 
   count <- prop <- token <- NULL # silence r check
 

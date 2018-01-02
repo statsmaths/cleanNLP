@@ -7,20 +7,20 @@
 #' install; the Java option has additional annotators that are not available
 #' in spaCy.
 #'
-#' Once the package is set up, run one of \code{\link{init_tokenizers}},
-#' \code{\link{init_spaCy}}, or \code{\link{init_coreNLP}} to load the
+#' Once the package is set up, run one of \code{\link{cnlp_init_tokenizers}},
+#' \code{\link{cnlp_init_spacy}}, or \code{\link{cnlp_init_corenlp}} to load the
 #' desired NLP backend. After this function is done running, use
-#' \code{\link{run_annotators}} to run the annotation engine over a corpus
+#' \code{\link{cnlp_annotate}} to run the annotation engine over a corpus
 #' of text. Functions are then available to extract data tables from the
-#' annotation object: \code{\link{get_token}}, \code{\link{get_dependency}},
-#' \code{\link{get_document}}, \code{\link{get_coreference}},
-#' \code{\link{get_entity}}, \code{\link{get_sentence}},
-#' and \code{\link{get_vector}}. See their documentation for
+#' annotation object: \code{\link{cnlp_get_token}}, \code{\link{cnlp_get_dependency}},
+#' \code{\link{cnlp_get_document}}, \code{\link{cnlp_get_coreference}},
+#' \code{\link{cnlp_get_entity}}, \code{\link{cnlp_get_sentence}},
+#' and \code{\link{cnlp_get_vector}}. See their documentation for
 #' further details. The package vignettes provide more detailed set-up
 #' information.
 #'
 #' If loading annotation that have previously been saved to disk, these
-#' can be pulled back into R using \code{\link{read_annotation}}. This
+#' can be pulled back into R using \code{\link{cnlp_read_csv}}. This
 #' does not require Java or Python nor does it require initializing the
 #' annotation pipeline.
 #'
@@ -35,13 +35,13 @@
 #' annotation <- run_annotators("path/to/corpus/directory")
 #'
 #' # pull off data tables
-#' token <- get_token(annotation)
-#' dependency <- get_dependency(annotation)
-#' document <- get_document(annotation)
-#' coreference <- get_coreference(annotation)
-#' entity <- get_entity(annotation)
-#' sentiment <- get_sentence(annotation)
-#' vector <- get_vector(annotation)
+#' token <- cnlp_get_token(annotation)
+#' dependency <- cnlp_get_dependency(annotation)
+#' document <- cnlp_get_document(annotation)
+#' coreference <- cnlp_get_coreference(annotation)
+#' entity <- cnlp_get_entity(annotation)
+#' sentiment <- cnlp_get_sentence(annotation)
+#' vector <- cnlp_get_vector(annotation)
 #'}
 #'
 #' @docType package

@@ -16,43 +16,18 @@ check_spacy_exists <- function() {
 }
 
 test_that("extract subset of documents from an annotation object", {
-  sub_obama <- extract_documents(obama, ids = c(1L, 4L))
-  expect_equal(unique(get_token(sub_obama)$id), c(1L, 4L))
-  expect_equal(unique(get_document(sub_obama)$id), c(1L, 4L))
-  expect_equal(unique(get_dependency(sub_obama)$id), c(1L, 4L))
-  expect_equal(unique(get_coreference(sub_obama)$id), c(1L, 4L))
-  expect_equal(unique(get_sentence(sub_obama)$id), c(1L, 4L))
-  expect_equal(unique(get_entity(sub_obama)$id), c(1L, 4L))
-})
-
-test_that("reset document ids", {
-  sub_obama <- extract_documents(obama, ids = c(1L, 4L))
-  sub_obama <- doc_id_reset(sub_obama)
-
-  expect_equal(unique(get_token(sub_obama)$id), c(1L, 2L))
-  expect_equal(unique(get_document(sub_obama)$id), c(1L, 2L))
-  expect_equal(unique(get_dependency(sub_obama)$id), c(1L, 2L))
-  expect_equal(unique(get_coreference(sub_obama)$id), c(1L, 2L))
-  expect_equal(unique(get_sentence(sub_obama)$id), c(1L, 2L))
-  expect_equal(unique(get_entity(sub_obama)$id), c(1L, 2L))
-
-  sub_obama <- extract_documents(obama, ids = c(1L, 4L))
-  sub_obama <- doc_id_reset(sub_obama, start_id = 100L)
-
-  expect_equal(unique(get_token(sub_obama)$id), c(100L, 101L))
-  expect_equal(unique(get_document(sub_obama)$id), c(100L, 101L))
-  expect_equal(unique(get_dependency(sub_obama)$id), c(100L, 101L))
-  expect_equal(unique(get_coreference(sub_obama)$id), c(100L, 101L))
-  expect_equal(unique(get_sentence(sub_obama)$id), c(100L, 101L))
-  expect_equal(unique(get_entity(sub_obama)$id), c(100L, 101L))
+  sub_obama <- cnlp_extract_documents(obama, ids = c("doc2009", "doc2012"))
+  expect_equal(unique(cnlp_get_token(sub_obama)$doc_id), c("doc2009", "doc2012"))
+  expect_equal(unique(cnlp_get_document(sub_obama)$doc_id), c("doc2009", "doc2012"))
+  expect_equal(unique(cnlp_get_dependency(sub_obama)$doc_id), c("doc2009", "doc2012"))
+  expect_equal(unique(cnlp_get_entity(sub_obama)$doc_id), c("doc2009", "doc2012"))
 })
 
 test_that("combine documents", {
-  obama1 <- extract_documents(obama, ids = c(1L, 4L))
-  obama2 <- extract_documents(obama, ids = c(7L))
-  obama12 <- combine_documents(obama1, obama2)
-  obama3 <- extract_documents(obama, ids = c(1L, 4L, 7L))
-  obama3 <- doc_id_reset(obama3)
+  obama1 <- cnlp_extract_documents(obama, ids = c("doc2009", "doc2012"))
+  obama2 <- cnlp_extract_documents(obama, ids = c("doc2015"))
+  obama12 <- cnlp_combine_documents(obama1, obama2)
+  obama3 <- cnlp_extract_documents(obama, ids = c("doc2009", "doc2012", "doc2015"))
 
   expect_equal(obama12, obama3)
 })
@@ -61,13 +36,13 @@ test_that("read and write annotations", {
   skip_on_cran()
   check_spacy_exists()
 
-  init_spaCy(vector_flag = TRUE)
-  anno <- run_annotators(input_files)
+  cnlp_init_spacy(vector_flag = TRUE)
+  anno <- cnlp_annotate(input_files)
 
   od <- file.path(tempdir(), "test_dir_2")
-  write_annotation(anno, od)
+  cnlp_write_csv(anno, od)
 
-  anno_from_disk <- read_annotation(od)
+  anno_from_disk <- cnlp_read_csv(od)
   expect_equal(anno, anno_from_disk)
 })
 

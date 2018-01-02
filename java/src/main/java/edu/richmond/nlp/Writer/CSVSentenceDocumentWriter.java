@@ -20,7 +20,7 @@ public class CSVSentenceDocumentWriter {
 
   public CSVSentenceDocumentWriter(String docID) {
     this.docID = docID;
-    this.header = String.format("id,sid,sentiment%n");
+    this.header = String.format("doc_id,sid,sentiment%n");
   }
 
   public String print(CoreMap sentence) {
@@ -34,7 +34,7 @@ public class CSVSentenceDocumentWriter {
       String predClassString = (predClass == null) ? "NA" : predClass.toString();
       SimpleMatrix sm = RNNCoreAnnotations.getPredictions(sentimentTree);
 
-      sb.append(String.format("%s,%d,%s%n", docID, tokens.get(0).sentIndex() + 1, predClassString));
+      sb.append(String.format("doc%s,%d,%s%n", docID, tokens.get(0).sentIndex() + 1, predClassString));
     }
 
     return sb.toString();

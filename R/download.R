@@ -32,11 +32,11 @@
 #'
 #'@examples
 #'\dontrun{
-#'download_core_nlp()
-#'download_core_nlp(type="spanish")
+#'cnlp_download_core_nlp()
+#'cnlp_download_core_nlp(type="spanish")
 #'}
 #' @export
-download_core_nlp <- function(
+cnlp_download_core_nlp <- function(
     type = c("default", "base", "en", "fr", "de", "es"),
     output_loc, url = NULL, url_core = TRUE, force = FALSE) {
 

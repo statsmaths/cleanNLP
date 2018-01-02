@@ -1,7 +1,7 @@
-#' Interface for initializing the coreNLP backend
+#' Interface for initializing the corenlp backend
 #'
 #' This function must be run before annotating text with
-#' the tokenizers backend. It sets the properties for the
+#' the corenlp backend. It sets the properties for the
 #' soreNLP engine and loads the file using rJava
 #' interface provided by reticulate. See Details for more
 #' information about the anno_level codes.
@@ -14,22 +14,22 @@
 #'                       and run. anno_level 0 is the fastest,
 #'                       and anno_level 8 is the slowest. See Details for a
 #'                       full description of the levels
-#' @param lib_location   a string giving the location of the CoreNLP java
+#' @param lib_location   a string giving the location of the corenlp java
 #'                       files. This should point to a directory which
 #'                       contains, for example the file
 #'                       "stanford-corenlp-*.jar",
 #'                       where "*" is the version number. If missing, the
 #'                       function will try to find the library in the
-#'                       environment variable CORENLP_HOME, and otherwise
+#'                       environment variable corenlp_HOME, and otherwise
 #'                       will fail. (Java model only)
 #' @param mem            a string giving the amount of memory to be assigned
 #'                       to the rJava engine. For example, "6g" assigned 6
 #'                       gigabytes of memory. At least 2 gigabytes are
-#'                       recommended at a minimum for running the CoreNLP
+#'                       recommended at a minimum for running the corenlp
 #'                       package. On a 32bit machine, where this is not
 #'                       possible, setting "1800m" may also work. This
 #'                       option will only have an effect the first
-#'                       time \code{init_backend} is called for the coreNLP
+#'                       time \code{init_backend} is called for the corenlp
 #'                       backend, and also will not have an effect if the
 #'                       java engine is already started by another process.
 #' @param verbose        boolean. Should messages from the pipeline be
@@ -71,11 +71,11 @@
 #'
 #' @examples
 #'\dontrun{
-#'init_coreNLP("en")
+#'cnlp_init_corenlp("en")
 #'}
 #'
 #' @export
-init_coreNLP <- function(language, anno_level = 2, lib_location = NULL,
+cnlp_init_corenlp <- function(language, anno_level = 2, lib_location = NULL,
                          mem = "6g", verbose = FALSE) {
 
   if (missing(language)) language <- "en"
@@ -88,125 +88,125 @@ init_coreNLP <- function(language, anno_level = 2, lib_location = NULL,
     lib_location <- file.path(system.file("extdata", package="cleanNLP"),
                     "/stanford-corenlp-full-2016-10-31")
 
-  # set properties that are not "coreNLP" properties
-  volatiles$coreNLP$language <- language
-  volatiles$coreNLP$lib_location <- lib_location
-  volatiles$coreNLP$mem <- mem
-  volatiles$coreNLP$verbose <- verbose
+  # set properties that are not "corenlp" properties
+  volatiles$corenlp$language <- language
+  volatiles$corenlp$lib_location <- lib_location
+  volatiles$corenlp$mem <- mem
+  volatiles$corenlp$verbose <- verbose
 
   # German models
   if (language == "de" & anno_level == 0) {
-    .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, lemma",
+    .setup_corenlp_backend_raw("annotators", "tokenize, ssplit, pos, lemma",
         clear = TRUE)
-    .setup_coreNLP_backend_raw("tokenize.language", "de")
-    .setup_coreNLP_backend_raw("pos.model",
+    .setup_corenlp_backend_raw("tokenize.language", "de")
+    .setup_corenlp_backend_raw("pos.model",
       "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger")
   }
   if (language == "de" & anno_level == 1) {
-    .setup_coreNLP_backend_raw("annotators",
+    .setup_corenlp_backend_raw("annotators",
       "tokenize, ssplit, pos, lemma, parse, depparse", clear = TRUE)
-    .setup_coreNLP_backend_raw("tokenize.language", "de")
-    .setup_coreNLP_backend_raw("pos.model",
+    .setup_corenlp_backend_raw("tokenize.language", "de")
+    .setup_corenlp_backend_raw("pos.model",
       "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger")
-    .setup_coreNLP_backend_raw("parse.model",
+    .setup_corenlp_backend_raw("parse.model",
       "edu/stanford/nlp/models/lexparser/germanFactored.ser.gz")
   }
   if (language == "de" & anno_level >= 2) {
-    .setup_coreNLP_backend_raw("annotators",
+    .setup_corenlp_backend_raw("annotators",
       "tokenize, ssplit, pos, lemma, ner, parse, depparse", clear = TRUE)
-    .setup_coreNLP_backend_raw("tokenize.language", "de")
-    .setup_coreNLP_backend_raw("pos.model",
+    .setup_corenlp_backend_raw("tokenize.language", "de")
+    .setup_corenlp_backend_raw("pos.model",
       "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger")
-    .setup_coreNLP_backend_raw("ner.model",
+    .setup_corenlp_backend_raw("ner.model",
       "edu/stanford/nlp/models/ner/german.conll.hgc_175m_600.crf.ser.gz")
-    .setup_coreNLP_backend_raw("ner.applyNumericClassifiers", "false")
-    .setup_coreNLP_backend_raw("ner.useSUTime", "false")
-    .setup_coreNLP_backend_raw("parse.model",
+    .setup_corenlp_backend_raw("ner.applyNumericClassifiers", "false")
+    .setup_corenlp_backend_raw("ner.useSUTime", "false")
+    .setup_corenlp_backend_raw("parse.model",
       "edu/stanford/nlp/models/lexparser/germanFactored.ser.gz")
   }
 
   # English models
   if (language == "en" & anno_level == 0) {
-    .setup_coreNLP_backend_raw("annotators",
+    .setup_corenlp_backend_raw("annotators",
       "tokenize, ssplit, pos, lemma", clear = TRUE)
   }
   if (language == "en" & anno_level == 1) {
-    .setup_coreNLP_backend_raw("annotators",
+    .setup_corenlp_backend_raw("annotators",
       "tokenize, ssplit, pos, lemma, parse, depparse, sentiment",
       clear = TRUE)
-    #.setup_coreNLP_backend_raw("parse.model",
+    #.setup_corenlp_backend_raw("parse.model",
     #  "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
   }
   if (language == "en" & anno_level == 2) {
     string <- paste("tokenize, ssplit, pos, lemma, parse, depparse,",
                     "sentiment, ner, mention, entitymentions, natlog",
                     collapse = "")
-    .setup_coreNLP_backend_raw("annotators", string, clear = TRUE)
-    #.setup_coreNLP_backend_raw("parse.model",
+    .setup_corenlp_backend_raw("annotators", string, clear = TRUE)
+    #.setup_corenlp_backend_raw("parse.model",
     #  "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
   }
   if (language == "en" & anno_level >= 3) {
     string <- paste("tokenize, ssplit, pos, lemma, parse, depparse,",
                     " sentiment, ner, mention, entitymentions, natlog, coref",
                     collapse = "")
-    .setup_coreNLP_backend_raw("annotators", string, clear = TRUE)
-    #.setup_coreNLP_backend_raw("parse.model",
+    .setup_corenlp_backend_raw("annotators", string, clear = TRUE)
+    #.setup_corenlp_backend_raw("parse.model",
     #  "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
   }
 
   # Spanish models
   if (language == "es" & anno_level == 0) {
-    .setup_coreNLP_backend_raw("annotators", "tokenize, ssplit, pos, lemma",
+    .setup_corenlp_backend_raw("annotators", "tokenize, ssplit, pos, lemma",
       clear = TRUE)
-    .setup_coreNLP_backend_raw("tokenize.language", "es")
-    .setup_coreNLP_backend_raw("pos.model",
+    .setup_corenlp_backend_raw("tokenize.language", "es")
+    .setup_corenlp_backend_raw("pos.model",
       "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger")
   }
   if (language == "es" & anno_level == 1) {
-    .setup_coreNLP_backend_raw("annotators",
+    .setup_corenlp_backend_raw("annotators",
       "tokenize, ssplit, pos, lemma, parse, depparse", clear = TRUE)
-    .setup_coreNLP_backend_raw("tokenize.language", "es")
-    .setup_coreNLP_backend_raw("pos.model",
+    .setup_corenlp_backend_raw("tokenize.language", "es")
+    .setup_corenlp_backend_raw("pos.model",
       "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger")
-    .setup_coreNLP_backend_raw("parse.model",
+    .setup_corenlp_backend_raw("parse.model",
       "edu/stanford/nlp/models/lexparser/spanishPCFG.ser.gz")
   }
   if (language == "es" & anno_level >= 2) {
-    .setup_coreNLP_backend_raw("annotators",
+    .setup_corenlp_backend_raw("annotators",
       "tokenize, ssplit, pos, lemma, ner, parse, depparse", clear = TRUE)
-    .setup_coreNLP_backend_raw("tokenize.language", "es")
-    .setup_coreNLP_backend_raw("pos.model",
+    .setup_corenlp_backend_raw("tokenize.language", "es")
+    .setup_corenlp_backend_raw("pos.model",
       "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger")
-    .setup_coreNLP_backend_raw("ner.model",
+    .setup_corenlp_backend_raw("ner.model",
       "edu/stanford/nlp/models/ner/spanish.ancora.distsim.s512.crf.ser.gz")
-    .setup_coreNLP_backend_raw("ner.applyNumericClassifiers", "false")
-    .setup_coreNLP_backend_raw("ner.useSUTime", "false")
-    .setup_coreNLP_backend_raw("parse.model",
+    .setup_corenlp_backend_raw("ner.applyNumericClassifiers", "false")
+    .setup_corenlp_backend_raw("ner.useSUTime", "false")
+    .setup_corenlp_backend_raw("parse.model",
       "edu/stanford/nlp/models/lexparser/spanishPCFG.ser.gz")
   }
 
   # French models
   if (language == "fr" & anno_level == 0) {
-    .setup_coreNLP_backend_raw("annotators",
+    .setup_corenlp_backend_raw("annotators",
       "tokenize, ssplit, pos, lemma", clear = TRUE)
-    .setup_coreNLP_backend_raw("tokenize.language", "fr")
-    .setup_coreNLP_backend_raw("pos.model",
+    .setup_corenlp_backend_raw("tokenize.language", "fr")
+    .setup_corenlp_backend_raw("pos.model",
       "edu/stanford/nlp/models/pos-tagger/french/french.tagger")
   }
   if (language == "fr" & anno_level >= 1) {
-    .setup_coreNLP_backend_raw("annotators",
+    .setup_corenlp_backend_raw("annotators",
       "tokenize, ssplit, pos, lemma, parse, depparse", clear = TRUE)
-    .setup_coreNLP_backend_raw("tokenize.language", "fr")
-    .setup_coreNLP_backend_raw("pos.model",
+    .setup_corenlp_backend_raw("tokenize.language", "fr")
+    .setup_corenlp_backend_raw("pos.model",
       "edu/stanford/nlp/models/pos-tagger/french/french.tagger")
-    .setup_coreNLP_backend_raw("parse.model",
+    .setup_corenlp_backend_raw("parse.model",
       "edu/stanford/nlp/models/lexparser/frenchFactored.ser.gz")
   }
 
-  invisible(.init_coreNLP_backend())
+  invisible(init_corenlp_backend())
 }
 
-.setup_coreNLP_backend_raw <- function(keys, values, clear = FALSE) {
+.setup_corenlp_backend_raw <- function(keys, values, clear = FALSE) {
   if (length(keys) != length(values))
     stop(sprintf("length of keys (%d) does not match length of values (%d)",
       length(keys), length(values)))
@@ -220,7 +220,7 @@ init_coreNLP <- function(language, anno_level = 2, lib_location = NULL,
     fin <- file.path(system.file("extdata", package="cleanNLP"),
       "properties.rds")
     if (file.exists(fin))
-      prop <- readr::read_rds(fin)
+      prop <- readRDS(fin)
     else
       prop <- list()
   } else prop <- list()
@@ -230,18 +230,18 @@ init_coreNLP <- function(language, anno_level = 2, lib_location = NULL,
     prop[[keys[i]]] <- values[i]
 
   # save new parameter file
-  readr::write_rds(prop, file.path(system.file("extdata",
+  saveRDS(prop, file.path(system.file("extdata",
     package="cleanNLP"), "properties.rds"))
 }
 
-.init_coreNLP_backend <- function() {
+init_corenlp_backend <- function() {
 
   if (!requireNamespace("rJava")) {
-    stop("The rJava package is required to use the coreNLP backend")
+    stop("The rJava package is required to use the corenlp backend")
   }
 
   # Start java engine, if not already done
-  options(java.parameters = paste0("-Xmx", volatiles$coreNLP$mem))
+  options(java.parameters = paste0("-Xmx", volatiles$corenlp$mem))
   rJava::.jinit()
 
   # Make sure you have a sufficent version of Java
@@ -255,19 +255,19 @@ init_coreNLP <- function(language, anno_level = 2, lib_location = NULL,
   fp <- file.path(system.file("extdata",package="cleanNLP"),
     "properties.rds")
   if (!file.exists(fp)) {
-    .setup_coreNLP_backend_raw("en")
+    .setup_corenlp_backend_raw("en")
   }
-  properties <- readr::read_rds(fp)
+  properties <- readRDS(fp)
   keys <- names(properties)
   values <- as.character(properties)
-  lang <- volatiles$coreNLP$language
+  lang <- volatiles$corenlp$language
 
-  # Find location of the CoreNLP Libraries
-  if (!file.exists(volatiles$coreNLP$lib_location)) {
-    stop("Please run download_core_nlp() in order to",
+  # Find location of the corenlp Libraries
+  if (!file.exists(volatiles$corenlp$lib_location)) {
+    stop("Please run cnlp_download_core_nlp() in order to",
       "install required jar files.")
   } else {
-    path <- Sys.glob(file.path(volatiles$coreNLP$lib_location,
+    path <- Sys.glob(file.path(volatiles$corenlp$lib_location,
       "*.jar"))
   }
 
@@ -279,7 +279,7 @@ init_coreNLP <- function(language, anno_level = 2, lib_location = NULL,
   # Determine if the corenlp files have been loaded correctly
   jar_files <- basename(rJava::.jclassPath())
   if (!("stanford-corenlp-3.7.0.jar" %in% jar_files))
-    warning("The Stanford CoreNLP (3.7.0) files were not found",
+    warning("The Stanford corenlp (3.7.0) files were not found",
             "as expected. Proceed with caution.")
   if (lang == "en" && !("stanford-english-corenlp-2016-10-31-models.jar"
     %in% jar_files))
@@ -301,8 +301,8 @@ init_coreNLP <- function(language, anno_level = 2, lib_location = NULL,
   # If running for the second time, reset the annotator pool
   # We create a second one anyway, but it's good to release the
   # memory explicitly.
-  if (!is.null(volatiles$coreNLP$coreNLP))
-    rJava::.jcall(volatiles$coreNLP$coreNLP, "V", "clearAnnotatorPool")
+  if (!is.null(volatiles$corenlp$corenlp))
+    rJava::.jcall(volatiles$corenlp$corenlp, "V", "clearAnnotatorPool")
 
   # Apply properties to a java properties object
   prop <- rJava::.jnew("java.util.Properties")
@@ -310,7 +310,7 @@ init_coreNLP <- function(language, anno_level = 2, lib_location = NULL,
     prop$setProperty(keys[i], values[i])
 
   # Load the NLP pipeline (quietly, if desired)
-  if (!volatiles$coreNLP$verbose) {
+  if (!volatiles$corenlp$verbose) {
     err <- rJava::.jfield("java/lang/System", , "err")
     rJava::.jcall("java/lang/System", "V", "setErr",
       rJava::.jnew("java/io/PrintStream",
@@ -321,20 +321,90 @@ init_coreNLP <- function(language, anno_level = 2, lib_location = NULL,
       "Please be patient.)")
   }
 
-  volatiles$coreNLP$coreNLP <-
+  volatiles$corenlp$corenlp <-
     rJava::.jnew("edu.stanford.nlp.pipeline.StanfordCoreNLP", prop)
-  volatiles$coreNLP$AnnotationProcessor <-
+  volatiles$corenlp$AnnotationProcessor <-
     rJava::.jnew("edu.richmond.nlp.AnnotationProcessor")
-  if (!volatiles$coreNLP$verbose)
+  if (!volatiles$corenlp$verbose)
     rJava::.jcall("java/lang/System", "V", "setErr", err)
 
   gc() # manually garbage collect in case we just threw
        # away a large Java object; it may look small to
-       # R (just a pointer) but the CoreNLP pipeline is
+       # R (just a pointer) but the corenlp pipeline is
        # very large
 
-  volatiles$coreNLP$init <- TRUE
-  volatiles$model_init_last <- "coreNLP"
+  volatiles$corenlp$init <- TRUE
+  volatiles$model_init_last <- "corenlp"
 
   invisible(NULL)
 }
+
+
+annotate_with_corenlp <- function(input, as_strings) {
+
+  if (!volatiles$corenlp$init) {
+    stop("You must initialize corenlp with: init_corenlp_backend()")
+  }
+
+  output_dir <- tempfile()   # yes, we want tempfile and not tempdir; the
+                             # latter points to a static directory that is
+                             # persistent through the R session; tempfile()
+                             # gives a random path *within* that directory;
+                             # we are free to treat it as a directory rather
+                             # than a file.
+
+  # the spacy module saves the results on disk, so we need to have
+  # a place to put the output
+  dir.create(output_dir, FALSE, TRUE)
+
+  # have to follow python file naming rules; causes a problem
+  # in windows if we use the default R values
+  output_dir <- file.path(Sys.glob(output_dir), "/")
+  output_dir <- gsub("\\", "/", output_dir, fixed = TRUE)
+
+  # for now, we will only work with strings stored on disk, so
+  # write strings to disk (NOTE: yes this is silly and needs to
+  # be modified)
+  if (as_strings) {
+    new_input <- NULL
+    for (i in seq_along(input)) {
+      this_file <- tempfile()
+      new_input <- c(new_input, this_file)
+      writeLines(input[i], this_file)
+    }
+    input <- new_input
+  }
+
+  # find the input values; if none are found return an error
+  input <- Sys.glob(input)
+  if (length(input) == 0) {
+    stop("No valid files found.")
+  }
+
+  # rJava is used as a bridge to Python
+  if (!requireNamespace("rJava")) {
+    stop("The reticulate package is required to use the spacy backend.")
+  }
+
+  # set parameters within the Java class
+  rJava::.jcall(volatiles$corenlp$AnnotationProcessor, "V",
+                "setOutputPath", output_dir)
+  rJava::.jcall(volatiles$corenlp$AnnotationProcessor, "V",
+                "setLanguage", volatiles$corenlp$language)
+
+  # run the AnnotationProcessor method "processFiles"
+  rJava::.jcall(volatiles$corenlp$AnnotationProcessor,
+                "V",
+                "processFiles",
+                rJava::.jarray(input),
+                volatiles$corenlp$corenlp)
+
+  # read in the output as an R object, if desired; otherwise
+  # just return a path to the files; the latter is useful if
+  # the output is very large
+  out <- cnlp_read_csv(output_dir)
+
+  return(out)
+}
+
+

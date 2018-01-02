@@ -1,3 +1,27 @@
+# cleanNLP 2.0
+
+This is a major re-structuring of the cleanNLP package.
+The primary changes include:
+
+* the new udpipe backend, which gives tokenization,
+POS-tags, lemmatization,and dependency parsing with no
+external dependencies
+
+* all functions return results in memory; to store data
+on disk, users need to save the output manually
+
+* use a character vector named 'doc_id' as the document
+id (it was previously an integer index); this is to
+conform to the text interchange format (tif)
+
+* functions now use the prefix 'cnlp_', following convention
+of packages such as stringi; the old versions still exist
+but produce a warning; will be removed in version 2.1
+
+There are also many internal changes, primarily to deal
+with the new spaCy (2.0) version and to make the use of
+udpipe more natural.
+
 # cleanNLP 1.10
 
 In this version, the internal mechanisms for running

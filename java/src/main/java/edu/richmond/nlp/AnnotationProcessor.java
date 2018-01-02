@@ -25,7 +25,6 @@ public final class AnnotationProcessor {
   DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
   String output_path = "";
   String language = "";
-  int idOffset = 0;
 
   public AnnotationProcessor() {}
 
@@ -37,10 +36,6 @@ public final class AnnotationProcessor {
     this.language = language;
   }
 
-  public void setIdOffset(int idOffset) {
-    this.idOffset = idOffset;
-  }
-
   public void processFiles(String[] file_list, StanfordCoreNLP scnlp) throws FileNotFoundException, IOException {
     processFiles(Arrays.asList(file_list), scnlp);
   }
@@ -49,7 +44,7 @@ public final class AnnotationProcessor {
     String corenlp_version = scnlp.getClass().getPackage().getImplementationVersion();
     df.setTimeZone(tz);
     boolean append = false;
-    int docID = idOffset;
+    int docID = 1;
 
     for (int i = 0; i < file_list.size(); i++) {
       // record current time and start processing files

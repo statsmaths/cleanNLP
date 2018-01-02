@@ -16,13 +16,13 @@ public class CSVDocumentDocumentWriter {
 
   public CSVDocumentDocumentWriter(String docID) {
     this.docID = docID;
-    this.header = String.format("id,time,version,language,uri%n");
+    this.header = String.format("doc_id,time,version,language,uri%n");
   }
 
   public String print(Annotation doc) {
 
     StringBuilder sb = new StringBuilder();
-    sb.append(String.format("%s,%s,%s,%s,\"%s\"%n", docID, this.starttime,
+    sb.append(String.format("doc%s,%s,%s,%s,\"%s\"%n", docID, this.starttime,
                             this.version, this.language, this.uri));
 
     return sb.toString();

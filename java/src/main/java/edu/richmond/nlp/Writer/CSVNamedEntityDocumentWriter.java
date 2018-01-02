@@ -16,7 +16,7 @@ public class CSVNamedEntityDocumentWriter {
 
   public CSVNamedEntityDocumentWriter(String docID) {
     this.docID = docID;
-    this.header = String.format("id,sid,tid,tid_end,entity_type,entity,entity_normalized%n");
+    this.header = String.format("doc_id,sid,tid,tid_end,entity_type,entity,entity_normalized%n");
   }
 
   public String print(CoreMap sentence) {
@@ -35,7 +35,7 @@ public class CSVNamedEntityDocumentWriter {
 
       if (ner.equals("O")) {
         if (!entity.equals("")) {
-          sb.append(String.format("%s,%d,%d,%d,%s,\"%s\",\"%s\"%n",
+          sb.append(String.format("doc%s,%d,%d,%d,%s,\"%s\",\"%s\"%n",
                                   docID, sid, tid, tidEnd, entityType, entity, entityNorm));
           entity = "";
           entityType = "";
@@ -57,7 +57,7 @@ public class CSVNamedEntityDocumentWriter {
 
     // flush last entity in case it ends the sentence
     if (!entity.equals("")) {
-      sb.append(String.format("%s,%d,%d,%d,%s,\"%s\",\"%s\"%n", docID, sid + 1, tid, tidEnd, entityType, entity, entityNorm));
+      sb.append(String.format("doc%s,%d,%d,%d,%s,\"%s\",\"%s\"%n", docID, sid + 1, tid, tidEnd, entityType, entity, entityNorm));
     }
 
 
