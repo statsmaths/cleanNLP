@@ -40,7 +40,7 @@
 #'
 #' @export
 cnlp_annotate <- function(input,
-                           as_strings = FALSE,
+                           as_strings = TRUE,
                            doc_ids = NULL,
                            backend = NULL,
                            meta = NULL) {

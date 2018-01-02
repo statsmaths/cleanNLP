@@ -25,7 +25,7 @@ test_that("tokens with udpipe", {
   skip_on_cran()
 
   cnlp_init_udpipe()
-  anno <- cnlp_annotate(input_files)
+  anno <- cnlp_annotate(input_files, as_strings = FALSE)
   token <- cnlp_get_token(anno)
 
   expect_equal(class(token), c("tbl_df", "tbl", "data.frame"))
@@ -47,7 +47,7 @@ test_that("dependency with spacy", {
   skip_on_cran()
 
   cnlp_init_udpipe()
-  anno <- cnlp_annotate(input_files)
+  anno <- cnlp_annotate(input_files, as_strings = FALSE)
   dep <- cnlp_get_dependency(anno)
 
   expect_equal(class(dep), c("tbl_df", "tbl", "data.frame"))
@@ -66,7 +66,8 @@ test_that("cnlp_annotate options", {
 
   cnlp_init_udpipe()
   anno <- cnlp_annotate(input_files,
-                        doc_ids = c("bush", "clinton", "obama"))
+                        doc_ids = c("bush", "clinton", "obama"),
+                        as_strings = FALSE)
   token <- cnlp_get_token(anno)
   expect_equal(unique(token$doc_id), c("bush", "clinton", "obama"))
 

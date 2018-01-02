@@ -37,7 +37,7 @@ test_that("read and write annotations", {
   check_spacy_exists()
 
   cnlp_init_spacy(vector_flag = TRUE)
-  anno <- cnlp_annotate(input_files)
+  anno <- cnlp_annotate(input_files, as_strings = FALSE)
 
   od <- file.path(tempdir(), "test_dir_2")
   cnlp_write_csv(anno, od)

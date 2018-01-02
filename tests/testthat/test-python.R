@@ -35,7 +35,7 @@ test_that("tokens with spacy", {
   check_spacy_exists()
 
   cnlp_init_spacy()
-  anno <- cnlp_annotate(input_files)
+  anno <- cnlp_annotate(input_files, as_strings = FALSE)
   token <- cnlp_get_token(anno)
 
   expect_equal(class(token), c("tbl_df", "tbl", "data.frame"))
@@ -58,7 +58,7 @@ test_that("dependency with spacy", {
   check_spacy_exists()
 
   cnlp_init_spacy()
-  anno <- cnlp_annotate(input_files)
+  anno <- cnlp_annotate(input_files, as_strings = FALSE)
   dep <- cnlp_get_dependency(anno)
 
   expect_equal(class(dep), c("tbl_df", "tbl", "data.frame"))
@@ -75,7 +75,7 @@ test_that("entity with spacy", {
   check_spacy_exists()
 
   cnlp_init_spacy()
-  anno <- cnlp_annotate(input_files)
+  anno <- cnlp_annotate(input_files, as_strings = FALSE)
   ent <- cnlp_get_entity(anno)
 
   expect_equal(class(ent), c("tbl_df", "tbl", "data.frame"))
@@ -92,13 +92,13 @@ test_that("cnlp_init_spacy", {
   check_spacy_exists()
 
   cnlp_init_spacy(vector_flag = TRUE)
-  anno <- cnlp_annotate(input_files)
+  anno <- cnlp_annotate(input_files, as_strings = FALSE)
   expect_true(nrow(cnlp_get_vector(anno)) > 0L)
   expect_equal(ncol(cnlp_get_vector(anno)), 384L)
   expect_equal(class(cnlp_get_vector(anno)), "matrix")
 
   cnlp_init_spacy(entity_flag = FALSE)
-  anno <- cnlp_annotate(input_files)
+  anno <- cnlp_annotate(input_files, as_strings = FALSE)
   expect_equal(nrow(cnlp_get_entity(anno)), 0L)
   expect_equal(nrow(cnlp_get_vector(anno)), 0L)
   expect_equal(ncol(cnlp_get_vector(anno)), 0L)
@@ -110,7 +110,8 @@ test_that("cnlp_annotate options", {
 
   cnlp_init_spacy(vector_flag = FALSE)
   anno <- cnlp_annotate(input_files,
-                        doc_ids = c("bush", "clinton", "obama"))
+                        doc_ids = c("bush", "clinton", "obama"),
+                        as_strings = FALSE)
   token <- cnlp_get_token(anno)
   expect_equal(unique(token$doc_id), c("bush", "clinton", "obama"))
 

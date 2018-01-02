@@ -40,7 +40,8 @@ test_that("coreNLP; anno_level 0", {
   check_corenlp_available()
 
   cnlp_init_corenlp("en", anno_level = 0, lib_location = lib_loc)
-  anno <- cnlp_annotate(input_files, backend = "coreNLP")
+  anno <- cnlp_annotate(input_files, backend = "coreNLP",
+                        as_strings = FALSE)
 
   # check token
   token <- cnlp_get_token(anno)
@@ -76,7 +77,8 @@ test_that("coreNLP; anno_level 1", {
   check_corenlp_available()
 
   cnlp_init_corenlp("en", anno_level = 1, lib_location = lib_loc)
-  anno <- cnlp_annotate(input_files, backend = "coreNLP")
+  anno <- cnlp_annotate(input_files, backend = "coreNLP",
+                        as_strings = FALSE)
 
   # check token
   token <- cnlp_get_token(anno)
@@ -127,7 +129,8 @@ test_that("coreNLP; anno_level 2", {
   check_corenlp_available()
 
   cnlp_init_corenlp("en", anno_level = 2, lib_location = lib_loc)
-  anno <- cnlp_annotate(input_files, backend = "coreNLP")
+  anno <- cnlp_annotate(input_files, backend = "coreNLP",
+                        as_strings = FALSE)
 
   # check token
   token <- cnlp_get_token(anno)
@@ -186,7 +189,8 @@ test_that("coreNLP; anno_level 3", {
   check_corenlp_available()
 
   cnlp_init_corenlp("en", anno_level = 3, lib_location = lib_loc)
-  anno <- cnlp_annotate(input_files, backend = "corenlp")
+  anno <- cnlp_annotate(input_files, backend = "corenlp",
+                        as_strings = FALSE)
 
   # check token
   token <- cnlp_get_token(anno)
@@ -253,7 +257,7 @@ test_that("run_annotators options", {
 
   cnlp_init_corenlp("en", anno_level = 0, lib_location = lib_loc)
   anno <- cnlp_annotate(input_files, doc_ids = c("d1", "d2", "d3"),
-                        backend = "coreNLP")
+                        backend = "coreNLP", as_strings = FALSE)
   token <- cnlp_get_token(anno)
   expect_equal(unique(token$doc_id), c("d1", "d2", "d3"))
 

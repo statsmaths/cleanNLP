@@ -9,8 +9,8 @@ input_files <- file.path(input_dir,
 test_that("annotation uses tokenizers by default", {
   cleanNLP:::.onLoad()
   cnlp_init_tokenizers()
-  anno1 <- cnlp_annotate(input_files)
-  anno2 <- cnlp_annotate(input_files, backend = "tokenizers")
+  anno1 <- cnlp_annotate(input_files, as_strings = FALSE)
+  anno2 <- cnlp_annotate(input_files, backend = "tokenizers", as_strings = FALSE)
 
   # the times of course will not match
   anno1$document$time <- anno2$document$time
@@ -20,7 +20,7 @@ test_that("annotation uses tokenizers by default", {
 
 test_that("output of tokenizers", {
   cnlp_init_tokenizers()
-  anno <- cnlp_annotate(input_files)
+  anno <- cnlp_annotate(input_files, as_strings = FALSE)
 
   # check tokens
   token <- cnlp_get_token(anno)
@@ -56,7 +56,8 @@ test_that("run_annotators options", {
   cnlp_init_tokenizers()
 
   anno <- cnlp_annotate(input_files, doc_ids = c("bush", "clinton", "obama"),
-                         backend = "tokenizers")
+                         backend = "tokenizers",
+                         as_strings = FALSE)
   token <- cnlp_get_token(anno)
   expect_equal(unique(token$doc_id), c("bush", "clinton", "obama"))
 

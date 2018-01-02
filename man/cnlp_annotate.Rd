@@ -4,7 +4,7 @@
 \alias{cnlp_annotate}
 \title{Run the annotation pipeline on a set of documents}
 \usage{
-cnlp_annotate(input, as_strings = FALSE, doc_ids = NULL, backend = NULL,
+cnlp_annotate(input, as_strings = TRUE, doc_ids = NULL, backend = NULL,
   meta = NULL)
 }
 \arguments{
