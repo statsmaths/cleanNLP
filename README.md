@@ -99,13 +99,21 @@ access these table with the `get_token` function:
 head(cnlp_get_token(obj))
 ```
 ```
-  doc_id sid tid    word   lemma upos pos cid
-1   doc1   1   1     The     the  DET  DT   0
-2   doc1   1   2 regular regular  ADJ  JJ   4
-3   doc1   1   3   early   early  ADJ  JJ  12
-4   doc1   1   4 morning morning NOUN  NN  18
-5   doc1   1   5    yell    yell NOUN  NN  26
-6   doc1   1   6      of      of  ADP  IN  31
+> head(cnlp_get_token(obj))
+  doc_id sid tid    word   lemma upos pos cid pid case definite degree gender
+1   doc1   1   1     The     the  DET  DT   0   1 <NA>      Def   <NA>   <NA>
+2   doc1   1   2 regular regular  ADJ  JJ   4   1 <NA>     <NA>    Pos   <NA>
+3   doc1   1   3   early   early  ADJ  JJ  12   1 <NA>     <NA>    Pos   <NA>
+4   doc1   1   4 morning morning NOUN  NN  18   1 <NA>     <NA>   <NA>   <NA>
+5   doc1   1   5    yell    yell NOUN  NN  26   1 <NA>     <NA>   <NA>   <NA>
+6   doc1   1   6      of      of  ADP  IN  31   1 <NA>     <NA>   <NA>   <NA>
+  mood num_type number person pron_type tense verb_form
+1 <NA>     <NA>   <NA>   <NA>       Art  <NA>      <NA>
+2 <NA>     <NA>   <NA>   <NA>      <NA>  <NA>      <NA>
+3 <NA>     <NA>   <NA>   <NA>      <NA>  <NA>      <NA>
+4 <NA>     <NA>   Sing   <NA>      <NA>  <NA>      <NA>
+5 <NA>     <NA>   Sing   <NA>      <NA>  <NA>      <NA>
+6 <NA>     <NA>   <NA>   <NA>      <NA>  <NA>      <NA>
 ```
 
 The output from the `cnlp_get` functions are (mostly) pre-calculated.
@@ -150,17 +158,19 @@ data, run `cnlp_get_tif`:
 head(cnlp_get_tif(obj))
 ```
 ```
-# A tibble: 6 x 13
-  doc_id   sid   tid   word  lemma  upos   pos   cid source relation
-   <chr> <int> <int>  <chr>  <chr> <chr> <chr> <dbl>  <int>    <chr>
-1   West     1     1     It     it  PRON   PRP     0      3     expl
-2   West     1     2     is     be   AUX   VBZ     3      3      cop
-3   West     1     3 better better   ADJ   JJR     6      0     root
-4   West     1     4     to     to  PART    TO    13      6     mark
-5   West     1     5     be     be   AUX    VB    16      6 aux:pass
-6   West     1     6 looked   look  VERB   VBN    19      3    csubj
-# ... with 3 more variables: word_source <chr>, lemma_source <chr>,
-#   spaces <dbl>
+# A tibble: 6 x 25
+  doc_id   sid   tid   word  lemma  upos   pos   cid   pid  case definite
+   <chr> <int> <int>  <chr>  <chr> <chr> <chr> <dbl> <int> <chr>    <chr>
+1   West     1     1     It     it  PRON   PRP     0     1   Nom     <NA>
+2   West     1     2     is     be   AUX   VBZ     3     1  <NA>     <NA>
+3   West     1     3 better better   ADJ   JJR     6     1  <NA>     <NA>
+4   West     1     4     to     to  PART    TO    13     1  <NA>     <NA>
+5   West     1     5     be     be   AUX    VB    16     1  <NA>     <NA>
+6   West     1     6 looked   look  VERB   VBN    19     1  <NA>     <NA>
+# ... with 14 more variables: degree <chr>, gender <chr>, mood <chr>,
+#   number <chr>, person <chr>, pron_type <chr>, tense <chr>, verb_form <chr>,
+#   voice <chr>, source <int>, relation <chr>, word_source <chr>,
+#   lemma_source <chr>, spaces <dbl>
 ```
 
 The output is now a single data frame that can be saved to disk or

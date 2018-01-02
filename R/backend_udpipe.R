@@ -135,10 +135,12 @@ from_udpipe_CoNLL <- function(z) {
   temp <- temp[ok]
   doc_id <- doc_id[ok]
   sid <- sid[ok]
+  pid <- pid[ok]
 
   # parse the body of the CoNLL
   body <- utils::read.delim(
                      text = temp, sep = "\t", na.strings = "_",
+                     quote = "",
                      header = FALSE, stringsAsFactors = FALSE,
                      colClasses = c("integer", "character", "character",
                                     "character", "character", "character",
@@ -152,6 +154,7 @@ from_udpipe_CoNLL <- function(z) {
   pos <- body$V5
   relation <- body$V8
   source <- body$V7
+  feats <- body$V6
 
   # detect character offsets
   cid <- stringi::stri_match(body$V10, regex = "SpacesAfter=([^|]+)")[,2]
@@ -174,9 +177,30 @@ from_udpipe_CoNLL <- function(z) {
   token <- data.frame(doc_id = doc_id, sid = sid, tid = tid,
                 word = word, lemma = lemma,
                 upos = upos, pos = pos,
-                cid = cid,
+                cid = cid, pid = pid,
                 stringsAsFactors = FALSE)
 
+  # add extra features to token table
+  temp <- stringi::stri_split(feats, fixed = "|")
+
+  index <- mapply(function(u, v) rep(u, length(v)), seq_along(temp), temp)
+  df <- data.frame(index = unlist(index),
+                   raw = unlist(temp))
+  temp <- stringi::stri_match(df$raw, regex = "([A-Za-z]+)=([A-Za-z0-9]+)")
+  df$key <- temp[,2]
+  df$val <- temp[,3]
+  df <- df[!is.na(df$raw),]
+  df$key <- stringi::stri_replace_all(df$key, "$1_$2", regex = "([a-z])([A-Z])")
+  df$key <- tolower(df$key)
+
+  vars <- sort(unique(df$key))
+  for (v in vars) {
+    df_var <- df[df$key == v,]
+    token[[v]] <- NA_character_
+    token[[v]][df_var$index] <- df_var$val
+  }
+
+  # add roots to the token table
   roots <- token[tid == 1,]
   roots$tid <- 0L
   roots$word <- roots$lemma <- "ROOT"

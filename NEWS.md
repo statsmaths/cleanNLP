@@ -15,8 +15,7 @@ id (it was previously an integer index); this is to
 conform to the text interchange format (tif)
 
 * functions now use the prefix 'cnlp_', following convention
-of packages such as stringi; the old versions still exist
-but produce a warning; will be removed in version 2.1
+of packages such as stringi
 
 There are also many internal changes, primarily to deal
 with the new spaCy (2.0) version and to make the use of

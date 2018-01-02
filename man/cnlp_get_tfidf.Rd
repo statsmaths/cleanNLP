@@ -67,11 +67,11 @@ supplied, the options \code{min_df}, \code{max_df},
 and \code{max_features} are ignored.}
 }
 \value{
-a named list, including some of the following:
+a sparse matrix with dimnames or, if "all", a list with elements
 \itemize{
 \item{tf}{ the term frequency matrix}
 \item{idf}{ the inverse document frequency matrix}
-\item{tfidf}{ the produce of the tf and idf matrices}
+\item{tfidf}{ the product of the tf and idf matrices}
 \item{vocab}{ a character vector giving the vocabulary used in
               the function, corresponding to the columns of the
               matrices}
@@ -92,14 +92,14 @@ data(obama)
 
 # Top words in the first Obama S.O.T.U., using all tokens
 tfidf <- cnlp_get_tfidf(obama)
-vids <- order(tfidf$tfidf[1,], decreasing = TRUE)[1:10]
-tfidf$vocab[vids]
+vids <- order(tfidf[1,], decreasing = TRUE)[1:10]
+colnames(tfidf)[vids]
 
 # Top words, only using non-proper nouns
 tfidf <- cnlp_get_token(obama) \%>\%
   filter(pos \%in\% c("NN", "NNS")) \%>\%
   cnlp_get_tfidf()
-vids <- order(tfidf$tfidf[1,], decreasing = TRUE)[1:10]
-tfidf$vocab[vids]
+vids <- order(tfidf[1,], decreasing = TRUE)[1:10]
+colnames(tfidf)[vids]
 
 }

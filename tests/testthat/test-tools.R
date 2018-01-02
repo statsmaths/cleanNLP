@@ -18,35 +18,36 @@ test_that("testing get_tfidf", {
   expect_equal(tf_direct, tf_manual)
 
   tf_direct <- cnlp_get_tfidf(obama, max_features = 5L)
-  expect_equal(ncol(tf_direct$tfidf), 5L)
+  expect_equal(ncol(tf_direct), 5L)
 
   vocabulary <- cnlp_get_tfidf(obama, type = "vocab",
-    max_features = 100L)$vocab
+    max_features = 100L)
   expect_equal(class(vocabulary), "character")
   expect_equal(length(vocabulary), 100L)
 
   tf_direct <- cnlp_get_tfidf(obama, max_features = 100L)
   tf_manual <- cnlp_get_tfidf(obama, vocabulary = vocabulary)
   expect_equal(tf_direct, tf_manual)
+  expect_equal(colnames(tf_direct), vocabulary)
 })
 
 
 test_that("testing tidy_pca", {
-  obj <- cnlp_get_tfidf(obama)
-  res <- cnlp_pca(obj$tfidf)
+  tfidf <- cnlp_get_tfidf(obama)
+  res <- cnlp_pca(tfidf)
   expect_equal(class(res), c("tbl_df", "tbl", "data.frame"))
   expect_equal(names(res), c("PC1", "PC2"))
-  expect_equal(nrow(res), nrow(obj$tfidf))
+  expect_equal(nrow(res), nrow(tfidf))
 
-  res <- cnlp_pca(obj$tfidf, k = 5L)
+  res <- cnlp_pca(tfidf, k = 5L)
   expect_equal(class(res), c("tbl_df", "tbl", "data.frame"))
   expect_equal(names(res), c("PC1", "PC2", "PC3", "PC4", "PC5"))
-  expect_equal(nrow(res), nrow(obj$tfidf))
+  expect_equal(nrow(res), nrow(tfidf))
 
-  res <- cnlp_pca(obj$tfidf, meta = cnlp_get_document(obama)[,c("doc_id", "time")])
+  res <- cnlp_pca(tfidf, meta = cnlp_get_document(obama)[,c("doc_id", "time")])
   expect_equal(class(res), c("tbl_df", "tbl", "data.frame"))
   expect_equal(names(res), c("doc_id", "time", "PC1", "PC2"))
-  expect_equal(nrow(res), nrow(obj$tfidf))
+  expect_equal(nrow(res), nrow(tfidf))
 
 })
 

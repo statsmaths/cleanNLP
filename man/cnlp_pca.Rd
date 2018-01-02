@@ -37,10 +37,10 @@ require(dplyr)
 data(obama)
 
 # Get principal components from the non-proper noun lemmas
-res <- cnlp_get_token(obama) \%>\%
+tfidf <- cnlp_get_token(obama) \%>\%
   filter(pos \%in\% c("NN", "NNS")) \%>\%
   cnlp_get_tfidf()
-pca_doc <- cnlp_pca(res$tfidf, cnlp_get_document(obama))
+pca_doc <- cnlp_pca(tfidf, cnlp_get_document(obama))
 
 # Plot speeches using the first two principal components
 plot(pca_doc$PC1, pca_doc$PC2, col = "white")
