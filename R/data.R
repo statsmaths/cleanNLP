@@ -9,6 +9,18 @@
 #' @keywords data
 NULL
 
+#' Universal Declaration of Human Rights
+#'
+#' Data frame containing the 30 Articles in the United Nations'
+#' Universal Declaration of Human Rights, ratified on 10 December 1948
+#' in Paris, France.
+#'
+#' @name un
+#' @docType data
+#' @references \url{http://www.un.org/en/universal-declaration-human-rights/}
+#' @keywords data
+NULL
+
 #' Universal Dependency Frequencies
 #'
 #' The language-specific frequency of universal dependency codes as given
