@@ -2,9 +2,9 @@
 
 S3method(print,annotation)
 export(cnlp_annotate)
-export(cnlp_annotate_tif)
 export(cnlp_combine_documents)
-export(cnlp_download_core_nlp)
+export(cnlp_download_corenlp)
+export(cnlp_download_udpipe)
 export(cnlp_extract_documents)
 export(cnlp_get_coreference)
 export(cnlp_get_dependency)

@@ -8,10 +8,12 @@ cnlp_annotate(input, as_strings = TRUE, doc_ids = NULL, backend = NULL,
   meta = NULL)
 }
 \arguments{
-\item{input}{either a vector of file names to parse, or a
+\item{input}{either a vector of file names to parse, a
 character vector with one document in each
-element. Specify the latter with the
-as_string flag.}
+element, or a data frame. If a data frame,
+it is assumed that the first column gives the
+document ids, the second the raw text, and
+other columns (if present) yield metadata}
 
 \item{as_strings}{logical. Is the data given to \code{input} the
 actual document text rather than file names?}

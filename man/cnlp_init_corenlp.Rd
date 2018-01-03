@@ -44,7 +44,7 @@ written to the console or suppressed?}
 \description{
 This function must be run before annotating text with
 the corenlp backend. It sets the properties for the
-soreNLP engine and loads the file using rJava
+corenlp engine and loads the file using rJava
 interface provided by reticulate. See Details for more
 information about the anno_level codes.
 }

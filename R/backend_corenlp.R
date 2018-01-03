@@ -2,7 +2,7 @@
 #'
 #' This function must be run before annotating text with
 #' the corenlp backend. It sets the properties for the
-#' soreNLP engine and loads the file using rJava
+#' corenlp engine and loads the file using rJava
 #' interface provided by reticulate. See Details for more
 #' information about the anno_level codes.
 #'
@@ -96,42 +96,42 @@ cnlp_init_corenlp <- function(language, anno_level = 2, lib_location = NULL,
 
   # German models
   if (language == "de" & anno_level == 0) {
-    .setup_corenlp_backend_raw("annotators", "tokenize, ssplit, pos, lemma",
+    setup_corenlp_backend_raw("annotators", "tokenize, ssplit, pos, lemma",
         clear = TRUE)
-    .setup_corenlp_backend_raw("tokenize.language", "de")
-    .setup_corenlp_backend_raw("pos.model",
+    setup_corenlp_backend_raw("tokenize.language", "de")
+    setup_corenlp_backend_raw("pos.model",
       "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger")
   }
   if (language == "de" & anno_level == 1) {
-    .setup_corenlp_backend_raw("annotators",
+    setup_corenlp_backend_raw("annotators",
       "tokenize, ssplit, pos, lemma, parse, depparse", clear = TRUE)
-    .setup_corenlp_backend_raw("tokenize.language", "de")
-    .setup_corenlp_backend_raw("pos.model",
+    setup_corenlp_backend_raw("tokenize.language", "de")
+    setup_corenlp_backend_raw("pos.model",
       "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger")
-    .setup_corenlp_backend_raw("parse.model",
+    setup_corenlp_backend_raw("parse.model",
       "edu/stanford/nlp/models/lexparser/germanFactored.ser.gz")
   }
   if (language == "de" & anno_level >= 2) {
-    .setup_corenlp_backend_raw("annotators",
+    setup_corenlp_backend_raw("annotators",
       "tokenize, ssplit, pos, lemma, ner, parse, depparse", clear = TRUE)
-    .setup_corenlp_backend_raw("tokenize.language", "de")
-    .setup_corenlp_backend_raw("pos.model",
+    setup_corenlp_backend_raw("tokenize.language", "de")
+    setup_corenlp_backend_raw("pos.model",
       "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger")
-    .setup_corenlp_backend_raw("ner.model",
+    setup_corenlp_backend_raw("ner.model",
       "edu/stanford/nlp/models/ner/german.conll.hgc_175m_600.crf.ser.gz")
-    .setup_corenlp_backend_raw("ner.applyNumericClassifiers", "false")
-    .setup_corenlp_backend_raw("ner.useSUTime", "false")
-    .setup_corenlp_backend_raw("parse.model",
+    setup_corenlp_backend_raw("ner.applyNumericClassifiers", "false")
+    setup_corenlp_backend_raw("ner.useSUTime", "false")
+    setup_corenlp_backend_raw("parse.model",
       "edu/stanford/nlp/models/lexparser/germanFactored.ser.gz")
   }
 
   # English models
   if (language == "en" & anno_level == 0) {
-    .setup_corenlp_backend_raw("annotators",
+    setup_corenlp_backend_raw("annotators",
       "tokenize, ssplit, pos, lemma", clear = TRUE)
   }
   if (language == "en" & anno_level == 1) {
-    .setup_corenlp_backend_raw("annotators",
+    setup_corenlp_backend_raw("annotators",
       "tokenize, ssplit, pos, lemma, parse, depparse, sentiment",
       clear = TRUE)
     #.setup_corenlp_backend_raw("parse.model",
@@ -141,7 +141,7 @@ cnlp_init_corenlp <- function(language, anno_level = 2, lib_location = NULL,
     string <- paste("tokenize, ssplit, pos, lemma, parse, depparse,",
                     "sentiment, ner, mention, entitymentions, natlog",
                     collapse = "")
-    .setup_corenlp_backend_raw("annotators", string, clear = TRUE)
+    setup_corenlp_backend_raw("annotators", string, clear = TRUE)
     #.setup_corenlp_backend_raw("parse.model",
     #  "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
   }
@@ -149,64 +149,64 @@ cnlp_init_corenlp <- function(language, anno_level = 2, lib_location = NULL,
     string <- paste("tokenize, ssplit, pos, lemma, parse, depparse,",
                     " sentiment, ner, mention, entitymentions, natlog, coref",
                     collapse = "")
-    .setup_corenlp_backend_raw("annotators", string, clear = TRUE)
+    setup_corenlp_backend_raw("annotators", string, clear = TRUE)
     #.setup_corenlp_backend_raw("parse.model",
     #  "edu/stanford/nlp/models/srparser/englishSR.ser.gz")
   }
 
   # Spanish models
   if (language == "es" & anno_level == 0) {
-    .setup_corenlp_backend_raw("annotators", "tokenize, ssplit, pos, lemma",
+    setup_corenlp_backend_raw("annotators", "tokenize, ssplit, pos, lemma",
       clear = TRUE)
-    .setup_corenlp_backend_raw("tokenize.language", "es")
-    .setup_corenlp_backend_raw("pos.model",
+    setup_corenlp_backend_raw("tokenize.language", "es")
+    setup_corenlp_backend_raw("pos.model",
       "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger")
   }
   if (language == "es" & anno_level == 1) {
-    .setup_corenlp_backend_raw("annotators",
+    setup_corenlp_backend_raw("annotators",
       "tokenize, ssplit, pos, lemma, parse, depparse", clear = TRUE)
-    .setup_corenlp_backend_raw("tokenize.language", "es")
-    .setup_corenlp_backend_raw("pos.model",
+    setup_corenlp_backend_raw("tokenize.language", "es")
+    setup_corenlp_backend_raw("pos.model",
       "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger")
-    .setup_corenlp_backend_raw("parse.model",
+    setup_corenlp_backend_raw("parse.model",
       "edu/stanford/nlp/models/lexparser/spanishPCFG.ser.gz")
   }
   if (language == "es" & anno_level >= 2) {
-    .setup_corenlp_backend_raw("annotators",
+    setup_corenlp_backend_raw("annotators",
       "tokenize, ssplit, pos, lemma, ner, parse, depparse", clear = TRUE)
-    .setup_corenlp_backend_raw("tokenize.language", "es")
-    .setup_corenlp_backend_raw("pos.model",
+    setup_corenlp_backend_raw("tokenize.language", "es")
+    setup_corenlp_backend_raw("pos.model",
       "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger")
-    .setup_corenlp_backend_raw("ner.model",
+    setup_corenlp_backend_raw("ner.model",
       "edu/stanford/nlp/models/ner/spanish.ancora.distsim.s512.crf.ser.gz")
-    .setup_corenlp_backend_raw("ner.applyNumericClassifiers", "false")
-    .setup_corenlp_backend_raw("ner.useSUTime", "false")
-    .setup_corenlp_backend_raw("parse.model",
+    setup_corenlp_backend_raw("ner.applyNumericClassifiers", "false")
+    setup_corenlp_backend_raw("ner.useSUTime", "false")
+    setup_corenlp_backend_raw("parse.model",
       "edu/stanford/nlp/models/lexparser/spanishPCFG.ser.gz")
   }
 
   # French models
   if (language == "fr" & anno_level == 0) {
-    .setup_corenlp_backend_raw("annotators",
+    setup_corenlp_backend_raw("annotators",
       "tokenize, ssplit, pos, lemma", clear = TRUE)
-    .setup_corenlp_backend_raw("tokenize.language", "fr")
-    .setup_corenlp_backend_raw("pos.model",
+    setup_corenlp_backend_raw("tokenize.language", "fr")
+    setup_corenlp_backend_raw("pos.model",
       "edu/stanford/nlp/models/pos-tagger/french/french.tagger")
   }
   if (language == "fr" & anno_level >= 1) {
-    .setup_corenlp_backend_raw("annotators",
+    setup_corenlp_backend_raw("annotators",
       "tokenize, ssplit, pos, lemma, parse, depparse", clear = TRUE)
-    .setup_corenlp_backend_raw("tokenize.language", "fr")
-    .setup_corenlp_backend_raw("pos.model",
+    setup_corenlp_backend_raw("tokenize.language", "fr")
+    setup_corenlp_backend_raw("pos.model",
       "edu/stanford/nlp/models/pos-tagger/french/french.tagger")
-    .setup_corenlp_backend_raw("parse.model",
+    setup_corenlp_backend_raw("parse.model",
       "edu/stanford/nlp/models/lexparser/frenchFactored.ser.gz")
   }
 
   invisible(init_corenlp_backend())
 }
 
-.setup_corenlp_backend_raw <- function(keys, values, clear = FALSE) {
+setup_corenlp_backend_raw <- function(keys, values, clear = FALSE) {
   if (length(keys) != length(values))
     stop(sprintf("length of keys (%d) does not match length of values (%d)",
       length(keys), length(values)))
@@ -264,7 +264,7 @@ init_corenlp_backend <- function() {
 
   # Find location of the corenlp Libraries
   if (!file.exists(volatiles$corenlp$lib_location)) {
-    stop("Please run cnlp_download_core_nlp() in order to",
+    stop("Please run cnlp_download_corenlp() in order to",
       "install required jar files.")
   } else {
     path <- Sys.glob(file.path(volatiles$corenlp$lib_location,

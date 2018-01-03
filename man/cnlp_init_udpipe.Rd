@@ -4,7 +4,8 @@
 \alias{cnlp_init_udpipe}
 \title{Interface for initializing the udpipe backend}
 \usage{
-cnlp_init_udpipe(model_name = NULL, model_path = NULL)
+cnlp_init_udpipe(model_name = NULL, model_path = NULL,
+  feature_flag = TRUE, parser = "default")
 }
 \arguments{
 \item{model_name}{string giving the model namel.
@@ -12,12 +13,20 @@ Defaults to "english" if NULL.
 Ignored if \code{model_path} is not NULL.}
 
 \item{model_path}{provide a full path to a model file.}
+
+\item{feature_flag}{boolean. Should universal features be
+included in the output.}
+
+\item{parser}{a character string of length 1, which is
+either 'default' (default udpipe dependency
+parsing) or 'none' (no dependency parsing needed)
+or a character string with more complex parsing
+options}
 }
 \description{
 This function must be run before annotating text with
-the tokenizers backend. It sets the properties for the
-spaCy engine and loads the file using the R to Python
-interface provided by reticulate.
+the udpipe backend. It will parse in English by default,
+but you can load other models as well. See
 }
 \examples{
 \dontrun{

@@ -32,11 +32,11 @@
 #'
 #'@examples
 #'\dontrun{
-#'cnlp_download_core_nlp()
-#'cnlp_download_core_nlp(type="spanish")
+#'cnlp_download_corenlp()
+#'cnlp_download_corenlp(type="spanish")
 #'}
 #' @export
-cnlp_download_core_nlp <- function(
+cnlp_download_corenlp <- function(
     type = c("default", "base", "en", "fr", "de", "es"),
     output_loc, url = NULL, url_core = TRUE, force = FALSE) {
 
@@ -63,7 +63,7 @@ cnlp_download_core_nlp <- function(
   if (!is.null(url)) {
     if (url_core) {
       if (!dir.exists(file.path(output_loc, coreFile))) {
-        fp <- .check_file_exists(file.path(output_loc,
+        fp <- check_file_exists(file.path(output_loc,
                                            paste0(coreFile, ".zip")),
                                  force = force)
         f <- RCurl::CFILE(fp, mode="wb")
@@ -79,7 +79,7 @@ cnlp_download_core_nlp <- function(
       }
     } else {
       fname <- basename(url)
-      fp <- .check_file_exists(file.path(output_loc, coreFile, fname),
+      fp <- check_file_exists(file.path(output_loc, coreFile, fname),
                                force = force)
       f <- RCurl::CFILE(fp, mode="wb")
       ret <- RCurl::curlPerform(url = url, writedata = f@ref,
@@ -93,7 +93,7 @@ cnlp_download_core_nlp <- function(
 
   if (type %in% c("default", "base")) {
     if (!dir.exists(file.path(output_loc, coreFile))) {
-      fp <- .check_file_exists(file.path(output_loc, paste0(coreFile, ".zip")),
+      fp <- check_file_exists(file.path(output_loc, paste0(coreFile, ".zip")),
                                force = force)
       f <- RCurl::CFILE(fp, mode="wb")
       ret <- RCurl::curlPerform(url = paste0(baseURL, coreFile, ".zip"),
@@ -113,7 +113,7 @@ cnlp_download_core_nlp <- function(
          "Set type='base'.")
 
   if (type %in% c("default", "en")) {
-    fp <- .check_file_exists(file.path(output_loc, coreFile,
+    fp <- check_file_exists(file.path(output_loc, coreFile,
              "/stanford-english-corenlp-2016-10-31-models.jar"),
              force = force)
     f <- RCurl::CFILE(fp, mode="wb")
@@ -124,7 +124,7 @@ cnlp_download_core_nlp <- function(
   }
 
   if (type %in% c("fr")) {
-    fp <- .check_file_exists(file.path(output_loc, coreFile,
+    fp <- check_file_exists(file.path(output_loc, coreFile,
              "/stanford-french-corenlp-2016-10-31-models.jar"),
              force = force)
     f <- RCurl::CFILE(fp, mode="wb")
@@ -135,7 +135,7 @@ cnlp_download_core_nlp <- function(
   }
 
   if (type %in% c("de")) {
-    fp <- .check_file_exists(file.path(output_loc, coreFile,
+    fp <- check_file_exists(file.path(output_loc, coreFile,
              "/stanford-german-corenlp-2016-10-31-models.jar"),
              force = force)
     f <- RCurl::CFILE(fp, mode="wb")
@@ -146,7 +146,7 @@ cnlp_download_core_nlp <- function(
   }
 
   if (type %in% c("es")) {
-    fp <- .check_file_exists(file.path(output_loc, coreFile,
+    fp <- check_file_exists(file.path(output_loc, coreFile,
              "/stanford-spanish-corenlp-2016-10-31-models.jar"),
              force = force)
     f <- RCurl::CFILE(fp, mode="wb")
@@ -159,7 +159,7 @@ cnlp_download_core_nlp <- function(
   ret
 }
 
-.check_file_exists <- function(path, force = FALSE) {
+check_file_exists <- function(path, force = FALSE) {
   if (file.exists(path) & !force) {
     stop(sprintf("file already exists at: %s", path))
   } else if (file.exists(path) & force) {
@@ -169,3 +169,35 @@ cnlp_download_core_nlp <- function(
   return(path)
 }
 
+#' Download model files needed for udpipe
+#'
+#' The cleanNLP package does not supply the model files required
+#' for using the udpipe backend. These files can be downloaded
+#' with this function. The models are saved, by default, in the
+#' location where the package is installed. They will be saved
+#' between R sessions. This function is called internally by
+#' \code{\link{cnlp_init_udpipe}} if a model is not available.
+#'
+#' @param model_name   string giving the model namel.
+#'                     Defaults to "english" if NULL. See
+#'                     \code{\link{udpipe::udpipe_download_model}}
+#'                     For available languages.
+#' @param model_loc    where should be model be downloaded to. If
+#'                     set to NULL, will be downloaded in the location
+#'                     that the cleanNLP package is installed.
+#'
+#'@examples
+#'\dontrun{
+#'cnlp_download_core_nlp()
+#'cnlp_download_core_nlp(type="spanish")
+#'}
+#' @export
+cnlp_download_udpipe <- function(model_name = "english", model_loc = NULL) {
+  if (is.null(model_loc)) {
+    model_loc <- system.file("extdata", package="cleanNLP")
+  }
+
+  udpipe::udpipe_download_model(language = model_name,
+                                model_dir = model_loc)
+
+}

@@ -7,10 +7,12 @@
 #' \code{\link{cnlp_init_spacy}}, \code{\link{cnlp_init_udpipe}},
 #' or \code{\link{cnlp_init_corenlp}}.
 #'
-#' @param input          either a vector of file names to parse, or a
+#' @param input          either a vector of file names to parse, a
 #'                       character vector with one document in each
-#'                       element. Specify the latter with the
-#'                       as_string flag.
+#'                       element, or a data frame. If a data frame,
+#'                       it is assumed that the first column gives the
+#'                       document ids, the second the raw text, and
+#'                       other columns (if present) yield metadata
 #' @param as_strings     logical. Is the data given to \code{input} the
 #'                       actual document text rather than file names?
 #' @param doc_ids        optional character vector of document names
@@ -56,6 +58,31 @@ cnlp_annotate <- function(input,
   # select the correct backend
   backend <- match.arg(tolower(backend),
                        c("tokenizers", "spacy", "corenlp", "udpipe"))
+
+  # if the input is a data frame, check for tif
+  if (is.data.frame(input)) {
+
+    if (ncol(input) <= 1)
+      stop("The input should have at least two columns if a data frame")
+    if (class(input[[2]]) != "character")
+      stop("The second column of the input should contain a character vector")
+
+    names(input)[1:2] <- c("doc_id", "text")
+
+    if (!is.null(doc_ids)) {
+      warning("data frame input given along with doc_ids; ignoring the latter")
+    }
+    if (!is.null(meta)) {
+      warning("data frame input given along with meta; ignoring the latter")
+    }
+    if (ncol(input) > 2L) {
+      meta <- input[,seq(3,ncol(input))]
+    }
+
+    doc_ids <- input$doc_id
+    input <- input$text
+    as_strings <- TRUE
+  }
 
   # if metadata is present, make sure it is a data frame and
   # of the correct size
