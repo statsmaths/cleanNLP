@@ -2,8 +2,7 @@
 #'
 #' This function must be run before annotating text with
 #' the udpipe backend. It will parse in English by default,
-#' but you can load other models as well. See
-#' \code{\link{init_udpipe_backend}} for more details.
+#' but you can load other models as well.
 #'
 #' @param model_name   string giving the model namel.
 #'                     Defaults to "english" if NULL.

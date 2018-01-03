@@ -26,7 +26,7 @@ options}
 \description{
 This function must be run before annotating text with
 the udpipe backend. It will parse in English by default,
-but you can load other models as well. See
+but you can load other models as well.
 }
 \examples{
 \dontrun{

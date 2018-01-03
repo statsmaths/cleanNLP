@@ -255,7 +255,7 @@ init_corenlp_backend <- function() {
   fp <- file.path(system.file("extdata",package="cleanNLP"),
     "properties.rds")
   if (!file.exists(fp)) {
-    .setup_corenlp_backend_raw("en")
+    setup_corenlp_backend_raw("en")
   }
   properties <- readRDS(fp)
   keys <- names(properties)

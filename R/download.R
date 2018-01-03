@@ -179,9 +179,7 @@ check_file_exists <- function(path, force = FALSE) {
 #' \code{\link{cnlp_init_udpipe}} if a model is not available.
 #'
 #' @param model_name   string giving the model namel.
-#'                     Defaults to "english" if NULL. See
-#'                     \code{\link{udpipe::udpipe_download_model}}
-#'                     For available languages.
+#'                     Defaults to "english" if NULL.
 #' @param model_loc    where should be model be downloaded to. If
 #'                     set to NULL, will be downloaded in the location
 #'                     that the cleanNLP package is installed.

@@ -8,9 +8,7 @@ cnlp_download_udpipe(model_name = "english", model_loc = NULL)
 }
 \arguments{
 \item{model_name}{string giving the model namel.
-Defaults to "english" if NULL. See
-\code{\link{udpipe::udpipe_download_model}}
-For available languages.}
+Defaults to "english" if NULL.}
 
 \item{model_loc}{where should be model be downloaded to. If
 set to NULL, will be downloaded in the location
