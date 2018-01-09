@@ -7,7 +7,7 @@
 cnlp_get_tfidf(object, type = c("tfidf", "tf", "idf", "vocab", "all"),
   tf_weight = c("lognorm", "binary", "raw", "dnorm"), idf_weight = c("idf",
   "smooth", "prob"), min_df = 0.1, max_df = 0.9, max_features = 10000,
-  doc_var = "doc_id", token_var = "lemma", vocabulary = NULL)
+  doc_var = "id", token_var = "lemma", vocabulary = NULL)
 }
 \arguments{
 \item{object}{either an annotation object or a data frame with

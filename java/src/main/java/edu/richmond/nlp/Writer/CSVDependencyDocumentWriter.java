@@ -13,7 +13,7 @@ public class CSVDependencyDocumentWriter {
 
   public CSVDependencyDocumentWriter(String docID) {
     this.docID = docID;
-    this.header = String.format("doc_id,sid,tid,tid_target,relation,relation_full%n");
+    this.header = String.format("id,sid,tid,tid_target,relation,relation_full%n");
   }
 
   public String print(CoreMap sentence) {

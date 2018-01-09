@@ -135,7 +135,7 @@ cnlp_get_tfidf <- function(object, type = c("tfidf", "tf", "idf", "vocab", "all"
                       min_df = 0.1,
                       max_df = 0.9,
                       max_features = 1e4,
-                      doc_var = "doc_id",
+                      doc_var = "id",
                       token_var = "lemma",
                       vocabulary = NULL) {
 

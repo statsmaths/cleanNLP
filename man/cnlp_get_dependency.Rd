@@ -19,7 +19,7 @@ Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}
  The returned data frame includes at a minimum the following columns:
 
 \itemize{
- \item{"doc_id"}{ - integer. Id of the source document.}
+ \item{"id"}{ - integer. Id of the source document.}
  \item{"sid"}{ - integer. Sentence id of the source token.}
  \item{"tid"}{ - integer. Id of the source token.}
  \item{"tid_target"}{ - integer. Id of the source token.}

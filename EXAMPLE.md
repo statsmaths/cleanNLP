@@ -15,6 +15,6 @@ obama <- cnlp_annotate(txt,
 Encoding(obama$token$lemma) <- "latin1"
 obama$token$lemma <- iconv(obama$token$lemma, from = "latin1", to = "ASCII", sub = "")
 
-save(obama, file = "data/obama.rda")
+save(obama, file = "cleanNLP/data/obama.rda")
 ```
 

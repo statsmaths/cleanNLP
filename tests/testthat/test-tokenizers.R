@@ -26,12 +26,12 @@ test_that("output of tokenizers", {
   token <- cnlp_get_token(anno)
 
   expect_equal(class(token), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(token), c("doc_id", "sid", "tid", "word", "lemma",
+  expect_equal(names(token), c("id", "sid", "tid", "word", "lemma",
                                 "upos", "pos", "cid"))
-  expect_equal(token$doc_id, sort(token$doc_id))
-  expect_equal(token$sid[token$doc_id == "doc1"], sort(token$sid[token$doc_id == "doc1"]))
-  expect_equal(token$sid[token$doc_id == "doc2"], sort(token$sid[token$doc_id == "doc2"]))
-  expect_equal(token$sid[token$doc_id == "doc3"], sort(token$sid[token$doc_id == "doc3"]))
+  expect_equal(token$id, sort(token$id))
+  expect_equal(token$sid[token$id == "doc1"], sort(token$sid[token$id == "doc1"]))
+  expect_equal(token$sid[token$id == "doc2"], sort(token$sid[token$id == "doc2"]))
+  expect_equal(token$sid[token$id == "doc3"], sort(token$sid[token$id == "doc3"]))
 
   any_missing <- apply(is.na(token), 2, any)
   expect_true(!any(any_missing[c(1:4,8)]))
@@ -41,7 +41,7 @@ test_that("output of tokenizers", {
   # check document
   doc <- cnlp_get_document(anno)
   expect_equal(class(doc), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(doc), c("doc_id", "time", "version", "language", "uri"))
+  expect_equal(names(doc), c("id", "time", "version", "language", "uri"))
   expect_equal(nrow(doc), 3L)
 
   # check others empty
@@ -59,7 +59,7 @@ test_that("run_annotators options", {
                          backend = "tokenizers",
                          as_strings = FALSE)
   token <- cnlp_get_token(anno)
-  expect_equal(unique(token$doc_id), c("bush", "clinton", "obama"))
+  expect_equal(unique(token$id), c("bush", "clinton", "obama"))
 
   anno <- cnlp_annotate(c("Hi duck.", "Hi bunny.", "Hello goose."),
     as_strings = TRUE, backend = "tokenizers")

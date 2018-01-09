@@ -29,15 +29,15 @@ test_that("tokens with udpipe", {
   token <- cnlp_get_token(anno)
 
   expect_equal(class(token), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(token)[1:8], c("doc_id", "sid", "tid", "word",
+  expect_equal(names(token)[1:8], c("id", "sid", "tid", "word",
                                "lemma", "upos", "pos", "cid"))
-  expect_equal(token$doc_id, sort(token$doc_id))
-  expect_equal(token$sid[token$doc_id == "doc1"],
-               sort(token$sid[token$doc_id == "doc1"]))
-  expect_equal(token$sid[token$doc_id == "doc2"],
-               sort(token$sid[token$doc_id == "doc2"]))
-  expect_equal(token$sid[token$doc_id == "doc3"],
-               sort(token$sid[token$doc_id == "doc3"]))
+  expect_equal(token$id, sort(token$id))
+  expect_equal(token$sid[token$id == "doc1"],
+               sort(token$sid[token$id == "doc1"]))
+  expect_equal(token$sid[token$id == "doc2"],
+               sort(token$sid[token$id == "doc2"]))
+  expect_equal(token$sid[token$id == "doc3"],
+               sort(token$sid[token$id == "doc3"]))
 
   any_missing <- apply(is.na(token), 2, any)
   expect_true(!any(any_missing[1:3]))
@@ -51,9 +51,9 @@ test_that("dependency with spacy", {
   dep <- cnlp_get_dependency(anno)
 
   expect_equal(class(dep), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(dep), c("doc_id", "sid", "tid", "tid_target",
+  expect_equal(names(dep), c("id", "sid", "tid", "tid_target",
                              "relation", "relation_full"))
-  expect_equal(dep$doc_id, sort(dep$doc_id))
+  expect_equal(dep$id, sort(dep$id))
 
   any_missing <- apply(is.na(dep), 2, any)
   expect_true(!any(any_missing[1:4]))
@@ -69,7 +69,7 @@ test_that("cnlp_annotate options", {
                         doc_ids = c("bush", "clinton", "obama"),
                         as_strings = FALSE)
   token <- cnlp_get_token(anno)
-  expect_equal(unique(token$doc_id), c("bush", "clinton", "obama"))
+  expect_equal(unique(token$id), c("bush", "clinton", "obama"))
 
 })
 

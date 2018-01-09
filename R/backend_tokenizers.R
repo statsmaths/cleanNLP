@@ -62,7 +62,7 @@ annotate_with_r <- function(input, as_strings) {
     doc_id <- sprintf("doc%d", i)
 
     # add documents to the documents table
-    doc[[i]] <- data.frame(doc_id = doc_id,
+    doc[[i]] <- data.frame(id = doc_id,
                      time = format(Sys.time(), fmt = "%dZ", tz = "UTC"),
                      version = as.character(utils::packageVersion("cleanNLP")),
                      language = volatiles$tokenizers$locale,
@@ -113,7 +113,7 @@ annotate_with_r <- function(input, as_strings) {
 
     if (length(word) == 0L) next
 
-    token[[i]] <- data.frame(doc_id = doc_id, sid = as.integer(sid),
+    token[[i]] <- data.frame(id = doc_id, sid = as.integer(sid),
                             tid = as.integer(tid),
                             word = word, lemma = NA_character_,
                             upos = NA_character_,

@@ -264,7 +264,7 @@ init_corenlp_backend <- function() {
 
   # Find location of the corenlp Libraries
   if (!file.exists(volatiles$corenlp$lib_location)) {
-    stop("Please run cnlp_download_corenlp() in order to",
+    stop("Please run cnlp_download_corenlp() in order to ",
       "install required jar files.")
   } else {
     path <- Sys.glob(file.path(volatiles$corenlp$lib_location,

@@ -10,12 +10,15 @@ external dependencies
 * all functions return results in memory; to store data
 on disk, users need to save the output manually
 
-* use a character vector named 'doc_id' as the document
+* use a character vector named 'id' as the document
 id (it was previously an integer index); this is to
 conform to the text interchange format (tif)
 
 * functions now use the prefix 'cnlp_', following convention
 of packages such as stringi
+
+* the cnlp_get_tfidf function now returns a named sparse
+matrix in lieu of a named list
 
 There are also many internal changes, primarily to deal
 with the new spaCy (2.0) version and to make the use of

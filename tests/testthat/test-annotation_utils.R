@@ -17,10 +17,10 @@ check_spacy_exists <- function() {
 
 test_that("extract subset of documents from an annotation object", {
   sub_obama <- cnlp_extract_documents(obama, ids = c("doc2009", "doc2012"))
-  expect_equal(unique(cnlp_get_token(sub_obama)$doc_id), c("doc2009", "doc2012"))
-  expect_equal(unique(cnlp_get_document(sub_obama)$doc_id), c("doc2009", "doc2012"))
-  expect_equal(unique(cnlp_get_dependency(sub_obama)$doc_id), c("doc2009", "doc2012"))
-  expect_equal(unique(cnlp_get_entity(sub_obama)$doc_id), c("doc2009", "doc2012"))
+  expect_equal(unique(cnlp_get_token(sub_obama)$id), c("doc2009", "doc2012"))
+  expect_equal(unique(cnlp_get_document(sub_obama)$id), c("doc2009", "doc2012"))
+  expect_equal(unique(cnlp_get_dependency(sub_obama)$id), c("doc2009", "doc2012"))
+  expect_equal(unique(cnlp_get_entity(sub_obama)$id), c("doc2009", "doc2012"))
 })
 
 test_that("combine documents", {

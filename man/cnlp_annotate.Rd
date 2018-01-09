@@ -4,7 +4,7 @@
 \alias{cnlp_annotate}
 \title{Run the annotation pipeline on a set of documents}
 \usage{
-cnlp_annotate(input, as_strings = TRUE, doc_ids = NULL, backend = NULL,
+cnlp_annotate(input, as_strings = NULL, doc_ids = NULL, backend = NULL,
   meta = NULL)
 }
 \arguments{
@@ -16,7 +16,10 @@ document ids, the second the raw text, and
 other columns (if present) yield metadata}
 
 \item{as_strings}{logical. Is the data given to \code{input} the
-actual document text rather than file names?}
+actual document text or are they file names?
+If \code{NULL}, the default, will be set to
+\code{FALSE} if the input points to a valid
+file and \code{TRUE} otherwise.}
 
 \item{doc_ids}{optional character vector of document names}
 

@@ -19,7 +19,7 @@ public class CSVCoreferenceDocumentWriter {
 
   public CSVCoreferenceDocumentWriter(String docID) {
     this.docID = docID;
-    this.header = String.format("doc_id,rid,mid,mention,mention_type,number,gender,animacy,sid,tid,tid_end,tid_head%n");
+    this.header = String.format("id,rid,mid,mention,mention_type,number,gender,animacy,sid,tid,tid_end,tid_head%n");
   }
 
   public String print(Annotation doc) {

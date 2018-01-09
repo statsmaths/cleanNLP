@@ -33,7 +33,7 @@
 #'  which annotators were run:
 #'
 #' \itemize{
-#'  \item{"doc_id"}{ - integer. Id of the source document.}
+#'  \item{"id"}{ - integer. Id of the source document.}
 #'  \item{"sid"}{ - integer. Sentence id, starting from 0.}
 #'  \item{"tid"}{ - integer. Token id, with the root of the sentence
 #'                  starting at 0.}
@@ -74,7 +74,7 @@
 #' # find average sentence length from each address
 #' require(dplyr)
 #' cnlp_get_token(obama) %>%
-#'   group_by(doc_id, sid) %>%
+#'   group_by(id, sid) %>%
 #'   summarize(sentence_length = max(tid)) %>%
 #'   summarize(avg_sentence_length = mean(sentence_length))
 #' @export
@@ -83,29 +83,29 @@ cnlp_get_token <- function(annotation, include_root = FALSE,
                       spaces = FALSE) {
   res <- annotation$token
 
-  doc_id <- sid <- tid <- word <- lemma <- tid_end <- NULL
+  id <- sid <- tid <- word <- lemma <- tid_end <- NULL
   tid_target <- cid <- NULL
 
   if (combine) {
     dep <- cnlp_get_dependency(annotation)
     dep <- dplyr::left_join(dep,
-              dplyr::select_(res, "doc_id", "sid", "tid", "word", "lemma"),
-              by = c("doc_id", "sid", "tid"))
-    dep <- dplyr::select_(dep, "doc_id", "sid", source = "tid", tid = "tid_target",
+              dplyr::select_(res, "id", "sid", "tid", "word", "lemma"),
+              by = c("id", "sid", "tid"))
+    dep <- dplyr::select_(dep, "id", "sid", source = "tid", tid = "tid_target",
               "relation", word_source = "word", lemma_source = "lemma")
-    res <- dplyr::left_join(res, dep, by = c("doc_id", "sid", "tid"))
+    res <- dplyr::left_join(res, dep, by = c("id", "sid", "tid"))
     res <- dplyr::left_join(res, cnlp_get_sentence(annotation),
-              by = c("doc_id", "sid"))
+              by = c("id", "sid"))
     res <- dplyr::left_join(res,
               dplyr::select_(cnlp_get_entity(annotation), "-tid_end"),
-              by = c("doc_id", "sid", "tid"))
+              by = c("id", "sid", "tid"))
   }
 
   if (!include_root)
     res <- res[res$tid > 0,]
 
   if (spaces) {
-    res <- dplyr::group_by_(res, "doc_id")
+    res <- dplyr::group_by_(res, "id")
     res <- dplyr::mutate(res,
             spaces = dplyr::lead(cid, default = 0) - cid -
             stringi::stri_length(word))
@@ -150,7 +150,7 @@ cnlp_get_token <- function(annotation, include_root = FALSE,
 #'  The returned data frame includes at a minimum the following columns:
 #'
 #' \itemize{
-#'  \item{"doc_id"}{ - integer. Id of the source document.}
+#'  \item{"id"}{ - integer. Id of the source document.}
 #'  \item{"sid"}{ - integer. Sentence id of the source token.}
 #'  \item{"tid"}{ - integer. Id of the source token.}
 #'  \item{"tid_target"}{ - integer. Id of the source token.}
@@ -220,18 +220,18 @@ cnlp_get_dependency <- function(annotation, get_token = FALSE) {
   dep <- annotation$dependency
 
   # silence R CMD check warnings
-  doc_id <- sid <- tid <- word <- lemma <- NULL
+  id <- sid <- tid <- word <- lemma <- NULL
 
   if (get_token) {
     token <- cnlp_get_token(annotation, include_root = TRUE)
     dep <- dplyr::left_join(dep,
-                   dplyr::select_(token, "doc_id", "sid", "tid", "word", "lemma"),
-                   by = c("doc_id", "sid", "tid"))
+                   dplyr::select_(token, "id", "sid", "tid", "word", "lemma"),
+                   by = c("id", "sid", "tid"))
     dep <- dplyr::left_join(dep,
-                   dplyr::select_(token, "doc_id", "sid", tid_target = "tid",
+                   dplyr::select_(token, "id", "sid", tid_target = "tid",
                       word_target = "word",
                       lemma_target = "lemma"),
-                   by = c("doc_id", "sid", "tid_target"))
+                   by = c("id", "sid", "tid_target"))
   }
 
   dep
@@ -249,7 +249,7 @@ cnlp_get_dependency <- function(annotation, get_token = FALSE) {
 #'  The returned data frame includes at least the following columns:
 #'
 #' \itemize{
-#'  \item{"doc_id"}{ - integer. Id of the source document.}
+#'  \item{"id"}{ - integer. Id of the source document.}
 #'  \item{"time"}{ - date time. The time at which the parser was run on
 #'                the text.}
 #'  \item{"version"}{ - character. Version of the CoreNLP library used
@@ -306,7 +306,7 @@ cnlp_get_document <- function(annotation) {
 #'  The returned data frame includes at least the following columns:
 #'
 #' \itemize{
-#'  \item{"doc_id"}{ - integer. Id of the source document.}
+#'  \item{"id"}{ - integer. Id of the source document.}
 #'  \item{"rid"}{ - integer. Relation ID.}
 #'  \item{"mid"}{ - integer. Mention ID; unique to each coreference
 #'               within a document.}
@@ -379,7 +379,7 @@ cnlp_get_coreference <- function(annotation) {
 #'  The returned data frame includes the following columns:
 #'
 #' \itemize{
-#'  \item{"doc_id"}{ - integer. Id of the source document.}
+#'  \item{"id"}{ - integer. Id of the source document.}
 #'  \item{"sid"}{ - integer. Sentence id of the entity mention.}
 #'  \item{"tid"}{ - integer. Token id at the start of the entity mention.}
 #'  \item{"tid_end"}{ - integer. Token id at the end of the entity mention.}
@@ -470,7 +470,7 @@ cnlp_get_entity <- function(annotation) {
 #'  The returned data frame includes at a minimum the following columns:
 #'
 #' \itemize{
-#'  \item{"doc_id"}{ - integer. Id of the source document.}
+#'  \item{"id"}{ - integer. Id of the source document.}
 #'  \item{"sid"}{ - integer. Sentence id.}
 #' }
 #'

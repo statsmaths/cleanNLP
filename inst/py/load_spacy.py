@@ -166,15 +166,15 @@ def prepare_output(output_dir, entity_flag, vector_flag):
 
     # token
     tfile = io.open(os.path.join(output_dir, "token.csv"), "w")
-    _ = tfile.write(u"doc_id,sid,tid,word,lemma,upos,pos,cid\n")
+    _ = tfile.write(u"id,sid,tid,word,lemma,upos,pos,cid\n")
 
     # dependency
     dfile = io.open(os.path.join(output_dir, "dependency.csv"), "w")
-    _ = dfile.write(u"doc_id,sid,tid,tid_target,relation,relation_full\n")
+    _ = dfile.write(u"id,sid,tid,tid_target,relation,relation_full\n")
 
     # document
     mfile = io.open(os.path.join(output_dir, "document.csv"), "w")
-    _ = mfile.write(u"doc_id,time,version,language,uri\n")
+    _ = mfile.write(u"id,time,version,language,uri\n")
 
     # vector
     if vector_flag:
@@ -185,7 +185,7 @@ def prepare_output(output_dir, entity_flag, vector_flag):
     # entity
     if entity_flag:
         efile = io.open(os.path.join(output_dir, "entity.csv"), "w")
-        _ = efile.write(u"doc_id,sid,tid,tid_end,entity_type,entity\n")
+        _ = efile.write(u"id,sid,tid,tid_end,entity_type,entity\n")
     else:
         efile = None
 

@@ -16,7 +16,7 @@ Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}
  The returned data frame includes at least the following columns:
 
 \itemize{
- \item{"doc_id"}{ - integer. Id of the source document.}
+ \item{"id"}{ - integer. Id of the source document.}
  \item{"time"}{ - date time. The time at which the parser was run on
                the text.}
  \item{"version"}{ - character. Version of the CoreNLP library used

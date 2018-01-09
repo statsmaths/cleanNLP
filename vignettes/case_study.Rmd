@@ -40,7 +40,7 @@ and sentence id and the number of rows within each group are computed. The perce
 of these counts give a quick summary of the distribution.
 ```{r}
 cnlp_get_token(sotu) %>%
-  group_by(doc_id, sid) %>%
+  group_by(id, sid) %>%
   summarize(sent_len = n()) %$%
   quantile(sent_len, seq(0,1,0.1))
 ```
@@ -86,7 +86,7 @@ of the speech and then piped in a **ggplot2** command to illustrate how the leng
 the State of the Union has changed over time.
 ```{r}
 cnlp_get_token(sotu) %>%
-  group_by(doc_id) %>%
+  group_by(id) %>%
   summarize(n = n()) %>%
   left_join(cnlp_get_document(sotu)) %>%
   ggplot(aes(year, n)) +
@@ -157,10 +157,10 @@ cnlp_get_dependency(sotu, get_token = TRUE) %>%
   left_join(cnlp_get_document(sotu)) %>%
   filter(year == 2001) %>%
   filter(relation == "dobj") %>%
-  select(doc_id = doc_id, start = word, word = lemma_target) %>%
+  select(id = id, start = word, word = lemma_target) %>%
   left_join(word_frequency) %>%
   filter(frequency < 0.0005) %>%
-  select(doc_id, start, word) %$%
+  select(id, start, word) %$%
   sprintf("%s => %s", start, word)
 ```
 ```
@@ -180,10 +180,10 @@ cnlp_get_dependency(sotu, get_token = TRUE) %>%
   left_join(cnlp_get_document(sotu)) %>%
   filter(year == 2002) %>%
   filter(relation == "dobj") %>%
-  select(doc_id = doc_id, start = word, word = lemma_target) %>%
+  select(id = id, start = word, word = lemma_target) %>%
   left_join(word_frequency) %>%
   filter(frequency < 0.0005) %>%
-  select(doc_id, start, word) %$%
+  select(id, start, word) %$%
   sprintf("%s => %s", start, word)
 ```
 ```
@@ -260,7 +260,7 @@ additional ``mutate`` function defining a new id illustrates the flexibility of 
 df <- cnlp_get_token(sotu) %>%
   left_join(cnlp_get_document(sotu)) %>%
   filter(year > 2000) %>%
-  mutate(new_id = paste(doc_id, sid, sep = "-")) %>%
+  mutate(new_id = paste(id, sid, sep = "-")) %>%
   filter(pos %in% c("NN", "NNS"))
 mat <- cnlp_get_tfidf(df, min_df = 0, max_df = 1, type = "tf",
                  tf_weight = "raw", doc_var = "new_id")

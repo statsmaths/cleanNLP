@@ -14,7 +14,10 @@
 #'                       document ids, the second the raw text, and
 #'                       other columns (if present) yield metadata
 #' @param as_strings     logical. Is the data given to \code{input} the
-#'                       actual document text rather than file names?
+#'                       actual document text or are they file names?
+#'                       If \code{NULL}, the default, will be set to
+#'                       \code{FALSE} if the input points to a valid
+#'                       file and \code{TRUE} otherwise.
 #' @param doc_ids        optional character vector of document names
 #' @param backend        which backend to use. Will default to the last
 #'                       model to be initalized.
@@ -42,7 +45,7 @@
 #'
 #' @export
 cnlp_annotate <- function(input,
-                           as_strings = TRUE,
+                           as_strings = NULL,
                            doc_ids = NULL,
                            backend = NULL,
                            meta = NULL) {
@@ -82,6 +85,16 @@ cnlp_annotate <- function(input,
     doc_ids <- input$doc_id
     input <- input$text
     as_strings <- TRUE
+  }
+
+  # if as_strings is NULL, determine whether the first strings
+  # matches a valid file
+  if (is.null(as_strings)) {
+    if (file.exists(input[1])) {
+      as_strings <- FALSE
+    } else {
+      as_strings <- TRUE
+    }
   }
 
   # if metadata is present, make sure it is a data frame and

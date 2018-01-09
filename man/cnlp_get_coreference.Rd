@@ -16,7 +16,7 @@ Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}
  The returned data frame includes at least the following columns:
 
 \itemize{
- \item{"doc_id"}{ - integer. Id of the source document.}
+ \item{"id"}{ - integer. Id of the source document.}
  \item{"rid"}{ - integer. Relation ID.}
  \item{"mid"}{ - integer. Mention ID; unique to each coreference
               within a document.}

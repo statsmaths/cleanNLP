@@ -20,7 +20,7 @@ public class CSVSentenceDocumentWriter {
 
   public CSVSentenceDocumentWriter(String docID) {
     this.docID = docID;
-    this.header = String.format("doc_id,sid,sentiment%n");
+    this.header = String.format("id,sid,sentiment%n");
   }
 
   public String print(CoreMap sentence) {

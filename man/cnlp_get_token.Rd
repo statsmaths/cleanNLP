@@ -37,7 +37,7 @@ Returns an object of class \code{c("tbl_df", "tbl", "data.frame")}
  which annotators were run:
 
 \itemize{
- \item{"doc_id"}{ - integer. Id of the source document.}
+ \item{"id"}{ - integer. Id of the source document.}
  \item{"sid"}{ - integer. Sentence id, starting from 0.}
  \item{"tid"}{ - integer. Token id, with the root of the sentence
                  starting at 0.}
@@ -63,7 +63,7 @@ data(obama)
 # find average sentence length from each address
 require(dplyr)
 cnlp_get_token(obama) \%>\%
-  group_by(doc_id, sid) \%>\%
+  group_by(id, sid) \%>\%
   summarize(sentence_length = max(tid)) \%>\%
   summarize(avg_sentence_length = mean(sentence_length))
 }

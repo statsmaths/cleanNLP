@@ -282,7 +282,7 @@ public class CSVTokenDocumentWriter {
 
   public CSVTokenDocumentWriter(String docID) {
     this.docID = docID;
-    this.header = String.format("doc_id,sid,tid,word,lemma,upos,pos,cid%n");
+    this.header = String.format("id,sid,tid,word,lemma,upos,pos,cid%n");
   }
 
   public String print(CoreMap sentence) {

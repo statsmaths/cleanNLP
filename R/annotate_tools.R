@@ -76,7 +76,7 @@ cnlp_extract_documents <- function(anno, ids) {
     stop("You must supply a list of ids to extract") # nocov
 
   ids <- as.character(ids)
-  these <- (anno$token$doc_id %in% ids)
+  these <- (anno$token$id %in% ids)
   if (nrow(anno$vector) > 0) {
     vector <- anno$vector[these,,drop=FALSE]
   } else {
@@ -84,11 +84,11 @@ cnlp_extract_documents <- function(anno, ids) {
   }
 
   anno <- structure(list(
-       coreference = anno$coreference[anno$coreference$doc_id %in% ids,],
-       dependency  = anno$dependency[anno$dependency$doc_id %in% ids,],
-       document    = anno$document[anno$document$doc_id %in% ids,],
-       entity      = anno$entity[anno$entity$doc_id %in% ids,],
-       sentence    = anno$sentence[anno$sentence$doc_id %in% ids,],
+       coreference = anno$coreference[anno$coreference$id %in% ids,],
+       dependency  = anno$dependency[anno$dependency$id %in% ids,],
+       document    = anno$document[anno$document$id %in% ids,],
+       entity      = anno$entity[anno$entity$id %in% ids,],
+       sentence    = anno$sentence[anno$sentence$id %in% ids,],
        token       = anno$token[these,],
        vector      = vector
   ), class = "annotation")
@@ -116,7 +116,7 @@ print.annotation <- function(x, ...) {
 
 empty_anno <- function() {
 
-    coreference <- structure(list(doc_id       = character(0),
+    coreference <- structure(list(id           = character(0),
                                   rid          = integer(0),
                                   mid          = integer(0),
                                   mention      = character(0),
@@ -131,7 +131,7 @@ empty_anno <- function() {
                               row.names    = integer(0),
                               class = c("tbl_df", "tbl", "data.frame"))
 
-    dependency <- structure(list(doc_id        = character(0),
+    dependency <- structure(list(id            = character(0),
                                  sid           = integer(0),
                                  tid           = integer(0),
                                  tid_target    = integer(0),
@@ -140,7 +140,7 @@ empty_anno <- function() {
                             row.names = integer(0),
                             class = c("tbl_df", "tbl", "data.frame"))
 
-    document <- structure(list(doc_id   = character(0),
+    document <- structure(list(id       = character(0),
                                time     = structure(numeric(0),
                                   class = c("POSIXct", "POSIXt"),
                                   tzone = "UTC"),
@@ -150,7 +150,7 @@ empty_anno <- function() {
                           row.names = integer(0),
                           class = c("tbl_df", "tbl", "data.frame"))
 
-    entity <- structure(list(doc_id            = character(0),
+    entity <- structure(list(id                = character(0),
                              sid               = integer(0),
                              tid               = integer(0),
                              tid_end           = integer(0),
@@ -159,12 +159,12 @@ empty_anno <- function() {
                         row.names = integer(0),
                         class = c("tbl_df", "tbl", "data.frame"))
 
-    sentence <- structure(list(doc_id    = character(0),
+    sentence <- structure(list(id        = character(0),
                                sid       = integer(0)),
                            row.names = integer(0),
                            class = c("tbl_df", "tbl", "data.frame"))
 
-    token <- structure(list(doc_id  = character(0),
+    token <- structure(list(id      = character(0),
                             sid     = integer(0),
                             tid     = integer(0),
                             word    = character(0),
@@ -189,14 +189,14 @@ empty_anno <- function() {
   anno
 }
 
-set_doc_ids <- function(anno, doc_ids) {
-  input_id <- sprintf("doc%d", seq_along(doc_ids))
+set_doc_ids <- function(anno, ids) {
+  input_id <- sprintf("doc%d", seq_along(ids))
 
   for (table in c("coreference", "dependency", "document",
                   "entity", "sentence", "token")) {
     if (nrow(anno[[table]]) > 0) {
-      index <- match(anno[[table]][["doc_id"]], input_id)
-      anno[[table]][["doc_id"]] <- doc_ids[index]
+      index <- match(anno[[table]][["id"]], input_id)
+      anno[[table]][["id"]] <- ids[index]
     }
   }
 

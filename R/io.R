@@ -173,14 +173,14 @@ cnlp_read_conll <- function(file) {
 
   # create dependency table
   tid_target <- tid
-  dep <- dplyr::data_frame(doc_id = id + 1, sid = sid, tid = source,
+  dep <- dplyr::data_frame(id = id + 1, sid = sid, tid = source,
                             tid_target = tid_target,
                             relation = relation,
                             relation_full = relation)
 
   # create annotation object
   anno <- list()
-  anno$coreference <- structure(list( doc_id       = integer(0),
+  anno$coreference <- structure(list( id           = integer(0),
                                       rid          = integer(0),
                                       mid          = integer(0),
                                       mention      = character(0),
@@ -197,7 +197,7 @@ cnlp_read_conll <- function(file) {
 
   anno$dependency <- dep
 
-  anno$document <- structure(list(doc_id = 0L,
+  anno$document <- structure(list(id   = 0L,
                                   time = structure(NA_real_,
                                       tzone = "UTC",
                                       class = c("POSIXct", "POSIXt")),
@@ -206,7 +206,7 @@ cnlp_read_conll <- function(file) {
                                   file = file), row.names = c(NA, -1L),
                               class = c("tbl_df", "tbl", "data.frame"))
 
-  anno$entity <- structure(list( doc_id            = integer(0),
+  anno$entity <- structure(list( id                = integer(0),
                                  sid               = integer(0),
                                  tid               = integer(0),
                                  tid_end           = integer(0),
@@ -215,7 +215,7 @@ cnlp_read_conll <- function(file) {
                         row.names = integer(0),
                         class = c("tbl_df", "tbl", "data.frame"))
 
-  anno$sentence <- structure(list(doc_id = integer(0),
+  anno$sentence <- structure(list(id     = integer(0),
                                   sid    = integer(0)),
                            row.names = integer(0),
                            class = c("tbl_df", "tbl", "data.frame"))

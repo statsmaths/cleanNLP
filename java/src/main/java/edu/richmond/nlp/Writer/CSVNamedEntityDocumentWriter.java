@@ -16,7 +16,7 @@ public class CSVNamedEntityDocumentWriter {
 
   public CSVNamedEntityDocumentWriter(String docID) {
     this.docID = docID;
-    this.header = String.format("doc_id,sid,tid,tid_end,entity_type,entity,entity_normalized%n");
+    this.header = String.format("id,sid,tid,tid_end,entity_type,entity,entity_normalized%n");
   }
 
   public String print(CoreMap sentence) {

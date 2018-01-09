@@ -200,7 +200,7 @@ from_udpipe_CoNLL <- function(z) {
   cid <- unlist(cid, use.names = FALSE)
 
   # create document table
-  doc <- data.frame(doc_id   = unique(doc_id),
+  doc <- data.frame(id       = unique(doc_id),
                     time     = format(Sys.time(), fmt = "%dZ", tz = "UTC"),
                     version  = as.character(utils::packageVersion("udpipe")),
                     language = NA_character_,
@@ -208,7 +208,7 @@ from_udpipe_CoNLL <- function(z) {
                     stringsAsFactors = FALSE)
 
   # create token table
-  token <- data.frame(doc_id = doc_id, sid = sid, tid = tid,
+  token <- data.frame(id = doc_id, sid = sid, tid = tid,
                 word = word, lemma = lemma,
                 upos = upos, pos = pos,
                 cid = cid, pid = pid,
@@ -242,11 +242,11 @@ from_udpipe_CoNLL <- function(z) {
   roots$word <- roots$lemma <- "ROOT"
   roots$upos <- roots$pos <- NA_character_
   token <- rbind(token, roots)
-  token <- token[order(token$doc_id, token$sid, token$tid),]
+  token <- token[order(token$id, token$sid, token$tid),]
 
   # create dependency table
   tid_target <- tid
-  dep <- data.frame(doc_id = doc_id,
+  dep <- data.frame(id = doc_id,
                     sid = sid,
                     tid = source,
                     tid_target = tid_target,

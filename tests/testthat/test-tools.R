@@ -13,7 +13,7 @@ test_that("testing get_tfidf", {
   expect_equal(dim(tf_direct$tfidf), c(ndoc, vlen))
 
   tf_direct <- cnlp_get_tfidf(obama)
-  tf_manual <- cnlp_get_tfidf(cnlp_get_token(obama), doc_var = "doc_id",
+  tf_manual <- cnlp_get_tfidf(cnlp_get_token(obama), doc_var = "id",
     token_var = "lemma")
   expect_equal(tf_direct, tf_manual)
 
@@ -44,9 +44,9 @@ test_that("testing tidy_pca", {
   expect_equal(names(res), c("PC1", "PC2", "PC3", "PC4", "PC5"))
   expect_equal(nrow(res), nrow(tfidf))
 
-  res <- cnlp_pca(tfidf, meta = cnlp_get_document(obama)[,c("doc_id", "time")])
+  res <- cnlp_pca(tfidf, meta = cnlp_get_document(obama)[,c("id", "time")])
   expect_equal(class(res), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(res), c("doc_id", "time", "PC1", "PC2"))
+  expect_equal(names(res), c("id", "time", "PC1", "PC2"))
   expect_equal(nrow(res), nrow(tfidf))
 
 })

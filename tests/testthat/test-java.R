@@ -46,15 +46,15 @@ test_that("coreNLP; anno_level 0", {
   # check token
   token <- cnlp_get_token(anno)
   expect_equal(class(token), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(token), c("doc_id", "sid", "tid", "word", "lemma",
+  expect_equal(names(token), c("id", "sid", "tid", "word", "lemma",
                                 "upos", "pos", "cid"))
-  expect_equal(token$doc_id, sort(token$doc_id))
-  expect_equal(token$sid[token$doc_id == "doc1"],
-               sort(token$sid[token$doc_id == "doc1"]))
-  expect_equal(token$sid[token$doc_id == "doc2"],
-               sort(token$sid[token$doc_id == "doc2"]))
-  expect_equal(token$sid[token$doc_id == "doc3"],
-               sort(token$sid[token$doc_id == "doc3"]))
+  expect_equal(token$id, sort(token$id))
+  expect_equal(token$sid[token$id == "doc1"],
+               sort(token$sid[token$id == "doc1"]))
+  expect_equal(token$sid[token$id == "doc2"],
+               sort(token$sid[token$id == "doc2"]))
+  expect_equal(token$sid[token$id == "doc3"],
+               sort(token$sid[token$id == "doc3"]))
 
   any_missing <- apply(is.na(token), 2, any)
   expect_true(!any(any_missing[1:5]))
@@ -62,7 +62,7 @@ test_that("coreNLP; anno_level 0", {
   # check document
   doc <- cnlp_get_document(anno)
   expect_equal(class(doc), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(doc), c("doc_id", "time", "version", "language", "uri"))
+  expect_equal(names(doc), c("id", "time", "version", "language", "uri"))
   expect_equal(nrow(doc), 3L)
 
   # check others empty
@@ -83,15 +83,15 @@ test_that("coreNLP; anno_level 1", {
   # check token
   token <- cnlp_get_token(anno)
   expect_equal(class(token), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(token), c("doc_id", "sid", "tid", "word", "lemma",
+  expect_equal(names(token), c("id", "sid", "tid", "word", "lemma",
                                 "upos", "pos", "cid"))
-  expect_equal(token$doc_id, sort(token$doc_id))
-  expect_equal(token$sid[token$doc_id == "doc1"],
-               sort(token$sid[token$doc_id == "doc1"]))
-  expect_equal(token$sid[token$doc_id == "doc2"],
-               sort(token$sid[token$doc_id == "doc2"]))
-  expect_equal(token$sid[token$doc_id == "doc3"],
-               sort(token$sid[token$doc_id == "doc3"]))
+  expect_equal(token$id, sort(token$id))
+  expect_equal(token$sid[token$id == "doc1"],
+               sort(token$sid[token$id == "doc1"]))
+  expect_equal(token$sid[token$id == "doc2"],
+               sort(token$sid[token$id == "doc2"]))
+  expect_equal(token$sid[token$id == "doc3"],
+               sort(token$sid[token$id == "doc3"]))
 
   any_missing <- apply(is.na(token), 2, any)
   expect_true(!any(any_missing[1:5]))
@@ -99,13 +99,13 @@ test_that("coreNLP; anno_level 1", {
   # check document
   doc <- cnlp_get_document(anno)
   expect_equal(class(doc), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(doc), c("doc_id", "time", "version", "language", "uri"))
+  expect_equal(names(doc), c("id", "time", "version", "language", "uri"))
   expect_equal(nrow(doc), 3L)
 
   # check dependency
   dep <- cnlp_get_dependency(anno)
   expect_equal(class(dep), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(dep), c("doc_id", "sid", "tid", "tid_target",
+  expect_equal(names(dep), c("id", "sid", "tid", "tid_target",
                              "relation", "relation_full"))
   any_missing <- apply(is.na(dep), 2, any)
   expect_true(!any(any_missing))
@@ -114,7 +114,7 @@ test_that("coreNLP; anno_level 1", {
   # check sentence
   sent <- cnlp_get_sentence(anno)
   expect_equal(class(sent), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(sent), c("doc_id", "sid", "sentiment"))
+  expect_equal(names(sent), c("id", "sid", "sentiment"))
   any_missing <- apply(is.na(sent), 2, any)
   expect_true(!any(any_missing))
   expect_true(nrow(sent) > 0L)
@@ -135,15 +135,15 @@ test_that("coreNLP; anno_level 2", {
   # check token
   token <- cnlp_get_token(anno)
   expect_equal(class(token), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(token), c("doc_id", "sid", "tid", "word", "lemma",
+  expect_equal(names(token), c("id", "sid", "tid", "word", "lemma",
                                 "upos", "pos", "cid"))
-  expect_equal(token$doc_id, sort(token$doc_id))
-  expect_equal(token$sid[token$doc_id == "doc1"],
-               sort(token$sid[token$doc_id == "doc1"]))
-  expect_equal(token$sid[token$doc_id == "doc2"],
-               sort(token$sid[token$doc_id == "doc2"]))
-  expect_equal(token$sid[token$doc_id == "doc3"],
-               sort(token$sid[token$doc_id == "doc3"]))
+  expect_equal(token$id, sort(token$id))
+  expect_equal(token$sid[token$id == "doc1"],
+               sort(token$sid[token$id == "doc1"]))
+  expect_equal(token$sid[token$id == "doc2"],
+               sort(token$sid[token$id == "doc2"]))
+  expect_equal(token$sid[token$id == "doc3"],
+               sort(token$sid[token$id == "doc3"]))
 
   any_missing <- apply(is.na(token), 2, any)
   expect_true(!any(any_missing[1:5]))
@@ -151,13 +151,13 @@ test_that("coreNLP; anno_level 2", {
   # check document
   doc <- cnlp_get_document(anno)
   expect_equal(class(doc), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(doc), c("doc_id", "time", "version", "language", "uri"))
+  expect_equal(names(doc), c("id", "time", "version", "language", "uri"))
   expect_equal(nrow(doc), 3L)
 
   # check dependency
   dep <- cnlp_get_dependency(anno)
   expect_equal(class(dep), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(dep), c("doc_id", "sid", "tid", "tid_target",
+  expect_equal(names(dep), c("id", "sid", "tid", "tid_target",
                              "relation", "relation_full"))
   any_missing <- apply(is.na(dep), 2, any)
   expect_true(!any(any_missing))
@@ -166,7 +166,7 @@ test_that("coreNLP; anno_level 2", {
   # check sentence
   sent <- cnlp_get_sentence(anno)
   expect_equal(class(sent), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(sent), c("doc_id", "sid", "sentiment"))
+  expect_equal(names(sent), c("id", "sid", "sentiment"))
   any_missing <- apply(is.na(sent), 2, any)
   expect_true(!any(any_missing))
   expect_true(nrow(sent) > 0L)
@@ -174,7 +174,7 @@ test_that("coreNLP; anno_level 2", {
   # check NER
   ner <- cnlp_get_entity(anno)
   expect_equal(class(ner), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(ner), c("doc_id", "sid", "tid", "tid_end", "entity_type",
+  expect_equal(names(ner), c("id", "sid", "tid", "tid_end", "entity_type",
                              "entity", "entity_normalized"))
   any_missing <- apply(is.na(ner), 2, any)
   expect_true(!any(any_missing[1:6]))
@@ -195,15 +195,15 @@ test_that("coreNLP; anno_level 3", {
   # check token
   token <- cnlp_get_token(anno)
   expect_equal(class(token), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(token), c("doc_id", "sid", "tid", "word", "lemma",
+  expect_equal(names(token), c("id", "sid", "tid", "word", "lemma",
                                 "upos", "pos", "cid"))
-  expect_equal(token$doc_id, sort(token$doc_id))
-  expect_equal(token$sid[token$doc_id == "doc1"],
-               sort(token$sid[token$doc_id == "doc1"]))
-  expect_equal(token$sid[token$doc_id == "doc2"],
-               sort(token$sid[token$doc_id == "doc2"]))
-  expect_equal(token$sid[token$doc_id == "doc3"],
-               sort(token$sid[token$doc_id == "doc3"]))
+  expect_equal(token$id, sort(token$id))
+  expect_equal(token$sid[token$id == "doc1"],
+               sort(token$sid[token$id == "doc1"]))
+  expect_equal(token$sid[token$id == "doc2"],
+               sort(token$sid[token$id == "doc2"]))
+  expect_equal(token$sid[token$id == "doc3"],
+               sort(token$sid[token$id == "doc3"]))
 
   any_missing <- apply(is.na(token), 2, any)
   expect_true(!any(any_missing[1:5]))
@@ -211,13 +211,13 @@ test_that("coreNLP; anno_level 3", {
   # check document
   doc <- cnlp_get_document(anno)
   expect_equal(class(doc), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(doc), c("doc_id", "time", "version", "language", "uri"))
+  expect_equal(names(doc), c("id", "time", "version", "language", "uri"))
   expect_equal(nrow(doc), 3L)
 
   # check dependency
   dep <- cnlp_get_dependency(anno)
   expect_equal(class(dep), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(dep), c("doc_id", "sid", "tid", "tid_target",
+  expect_equal(names(dep), c("id", "sid", "tid", "tid_target",
                              "relation", "relation_full"))
   any_missing <- apply(is.na(dep), 2, any)
   expect_true(!any(any_missing))
@@ -226,7 +226,7 @@ test_that("coreNLP; anno_level 3", {
   # check sentence
   sent <- cnlp_get_sentence(anno)
   expect_equal(class(sent), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(sent), c("doc_id", "sid", "sentiment"))
+  expect_equal(names(sent), c("id", "sid", "sentiment"))
   any_missing <- apply(is.na(sent), 2, any)
   expect_true(!any(any_missing))
   expect_true(nrow(sent) > 0L)
@@ -234,7 +234,7 @@ test_that("coreNLP; anno_level 3", {
   # check NER
   ner <- cnlp_get_entity(anno)
   expect_equal(class(ner), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(ner), c("doc_id", "sid", "tid", "tid_end", "entity_type",
+  expect_equal(names(ner), c("id", "sid", "tid", "tid_end", "entity_type",
                              "entity", "entity_normalized"))
   any_missing <- apply(is.na(ner), 2, any)
   expect_true(!any(any_missing[1:6]))
@@ -243,7 +243,7 @@ test_that("coreNLP; anno_level 3", {
   # check coref
   cr <- cnlp_get_coreference(anno)
   expect_equal(class(cr), c("tbl_df", "tbl", "data.frame"))
-  expect_equal(names(cr), c("doc_id", "rid", "mid", "mention", "mention_type",
+  expect_equal(names(cr), c("id", "rid", "mid", "mention", "mention_type",
                             "number", "gender", "animacy", "sid", "tid",
                             "tid_end", "tid_head"))
   any_missing <- apply(is.na(cr), 2, any)
@@ -259,7 +259,7 @@ test_that("run_annotators options", {
   anno <- cnlp_annotate(input_files, doc_ids = c("d1", "d2", "d3"),
                         backend = "coreNLP", as_strings = FALSE)
   token <- cnlp_get_token(anno)
-  expect_equal(unique(token$doc_id), c("d1", "d2", "d3"))
+  expect_equal(unique(token$id), c("d1", "d2", "d3"))
 
   anno <- cnlp_annotate(c("Hi duck.", "Hi bunny.", "Hello goose."),
     as_strings = TRUE, backend = "coreNLP")
