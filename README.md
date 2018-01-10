@@ -87,7 +87,7 @@ document:
 cnlp_get_document(obj)
 ```
 ```
-  doc_id                time version language  uri
+      id                time version language  uri
 1   doc1 2018-01-02 16:37:43   0.2.2  english <NA>
 ```
 
@@ -100,7 +100,7 @@ head(cnlp_get_token(obj))
 ```
 ```
 > head(cnlp_get_token(obj))
-  doc_id sid tid    word   lemma upos pos cid pid case definite degree gender
+      id sid tid    word   lemma upos pos cid pid case definite degree gender
 1   doc1   1   1     The     the  DET  DT   0   1 <NA>      Def   <NA>   <NA>
 2   doc1   1   2 regular regular  ADJ  JJ   4   1 <NA>     <NA>    Pos   <NA>
 3   doc1   1   3   early   early  ADJ  JJ  12   1 <NA>     <NA>    Pos   <NA>
@@ -134,7 +134,7 @@ the second the raw text, and other columns containing metadata:
 text <- c("It is better to be looked over than overlooked.",
          "Real stupidity beats artificial intelligence every time.",
          "The secret of getting ahead is getting started.")
-tif_input <- data.frame(doc_id = c("West", "Pratchett", "Twain"),
+tif_input <- data.frame(id = c("West", "Pratchett", "Twain"),
                         text = text,
                         full_name = c("Mae West",
                                       "Terry Pratchett",
@@ -159,7 +159,7 @@ head(cnlp_get_tif(obj))
 ```
 ```
 # A tibble: 6 x 25
-  doc_id   sid   tid   word  lemma  upos   pos   cid   pid  case definite
+      id   sid   tid   word  lemma  upos   pos   cid   pid  case definite
    <chr> <int> <int>  <chr>  <chr> <chr> <chr> <dbl> <int> <chr>    <chr>
 1   West     1     1     It     it  PRON   PRP     0     1   Nom     <NA>
 2   West     1     2     is     be   AUX   VBZ     3     1  <NA>     <NA>

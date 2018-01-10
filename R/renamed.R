@@ -54,7 +54,22 @@ get_sentence <- function(...) {
 #' @export
 get_tfidf <- function(...) {
   message("NOTE: get_tfidf has been renamed cnlp_get_tfidf")
-  cnlp_get_tfidf(...)
+  res <- cnlp_get_tfidf(...)
+
+  # support old output format for backwards compatibility
+  if (attr(class(res), "package") == "Matrix") {
+    mf <- match.call(expand.dots = TRUE)
+    type <- mf[["type"]]
+    type <- match.arg(type, c("tfidf", "tf", "idf", "vocab"))
+    if (is.null(type)) type <- "tfidf"
+
+    res <- list(temp = res, vocab = colnames(res),
+                id = rownames(res))
+    names(res)[1] <- type
+    message("NOTE: returning legacy output format from get_tfidf")
+  }
+
+  return(res)
 }
 
 #' @rdname renamed
