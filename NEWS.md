@@ -14,7 +14,7 @@ on disk, users need to save the output manually
 id (it was previously an integer index); this is to
 conform to the text interchange format (tif)
 
-* functions now use the prefix 'cnlp_', following convention
+* functions now use the prefix 'cnlp_', following the convention
 of packages such as stringi
 
 * the cnlp_get_tfidf function now returns a named sparse

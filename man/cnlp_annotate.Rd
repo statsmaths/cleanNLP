@@ -49,8 +49,7 @@ annotation <- cnlp_annotate("path/to/corpus/directory")
 \references{
 Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel,
   Steven J. Bethard, and David McClosky. 2014.
-  \href{http://nlp.stanford.edu/pubs/Stanfordcorenlp2014.pdf}{The
-        Stanford corenlp Natural Language Processing Toolkit}.
+  The Stanford corenlp Natural Language Processing Toolkit.
   In: \emph{Proceedings of the 52nd Annual Meeting of the Association
             for Computational Linguistics: System Demonstrations,
             pp. 55-60.}
