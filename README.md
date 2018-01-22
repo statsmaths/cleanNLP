@@ -139,15 +139,18 @@ tif_input <- data.frame(id = c("West", "Pratchett", "Twain"),
                         full_name = c("Mae West",
                                       "Terry Pratchett",
                                       "Mark Twain"),
+                        birthplace = c("Brooklyn, New York",
+                                       "Florida, Missouri",
+                                       "Beaconsfield, Buckinghamshire, England"),
                         stringsAsFactors = FALSE)
 ```
 
-And then run the function `cnlp_annotate_tif` on in the input:
+And then run the function `cnlp_annotate` on in the input:
 
 ```{r}
 library(cleanNLP)
 cnlp_init_udpipe()
-obj <- cnlp_annotate_tif(tif_input)
+obj <- cnlp_annotate(tif_input)
 ```
 
 The object `obj` is a cleanNLP list of tables. To get the tif output
@@ -159,18 +162,18 @@ head(cnlp_get_tif(obj))
 ```
 ```
 # A tibble: 6 x 25
-      id   sid   tid   word  lemma  upos   pos   cid   pid  case definite
-   <chr> <int> <int>  <chr>  <chr> <chr> <chr> <dbl> <int> <chr>    <chr>
-1   West     1     1     It     it  PRON   PRP     0     1   Nom     <NA>
-2   West     1     2     is     be   AUX   VBZ     3     1  <NA>     <NA>
-3   West     1     3 better better   ADJ   JJR     6     1  <NA>     <NA>
-4   West     1     4     to     to  PART    TO    13     1  <NA>     <NA>
-5   West     1     5     be     be   AUX    VB    16     1  <NA>     <NA>
-6   West     1     6 looked   look  VERB   VBN    19     1  <NA>     <NA>
-# ... with 14 more variables: degree <chr>, gender <chr>, mood <chr>,
-#   number <chr>, person <chr>, pron_type <chr>, tense <chr>, verb_form <chr>,
-#   voice <chr>, source <int>, relation <chr>, word_source <chr>,
-#   lemma_source <chr>, spaces <dbl>
+     id   sid   tid   word  lemma  upos   pos   cid   pid  case definite degree
+  <chr> <int> <int>  <chr>  <chr> <chr> <chr> <dbl> <int> <chr>    <chr>  <chr>
+1  West     1     1     It     it  PRON   PRP     0     1   Nom     <NA>   <NA>
+2  West     1     2     is     be   AUX   VBZ     3     1  <NA>     <NA>   <NA>
+3  West     1     3 better better   ADJ   JJR     6     1  <NA>     <NA>    Cmp
+4  West     1     4     to     to  PART    TO    13     1  <NA>     <NA>   <NA>
+5  West     1     5     be     be   AUX    VB    16     1  <NA>     <NA>   <NA>
+6  West     1     6 looked   look  VERB   VBN    19     1  <NA>     <NA>   <NA>
+# ... with 13 more variables: gender <chr>, mood <chr>, number <chr>,
+#   person <chr>, pron_type <chr>, tense <chr>, verb_form <chr>, voice <chr>,
+#   source <int>, relation <chr>, word_source <chr>, lemma_source <chr>,
+#   spaces <dbl>
 ```
 
 The output is now a single data frame that can be saved to disk or
