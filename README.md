@@ -53,7 +53,7 @@ text <- paste(text, collapse = " ")
 ```
 
 A minimal working example of using **cleanNLP** consists of loading the
-package, setting up the NLP backend, initalizing the backend, and running
+package, setting up the NLP backend, initializing the backend, and running
 the function `cnlp_annotate`. Because our input is a text string we set
 `as_strings` to `TRUE` (the default is to assume that we are giving the
 function paths to where the input data sits on the local machine"):
@@ -238,14 +238,14 @@ as install the **reticulate** package. On a Mac, we've found that best
 solution is to start with a fresh version of Anaconda 3.6 (the 2.7
 series causes problem even though it technically should work). We have
 not had an issue getting the library installed when doing this.
-On Windows, a fresh version of Anacond also helps, but even then there
-can be futher issues. On Windows, it seems that there is no
+On Windows, a fresh version of Anaconda also helps, but even then there
+can be further issues. On Windows, it seems that there is no
 general solution that works for everyone, unfortunately. Your best bet
 is to follow the instructions above and then look up your particular
 warning on the [spacy issues page](https://github.com/explosion/spacy/issues).
 
 After the backend is install, you should be able to run the code in the
-preceeding section "Basic usage" as given.
+preceding section "Basic usage" as given.
 
 ### corenlp backend (Java)
 
@@ -263,7 +263,7 @@ Once these system requirements are met, we can install the ".jar" files
 inside of R with the following function:
 
 ```{r}
-cnlp_download_core_nlp()
+cnlp_download_corenlp()
 ```
 
 These files are large and may take several minutes to download. The Java
@@ -279,7 +279,7 @@ cnlp_init_corenlp(anno_level = 2L, lib_location = lib_loc)
 
 After the pipeline is loaded, we again call run_annotators and set the
 backend to "coreNLP" (by default run_annotators will use whichever backend
-for most recently initalized, so this option is technically not
+for most recently initialized, so this option is technically not
 needed if you just ran `cnlp_init_corenlp`):
 
 ```{r}
