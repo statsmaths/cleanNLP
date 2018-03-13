@@ -4,10 +4,13 @@
 \alias{cnlp_get_tif}
 \title{One Table Summary of an Annotation Object}
 \usage{
-cnlp_get_tif(annotation)
+cnlp_get_tif(annotation, rename = TRUE)
 }
 \arguments{
 \item{annotation}{an annotation object}
+
+\item{rename}{logical. Should columns be renamed to match
+the text interchange format.}
 }
 \description{
 This function pulls together several tables to provide
