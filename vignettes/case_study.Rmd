@@ -210,8 +210,8 @@ into the ``get_tfidif`` function and passing the results to ``tidy_pca``.
 ```{r}
 pca <- cnlp_get_token(sotu) %>%
   filter(pos %in% c("NN", "NNS")) %>%
-  cnlp_get_tfidf(min_df = 0.05, max_df = 0.95, type = "tfidf", tf_weight = "dnorm") %$%
-  cnlp__pca(tfidf, cnlp_get_document(sotu))
+  cnlp_get_tfidf(min_df = 0.05, max_df = 0.95, type = "tfidf", tf_weight = "dnorm") %>%
+  cnlp_pca(cnlp_get_document(sotu))
 ```
 In this example only non-proper nouns have been included in order to minimize the
 stylistic attributes of the speeches in order to focus more on their content.
