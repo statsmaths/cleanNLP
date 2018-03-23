@@ -26,33 +26,51 @@ cnlp_read_csv <- function(input_dir) {
   anno <- empty_anno()
 
   if (file.exists(fn <- file.path(input_dir, "coreference.csv"))) {
-    anno$coreference <- utils::read.csv(fn, stringsAsFactors = FALSE)
-    class(anno$coreference) <- c("tbl_df", "tbl", "data.frame")
+    temp <- utils::read.csv(fn, stringsAsFactors = FALSE)
+    if (nrow(temp) > 0) {
+      anno$coreference <- temp
+      class(anno$coreference) <- c("tbl_df", "tbl", "data.frame")
+    }
   }
 
   if (file.exists(fn <- file.path(input_dir, "dependency.csv"))) {
-    anno$dependency <- utils::read.csv(fn, stringsAsFactors = FALSE)
-    class(anno$dependency) <- c("tbl_df", "tbl", "data.frame")
+    temp <- utils::read.csv(fn, stringsAsFactors = FALSE)
+    if (nrow(temp) > 0) {
+      anno$dependency <- temp
+      class(anno$dependency) <- c("tbl_df", "tbl", "data.frame")
+    }
   }
 
   if (file.exists(fn <- file.path(input_dir, "document.csv"))) {
-    anno$document <- utils::read.csv(fn, stringsAsFactors = FALSE)
-    class(anno$document) <- c("tbl_df", "tbl", "data.frame")
+    temp <- utils::read.csv(fn, stringsAsFactors = FALSE)
+    if (nrow(temp) > 0) {
+      anno$document <- temp
+      class(anno$document) <- c("tbl_df", "tbl", "data.frame")
+    }
   }
 
   if (file.exists(fn <- file.path(input_dir, "entity.csv"))) {
-    anno$entity <- utils::read.csv(fn, stringsAsFactors = FALSE)
-    class(anno$entity) <- c("tbl_df", "tbl", "data.frame")
+    temp <- utils::read.csv(fn, stringsAsFactors = FALSE)
+    if (nrow(temp) > 0) {
+      anno$entity <- temp
+      class(anno$entity) <- c("tbl_df", "tbl", "data.frame")
+    }
   }
 
   if (file.exists(fn <- file.path(input_dir, "sentence.csv"))) {
-    anno$sentence <- utils::read.csv(fn, stringsAsFactors = FALSE)
-    class(anno$sentence) <- c("tbl_df", "tbl", "data.frame")
+    temp <- utils::read.csv(fn, stringsAsFactors = FALSE)
+    if (nrow(temp) > 0) {
+      anno$sentence <- temp
+      class(anno$sentence) <- c("tbl_df", "tbl", "data.frame")
+    }
   }
 
   if (file.exists(fn <- file.path(input_dir, "token.csv"))) {
-    anno$token <- utils::read.csv(fn, stringsAsFactors = FALSE)
-    class(anno$token) <- c("tbl_df", "tbl", "data.frame")
+    temp <- utils::read.csv(fn, stringsAsFactors = FALSE)
+    if (nrow(temp) > 0) {
+      anno$token <- temp
+      class(anno$token) <- c("tbl_df", "tbl", "data.frame")
+    }
   }
 
   if (file.exists(fn <- file.path(input_dir, "vector.csv"))) {
