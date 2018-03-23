@@ -79,14 +79,14 @@ cnlp_init_corenlp <- function(language, anno_level = 2, lib_location = NULL,
                          mem = "6g", verbose = FALSE) {
 
   if (missing(language)) language <- "en"
-  language_list <- c("en", "de", "fr", "es")
+  language_list <- c("en", "de", "fr", "es", "ar", "zh")
   language <- match.arg(arg = language, choices = language_list)
   anno_level <- as.integer(anno_level)[1]
   if (anno_level < 0)
     stop("anno_level must be set to a non-negative integer")
   if (is.null(lib_location))
     lib_location <- file.path(system.file("extdata", package="cleanNLP"),
-                    "/stanford-corenlp-full-2016-10-31")
+                    "/stanford-corenlp-full-2018-02-27")
 
   # set properties that are not "corenlp" properties
   volatiles$corenlp$language <- language
@@ -139,7 +139,7 @@ cnlp_init_corenlp <- function(language, anno_level = 2, lib_location = NULL,
   }
   if (language == "en" & anno_level == 2) {
     string <- paste("tokenize, ssplit, pos, lemma, parse, depparse,",
-                    "sentiment, ner, mention, entitymentions, natlog",
+                    "sentiment, ner, entitymentions, natlog",
                     collapse = "")
     setup_corenlp_backend_raw("annotators", string, clear = TRUE)
     #.setup_corenlp_backend_raw("parse.model",
@@ -201,6 +201,167 @@ cnlp_init_corenlp <- function(language, anno_level = 2, lib_location = NULL,
       "edu/stanford/nlp/models/pos-tagger/french/french.tagger")
     setup_corenlp_backend_raw("parse.model",
       "edu/stanford/nlp/models/lexparser/frenchFactored.ser.gz")
+  }
+
+  # Arabic models
+  if (language == "ar" & anno_level >= 0) {
+    setup_corenlp_backend_raw("annotators",
+      "segment, tokenize, ssplit, pos, parse", clear = TRUE)
+    setup_corenlp_backend_raw("customAnnotatorClass.segment",
+      "edu.stanford.nlp.pipeline.ArabicSegmenterAnnotator")
+    setup_corenlp_backend_raw("segment.model",
+      "edu/stanford/nlp/models/segmenter/arabic/arabic-segmenter-atb+bn+arztrain.ser.gz")
+    setup_corenlp_backend_raw("ssplit.boundaryTokenRegex",
+      "[.]|[!?]+|[!\\u061F]+")
+    setup_corenlp_backend_raw("pos.model",
+      "edu/stanford/nlp/models/pos-tagger/arabic/arabic.tagger")
+    setup_corenlp_backend_raw("parse.model",
+      "edu/stanford/nlp/models/lexparser/arabicFactored.ser.gz")
+  }
+
+  # Chinese models
+  if (language == "zh" & anno_level == 0) {
+    setup_corenlp_backend_raw("annotators",
+      "tokenize, ssplit, pos, lemma", clear = TRUE)
+
+    setup_corenlp_backend_raw("tokenize.language",
+      "zh")
+    setup_corenlp_backend_raw("segment.model",
+      "edu/stanford/nlp/models/segmenter/chinese/ctb.gz")
+    setup_corenlp_backend_raw("segment.sighanCorporaDict",
+      "edu/stanford/nlp/models/segmenter/chinese")
+    setup_corenlp_backend_raw("segment.serDictionary",
+      "edu/stanford/nlp/models/segmenter/chinese/dict-chris6.ser.gz")
+    setup_corenlp_backend_raw("segment.sighanPostProcessing",
+      "true")
+    setup_corenlp_backend_raw("ssplit.boundaryTokenRegex",
+      "[.\u3002]|[!?\uFF01\uFF1F]+")
+    setup_corenlp_backend_raw("pos.model",
+      "edu/stanford/nlp/models/pos-tagger/chinese-distsim/chinese-distsim.tagger")
+  }
+
+  if (language == "zh" & anno_level == 1) {
+    setup_corenlp_backend_raw("annotators",
+      "tokenize, ssplit, pos, lemma, ner, parse", clear = TRUE)
+
+    setup_corenlp_backend_raw("tokenize.language",
+      "zh")
+    setup_corenlp_backend_raw("segment.model",
+      "edu/stanford/nlp/models/segmenter/chinese/ctb.gz")
+    setup_corenlp_backend_raw("segment.sighanCorporaDict",
+      "edu/stanford/nlp/models/segmenter/chinese")
+    setup_corenlp_backend_raw("segment.serDictionary",
+      "edu/stanford/nlp/models/segmenter/chinese/dict-chris6.ser.gz")
+    setup_corenlp_backend_raw("segment.sighanPostProcessing",
+      "true")
+    setup_corenlp_backend_raw("ssplit.boundaryTokenRegex",
+      "[.\u3002]|[!?\uFF01\uFF1F]+")
+    setup_corenlp_backend_raw("pos.model",
+      "edu/stanford/nlp/models/pos-tagger/chinese-distsim/chinese-distsim.tagger")
+    setup_corenlp_backend_raw("ner.language",
+      "chinese")
+    setup_corenlp_backend_raw("ner.model",
+      "edu/stanford/nlp/models/ner/chinese.misc.distsim.crf.ser.gz")
+    setup_corenlp_backend_raw("ner.applyNumericClassifiers",
+      "true")
+    setup_corenlp_backend_raw("ner.useSUTime",
+      "false")
+    setup_corenlp_backend_raw("regexner.mapping",
+      "edu/stanford/nlp/models/kbp/cn_regexner_mapping.tab")
+    setup_corenlp_backend_raw("regexner.validpospattern",
+      "^(NR|NN|JJ).*")
+    setup_corenlp_backend_raw("regexner.ignorecase",
+      "true")
+    setup_corenlp_backend_raw("regexner.noDefaultOverwriteLabels",
+      "CITY")
+    setup_corenlp_backend_raw("parse.model",
+      "edu/stanford/nlp/models/srparser/chineseSR.ser.gz")
+    setup_corenlp_backend_raw("depparse.model",
+      "edu/stanford/nlp/models/parser/nndep/UD_Chinese.gz")
+    setup_corenlp_backend_raw("depparse.language",
+      "chinese")
+  }
+
+  if (language == "zh" & anno_level >= 2) {
+    setup_corenlp_backend_raw("annotators",
+      "tokenize, ssplit, pos, lemma, ner, parse, coref", clear = TRUE)
+
+    setup_corenlp_backend_raw("tokenize.language",
+      "zh")
+    setup_corenlp_backend_raw("segment.model",
+      "edu/stanford/nlp/models/segmenter/chinese/ctb.gz")
+    setup_corenlp_backend_raw("segment.sighanCorporaDict",
+      "edu/stanford/nlp/models/segmenter/chinese")
+    setup_corenlp_backend_raw("segment.serDictionary",
+      "edu/stanford/nlp/models/segmenter/chinese/dict-chris6.ser.gz")
+    setup_corenlp_backend_raw("segment.sighanPostProcessing",
+      "true")
+    setup_corenlp_backend_raw("ssplit.boundaryTokenRegex",
+      "[.\u3002]|[!?\uFF01\uFF1F]+")
+    setup_corenlp_backend_raw("pos.model",
+      "edu/stanford/nlp/models/pos-tagger/chinese-distsim/chinese-distsim.tagger")
+    setup_corenlp_backend_raw("ner.language",
+      "chinese")
+    setup_corenlp_backend_raw("ner.model",
+      "edu/stanford/nlp/models/ner/chinese.misc.distsim.crf.ser.gz")
+    setup_corenlp_backend_raw("ner.applyNumericClassifiers",
+      "true")
+    setup_corenlp_backend_raw("ner.useSUTime",
+      "false")
+    setup_corenlp_backend_raw("regexner.mapping",
+      "edu/stanford/nlp/models/kbp/cn_regexner_mapping.tab")
+    setup_corenlp_backend_raw("regexner.validpospattern",
+      "^(NR|NN|JJ).*")
+    setup_corenlp_backend_raw("regexner.ignorecase",
+      "true")
+    setup_corenlp_backend_raw("regexner.noDefaultOverwriteLabels",
+      "CITY")
+    setup_corenlp_backend_raw("parse.model",
+      "edu/stanford/nlp/models/srparser/chineseSR.ser.gz")
+    setup_corenlp_backend_raw("depparse.model",
+      "edu/stanford/nlp/models/parser/nndep/UD_Chinese.gz")
+    setup_corenlp_backend_raw("depparse.language",
+      "chinese")
+    setup_corenlp_backend_raw("coref.sieves",
+      "ChineseHeadMatch, ExactStringMatch, PreciseConstructs, StrictHeadMatch1, StrictHeadMatch2, StrictHeadMatch3, StrictHeadMatch4, PronounMatch")
+    setup_corenlp_backend_raw("coref.input.type",
+      "raw")
+    setup_corenlp_backend_raw("coref.postprocessing",
+      "true")
+    setup_corenlp_backend_raw("coref.calculateFeatureImportance",
+      "false")
+    setup_corenlp_backend_raw("coref.useConstituencyTree",
+      "true")
+    setup_corenlp_backend_raw("coref.useSemantics",
+      "false")
+    setup_corenlp_backend_raw("coref.algorithm",
+      "hybrid")
+    setup_corenlp_backend_raw("coref.path.word2vec",
+      "")
+    setup_corenlp_backend_raw("coref.language",
+      "zh")
+    setup_corenlp_backend_raw("coref.defaultPronounAgreement",
+      "true")
+    setup_corenlp_backend_raw("coref.zh.dict",
+      "edu/stanford/nlp/models/dcoref/zh-attributes.txt.gz")
+    setup_corenlp_backend_raw("coref.defaultPronounAgreement",
+      "true")
+    setup_corenlp_backend_raw("coref.zh.dict",
+      "edu/stanford/nlp/models/dcoref/zh-attributes.txt.gz")
+    setup_corenlp_backend_raw("coref.print.md.log",
+      "false")
+    setup_corenlp_backend_raw("coref.md.type",
+      "RULE")
+    setup_corenlp_backend_raw("coref.md.liberalChineseMD",
+      "false")
+    setup_corenlp_backend_raw("kbp.semgrex",
+      "edu/stanford/nlp/models/kbp/chinese/semgrex")
+    setup_corenlp_backend_raw("kbp.tokensregex",
+      "edu/stanford/nlp/models/kbp/chinese/tokensregex")
+    setup_corenlp_backend_raw("kbp.model",
+      "none")
+    setup_corenlp_backend_raw("entitylink.wikidict",
+      "edu/stanford/nlp/models/kbp/wikidict_chinese.tsv.gz")
   }
 
   invisible(init_corenlp_backend())
@@ -278,22 +439,22 @@ init_corenlp_backend <- function() {
 
   # Determine if the corenlp files have been loaded correctly
   jar_files <- basename(rJava::.jclassPath())
-  if (!("stanford-corenlp-3.7.0.jar" %in% jar_files))
-    warning("The Stanford corenlp (3.7.0) files were not found",
+  if (!("stanford-corenlp-3.9.1.jar" %in% jar_files))
+    warning("The Stanford corenlp (3.7.0) files were not found ",
             "as expected. Proceed with caution.")
-  if (lang == "en" && !("stanford-english-corenlp-2016-10-31-models.jar"
+  if (lang == "en" && !("stanford-english-corenlp-2018-02-27-models.jar"
     %in% jar_files))
     warning("English model file has not been downloaded to lib_location.",
             "Proceed with caution.")
-  if (lang == "fr" && !("stanford-french-corenlp-2016-10-31-models.jar"
+  if (lang == "fr" && !("stanford-french-corenlp-2018-02-27-models.jar"
     %in% jar_files))
     warning("French model file has not been downloaded to lib_location.",
       "Proceed with caution.")
-  if (lang == "de" && !("stanford-german-corenlp-2016-10-31-models.jar"
+  if (lang == "de" && !("stanford-german-corenlp-2018-02-27-models.jar"
     %in% jar_files))
     warning("German model file has not been downloaded to lib_location.",
       "Proceed with caution.")
-  if (lang == "es" && !("stanford-spanish-corenlp-2016-10-31-models.jar"
+  if (lang == "es" && !("stanford-spanish-corenlp-2018-02-27-models.jar"
     %in% jar_files))
     warning("Spanish model file has not been downloaded to lib_location.",
       "Proceed with caution.")

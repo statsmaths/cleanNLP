@@ -4,8 +4,8 @@
 \alias{cnlp_download_corenlp}
 \title{Download java files needed for CoreNLP}
 \usage{
-cnlp_download_corenlp(type = c("default", "base", "en", "fr", "de", "es"),
-  output_loc, url = NULL, url_core = TRUE, force = FALSE)
+cnlp_download_corenlp(type = c("default", "base", "en", "fr", "de", "es",
+  "ar", "zh"), output_loc, url = NULL, url_core = TRUE, force = FALSE)
 }
 \arguments{
 \item{type}{type of files to download. The base package

@@ -8,7 +8,7 @@ input_files <- file.path(input_dir,
 
 # Downloading the files is slow and network intensive; to test download
 # coreNLP library to this location and then the tests will run.
-lib_loc <- "~/local/core_nlp_files/stanford-corenlp-full-2016-10-31"
+lib_loc <- "~/local/core_nlp_files/stanford-corenlp-full-2018-02-27"
 
 check_corenlp_available <- function() {
   if (!requireNamespace("rJava")) {

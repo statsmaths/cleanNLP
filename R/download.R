@@ -37,7 +37,7 @@
 #'}
 #' @export
 cnlp_download_corenlp <- function(
-    type = c("default", "base", "en", "fr", "de", "es"),
+    type = c("default", "base", "en", "fr", "de", "es", "ar", "zh"),
     output_loc, url = NULL, url_core = TRUE, force = FALSE) {
 
   if (!requireNamespace("RCurl"))
@@ -45,7 +45,7 @@ cnlp_download_corenlp <- function(
 
   # set defaults and determine where files should be saved
   baseURL <- "https://nlp.stanford.edu/software/"
-  coreFile <- "/stanford-corenlp-full-2016-10-31"
+  coreFile <- "/stanford-corenlp-full-2018-02-27"
   if (missing(output_loc)) {
     output_loc <- system.file("extdata", package="cleanNLP")
     if (file.access(output_loc, "6") == -1)
@@ -114,44 +114,66 @@ cnlp_download_corenlp <- function(
 
   if (type %in% c("default", "en")) {
     fp <- check_file_exists(file.path(output_loc, coreFile,
-             "/stanford-english-corenlp-2016-10-31-models.jar"),
+             "/stanford-english-corenlp-2018-02-27-models.jar"),
              force = force)
     f <- RCurl::CFILE(fp, mode="wb")
     ret <- RCurl::curlPerform(url = paste0(baseURL,
-                  "/stanford-english-corenlp-2016-10-31-models.jar"),
+                  "/stanford-english-corenlp-2018-02-27-models.jar"),
                   writedata = f@ref, noprogress=FALSE)
     RCurl::close(f)
   }
 
   if (type %in% c("fr")) {
     fp <- check_file_exists(file.path(output_loc, coreFile,
-             "/stanford-french-corenlp-2016-10-31-models.jar"),
+             "/stanford-french-corenlp-2018-02-27-models.jar"),
              force = force)
     f <- RCurl::CFILE(fp, mode="wb")
     ret <- RCurl::curlPerform(url = paste0(baseURL,
-             "/stanford-french-corenlp-2016-10-31-models.jar"),
+             "/stanford-french-corenlp-2018-02-27-models.jar"),
              writedata = f@ref, noprogress=FALSE)
     RCurl::close(f)
   }
 
   if (type %in% c("de")) {
     fp <- check_file_exists(file.path(output_loc, coreFile,
-             "/stanford-german-corenlp-2016-10-31-models.jar"),
+             "/stanford-german-corenlp-2018-02-27-models.jar"),
              force = force)
     f <- RCurl::CFILE(fp, mode="wb")
     ret <- RCurl::curlPerform(url = paste0(baseURL,
-             "/stanford-german-corenlp-2016-10-31-models.jar"),
+             "/stanford-german-corenlp-2018-02-27-models.jar"),
              writedata = f@ref, noprogress=FALSE)
     RCurl::close(f)
   }
 
   if (type %in% c("es")) {
     fp <- check_file_exists(file.path(output_loc, coreFile,
-             "/stanford-spanish-corenlp-2016-10-31-models.jar"),
+             "/stanford-spanish-corenlp-2018-02-27-models.jar"),
              force = force)
     f <- RCurl::CFILE(fp, mode="wb")
     ret <- RCurl::curlPerform(url = paste0(baseURL,
-             "/stanford-spanish-corenlp-2016-10-31-models.jar"),
+             "/stanford-spanish-corenlp-2018-02-27-models.jar"),
+             writedata = f@ref, noprogress=FALSE)
+    RCurl::close(f)
+  }
+
+  if (type %in% c("ar")) {
+    fp <- check_file_exists(file.path(output_loc, coreFile,
+             "/stanford-arabic-corenlp-2018-02-27-models.jar"),
+             force = force)
+    f <- RCurl::CFILE(fp, mode="wb")
+    ret <- RCurl::curlPerform(url = paste0(baseURL,
+             "/stanford-arabic-corenlp-2018-02-27-models.jar"),
+             writedata = f@ref, noprogress=FALSE)
+    RCurl::close(f)
+  }
+
+  if (type %in% c("zh")) {
+    fp <- check_file_exists(file.path(output_loc, coreFile,
+             "/stanford-chinese-corenlp-2018-02-27-models.jar"),
+             force = force)
+    f <- RCurl::CFILE(fp, mode="wb")
+    ret <- RCurl::curlPerform(url = paste0(baseURL,
+             "/stanford-chinese-corenlp-2018-02-27-models.jar"),
              writedata = f@ref, noprogress=FALSE)
     RCurl::close(f)
   }
