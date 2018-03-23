@@ -5,15 +5,14 @@
 \title{Run the annotation pipeline on a set of documents}
 \usage{
 cnlp_annotate(input, as_strings = NULL, doc_ids = NULL, backend = NULL,
-  meta = NULL)
+  meta = NULL, doc_var = "doc_id", text_var = "text")
 }
 \arguments{
 \item{input}{either a vector of file names to parse, a
 character vector with one document in each
 element, or a data frame. If a data frame,
-it is assumed that the first column gives the
-document ids, the second the raw text, and
-other columns (if present) yield metadata}
+specify what column names contain the text and
+(optionally) document ids}
 
 \item{as_strings}{logical. Is the data given to \code{input} the
 actual document text or are they file names?
@@ -28,6 +27,15 @@ model to be initalized.}
 
 \item{meta}{an optional data frame to bind to the document
 table}
+
+\item{doc_var}{if passing a data frame, character description of the
+column containing the document identifier; if this
+this variable does not exist in the dataset,
+automatic names will be given (or set to NULL to
+force automatic names)}
+
+\item{text_var}{if passing a data frame, which column contains the
+document identifier}
 }
 \value{
 an object of class \code{annotation}

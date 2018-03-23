@@ -134,7 +134,7 @@ the second the raw text, and other columns containing metadata:
 text <- c("It is better to be looked over than overlooked.",
          "Real stupidity beats artificial intelligence every time.",
          "The secret of getting ahead is getting started.")
-tif_input <- data.frame(id = c("West", "Pratchett", "Twain"),
+tif_input <- data.frame(doc_id = c("West", "Pratchett", "Twain"),
                         text = text,
                         full_name = c("Mae West",
                                       "Terry Pratchett",

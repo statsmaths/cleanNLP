@@ -10,9 +10,8 @@
 #' @param input          either a vector of file names to parse, a
 #'                       character vector with one document in each
 #'                       element, or a data frame. If a data frame,
-#'                       it is assumed that the first column gives the
-#'                       document ids, the second the raw text, and
-#'                       other columns (if present) yield metadata
+#'                       specify what column names contain the text and
+#'                       (optionally) document ids
 #' @param as_strings     logical. Is the data given to \code{input} the
 #'                       actual document text or are they file names?
 #'                       If \code{NULL}, the default, will be set to
@@ -23,6 +22,13 @@
 #'                       model to be initalized.
 #' @param meta           an optional data frame to bind to the document
 #'                       table
+#' @param doc_var        if passing a data frame, character description of the
+#'                       column containing the document identifier; if this
+#'                       this variable does not exist in the dataset,
+#'                       automatic names will be given (or set to NULL to
+#'                       force automatic names)
+#' @param text_var       if passing a data frame, which column contains the
+#'                       document identifier
 #'
 #' @return  an object of class \code{annotation}
 #'
@@ -47,10 +53,12 @@ cnlp_annotate <- function(input,
                            as_strings = NULL,
                            doc_ids = NULL,
                            backend = NULL,
-                           meta = NULL) {
+                           meta = NULL,
+                           doc_var = "doc_id",
+                           text_var = "text") {
 
   # make sure there is a valid backend specified; if not
-  # explict, assume user wants the last initalized
+  # explicit, assume user wants the last initialized
   if (is.null(backend)) {
     if (volatiles$model_init_last == "")
       stop("No initialized backends found.")
@@ -64,25 +72,35 @@ cnlp_annotate <- function(input,
   # if the input is a data frame, check for tif
   if (is.data.frame(input)) {
 
-    if (ncol(input) <= 1)
-      stop("The input should have at least two columns if a data frame")
-    if (class(input[[2]]) != "character")
-      stop("The second column of the input should contain a character vector")
-
-    names(input)[1:2] <- c("doc_id", "text")
-
-    if (!is.null(doc_ids)) {
-      warning("data frame input given along with doc_ids; ignoring the latter")
+    # grab the text data
+    if (!(text_var %in% names(input))) {
+      stop(sprintf("text_var variable '%s' not found in input", text_var))
     }
+
+    input <- input[[text_var]]
+
+    # grab document ids
+    if (!is.null(doc_var)) {
+      if (doc_var %in% names(input)) {
+        doc_ids <- input[[doc_var]]
+      }
+    }
+
+    # grab metadata
     if (!is.null(meta)) {
-      warning("data frame input given along with meta; ignoring the latter")
-    }
-    if (ncol(input) > 2L) {
-      meta <- input[,seq(3,ncol(input))]
+      warning("both data frame and metadata provided; ignoring the latter")
     }
 
-    doc_ids <- input$doc_id
-    input <- input$text
+    if (!is.null(doc_var)) {
+      non_meta_cols <- which(names(input) %in% c(doc_var, text_var))
+    } else {
+      non_meta_cols <- which(names(input) == text_var)
+    }
+
+    if (length(non_meta_cols) < ncol(input)) {
+      meta <- input[,-non_meta_cols,drop=FALSE]
+    }
+
     as_strings <- TRUE
   }
 
