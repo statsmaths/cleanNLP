@@ -242,7 +242,8 @@ from_udpipe_CoNLL <- function(z) {
   roots$word <- roots$lemma <- "ROOT"
   roots$upos <- roots$pos <- NA_character_
   token <- rbind(token, roots)
-  token <- token[order(token$id, token$sid, token$tid),]
+  token_id_num <- as.numeric(stringi::stri_sub(token$id, 4, -1))
+  token <- token[order(token_id_num, token$sid, token$tid),]
 
   # create dependency table
   tid_target <- tid
