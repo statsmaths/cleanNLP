@@ -2,7 +2,6 @@
 % Please edit documentation in R/renamed.R
 \name{renamed}
 \alias{renamed}
-\alias{get_combine}
 \alias{get_coreference}
 \alias{get_dependency}
 \alias{get_document}
@@ -25,8 +24,6 @@
 \alias{extract_documents}
 \title{Renamed functions}
 \usage{
-get_combine(...)
-
 get_coreference(...)
 
 get_dependency(...)

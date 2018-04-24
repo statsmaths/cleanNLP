@@ -26,7 +26,7 @@
 #' @export
 cnlp_init_udpipe <- function(model_name = NULL,
                              model_path = NULL,
-                             feature_flag = TRUE,
+                             feature_flag = FALSE,
                              parser = "default") {
   if (!is.null(model_path))
     model_name <- "custom"
@@ -191,13 +191,17 @@ from_udpipe_CoNLL <- function(z) {
   feats <- body$V6
 
   # detect character offsets
-  cid <- stringi::stri_match(body$V10, regex = "SpacesAfter=([^|]+)")[,2]
-  cid <- stringi::stri_length(cid)
-  cid[stringi::stri_detect(body$V10, fixed = "SpaceAfter=No")] <- 0
-  cid[is.na(cid)] <- 1
+  s_after <- stringi::stri_match(body$V10, regex = "SpacesAfter=([^|]+)")[,2]
+  s_after[is.na(s_after)] <- " "
+  s_after[stringi::stri_detect(body$V10, fixed = "SpaceAfter=No")] <- ""
+  s_after <- stringi::stri_replace_all(s_after, "\t", fixed = "\\t")
+  s_after <- stringi::stri_replace_all(s_after, "\n", fixed = "\\n")
+  s_after <- stringi::stri_replace_all(s_after, " ", fixed = "\\s")
+  cid <- stringi::stri_length(s_after)
   cid <- cid + stringi::stri_length(word)
   cid <- tapply(cid, doc_id, function(v) cumsum(c(0, v[-length(v)])))
   cid <- unlist(cid, use.names = FALSE)
+  cid <- as.integer(cid)
 
   # create document table
   doc <- data.frame(id       = unique(doc_id),
@@ -212,6 +216,7 @@ from_udpipe_CoNLL <- function(z) {
                 word = word, lemma = lemma,
                 upos = upos, pos = pos,
                 cid = cid, pid = pid,
+                s_after = s_after,
                 stringsAsFactors = FALSE)
 
   # add extra features to token table

@@ -156,3 +156,46 @@ cnlp_annotate <- function(input,
 
   return(out)
 }
+
+#' Quickly Compute Data Frame of Annotations
+#'
+#' Runs the clean_nlp annotators over a given corpus of text
+#' and returns a data frame of annotated text with one token
+#' per line. By default it will initalize the udpipe backend
+#' if no annotators are found.
+#'
+#' @param input          either a vector of file names to parse, a
+#'                       character vector with one document in each
+#'                       element, or a data frame. If a data frame,
+#'                       specify what column names contain the text and
+#'                       (optionally) document ids
+#' @param ...            additional options passed to
+#'                       \code{\link{cnlp_annotate}}
+#'
+#' @return  a data frame of annotations with one row per token
+#'
+#' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
+#'
+#' @examples
+#'\dontrun{
+#'annotation <- cnlp_quick(c("Parse this text.", "This too, as a new doc."))
+#'}
+#'
+#' @export
+cnlp_quick <- function(input, ...) {
+
+  # if there is no valid backend specified, specify it as udpipe
+  if (volatiles$model_init_last == "") {
+    cnlp_init_udpipe("english")
+  }
+
+  anno <- cnlp_annotate(input, ...)
+  df <- cnlp_get_token(anno, include_root = FALSE, combine = TRUE,
+                       remove_na = TRUE, spaces = FALSE)
+  names(df)[c(1L, 4L)] <- c("doc_id", "token")
+
+  return(df)
+}
+
+
+

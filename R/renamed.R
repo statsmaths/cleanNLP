@@ -10,13 +10,6 @@
 
 #' @rdname renamed
 #' @export
-get_combine <- function(...) {
-  message("NOTE: get_combine has been renamed cnlp_get_tif")
-  cnlp_get_tif(...)
-}
-
-#' @rdname renamed
-#' @export
 get_coreference <- function(...) {
   message("NOTE: get_coreference has been renamed cnlp_get_coreference")
   cnlp_get_coreference(...)
@@ -53,8 +46,8 @@ get_sentence <- function(...) {
 #' @rdname renamed
 #' @export
 get_tfidf <- function(...) {
-  message("NOTE: get_tfidf has been renamed cnlp_get_tfidf")
-  res <- cnlp_get_tfidf(...)
+  message("NOTE: get_tfidf has been renamed cnlp_utils_tfidf")
+  res <- cnlp_utils_tfidf(...)
 
   # support old output format for backwards compatibility
   if (attr(class(res), "package") == "Matrix") {
@@ -117,8 +110,8 @@ run_annotators <- function(...) {
 #' @rdname renamed
 #' @export
 tidy_pca <- function(...) {
-  message("NOTE: tidy_pca has been renamed cnlp_pca")
-  cnlp_pca(...)
+  message("NOTE: tidy_pca has been renamed cnlp_utils_pca")
+  cnlp_utils_pca(...)
 }
 
 #' @rdname renamed

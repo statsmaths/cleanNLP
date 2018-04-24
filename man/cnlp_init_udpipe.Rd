@@ -5,7 +5,7 @@
 \title{Interface for initializing the udpipe backend}
 \usage{
 cnlp_init_udpipe(model_name = NULL, model_path = NULL,
-  feature_flag = TRUE, parser = "default")
+  feature_flag = FALSE, parser = "default")
 }
 \arguments{
 \item{model_name}{string giving the model namel.

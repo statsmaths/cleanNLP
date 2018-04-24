@@ -1,7 +1,7 @@
 #' Compute Principal Components and store as a Data Frame
 #'
-#' Takes a matrix, perhaps from the output of \code{\link{cnlp_get_tfidf}}, and
-#' returns a data frame with the top principal components extracted. This
+#' Takes a matrix, perhaps from the output of \code{\link{cnlp_utils_tfidf}},
+#' and returns a data frame with the top principal components extracted. This
 #' is a simple but powerful technique for visualizing a corpus of documents.
 #'
 #' @param x       a matrix object to pass to \code{prcomp}
@@ -25,15 +25,16 @@
 #' # Get principal components from the non-proper noun lemmas
 #' tfidf <- cnlp_get_token(obama) %>%
 #'   filter(pos %in% c("NN", "NNS")) %>%
-#'   cnlp_get_tfidf()
-#' pca_doc <- cnlp_pca(tfidf, cnlp_get_document(obama))
+#'   cnlp_utils_tfidf()
+#' pca_doc <- cnlp_utils_pca(tfidf, cnlp_get_document(obama))
 #'
 #' # Plot speeches using the first two principal components
 #' plot(pca_doc$PC1, pca_doc$PC2, col = "white")
 #' text(pca_doc$PC1, pca_doc$PC2, label = 2009:2016)
 #'
 #' @export
-cnlp_pca <- function(x, meta = NULL, k = 2, center = TRUE, scale = TRUE) {
+cnlp_utils_pca <- function(x, meta = NULL, k = 2, center = TRUE,
+                           scale = TRUE) {
 
   m <- stats::prcomp(x, center = center, scale. = scale)$x
   out <- dplyr::as_data_frame(m[,1:k])
@@ -98,6 +99,7 @@ cnlp_pca <- function(x, meta = NULL, k = 2, center = TRUE, scale = TRUE) {
 #'                      within the function if set to \code{NULL}. When
 #'                      supplied, the options \code{min_df}, \code{max_df},
 #'                      and \code{max_features} are ignored.
+#' @param ...           other arguments passed to the base method
 #'
 #' @return  a sparse matrix with dimnames or, if "all", a list with elements
 #'\itemize{
@@ -117,19 +119,21 @@ cnlp_pca <- function(x, meta = NULL, k = 2, center = TRUE, scale = TRUE) {
 #' data(obama)
 #'
 #' # Top words in the first Obama S.O.T.U., using all tokens
-#' tfidf <- cnlp_get_tfidf(obama)
+#' tfidf <- cnlp_utils_tfidf(obama)
 #' vids <- order(tfidf[1,], decreasing = TRUE)[1:10]
 #' colnames(tfidf)[vids]
 #'
 #' # Top words, only using non-proper nouns
 #' tfidf <- cnlp_get_token(obama) %>%
 #'   filter(pos %in% c("NN", "NNS")) %>%
-#'   cnlp_get_tfidf()
+#'   cnlp_utils_tfidf()
 #' vids <- order(tfidf[1,], decreasing = TRUE)[1:10]
 #' colnames(tfidf)[vids]
 #'
 #' @export
-cnlp_get_tfidf <- function(object, type = c("tfidf", "tf", "idf", "vocab", "all"),
+#' @name cnlp_utils_tfidf
+cnlp_utils_tfidf <- function(object,
+                      type = c("tfidf", "tf", "idf", "vocab", "all"),
                       tf_weight = c("lognorm", "binary", "raw", "dnorm"),
                       idf_weight = c("idf", "smooth", "prob"),
                       min_df = 0.1,
@@ -272,4 +276,12 @@ cnlp_get_tfidf <- function(object, type = c("tfidf", "tf", "idf", "vocab", "all"
   return(out)
 
 }
+
+#' @rdname cnlp_utils_tfidf
+#' @export
+cnlp_utils_tf <- function(object, type = "tf", tf_weight = "raw", ...) {
+  out <- cnlp_utils_tfidf(object, type = type, tf_weight = tf_weight, ...)
+  return(out)
+}
+
 
