@@ -99,6 +99,11 @@ cnlp_utils_pca <- function(x, meta = NULL, k = 2, center = TRUE,
 #'                      within the function if set to \code{NULL}. When
 #'                      supplied, the options \code{min_df}, \code{max_df},
 #'                      and \code{max_features} are ignored.
+#' @param doc_set       optional character vector of document ids. Useful to
+#'                      create empty rows in the output matrix for documents
+#'                      without data in the input. Most users will want to keep
+#'                      this equal to \code{NULL}, the default, to have the 
+#'                      function compute the document set automatically.
 #' @param ...           other arguments passed to the base method
 #'
 #' @return  a sparse matrix with dimnames or, if "all", a list with elements
@@ -139,14 +144,18 @@ cnlp_utils_tfidf <- function(object,
                       min_df = 0.1,
                       max_df = 0.9,
                       max_features = 1e4,
-                      doc_var = "id",
+                      doc_var = c("doc_id", "id"),
                       token_var = "lemma",
-                      vocabulary = NULL) {
+                      vocabulary = NULL,
+                      doc_set = NULL) {
 
   if (inherits(object, "annotation"))
     object <- cnlp_get_token(object)
 
   count <- prop <- token <- NULL # silence r check
+
+  doc_var <- doc_var[min(which(doc_var %in% names(object)))]
+  if (length(doc_var) == 0) stop("No valid doc_var found; please specify")
 
   type <- match.arg(type)
   tf_weight <- match.arg(tf_weight)
@@ -181,10 +190,12 @@ cnlp_utils_tfidf <- function(object,
   }
 
   # create counts
+  if (is.null(doc_set)) {
+    doc_set <- unique(x[["doc"]])
+  }
   x <- dplyr::filter_(x, ~ token %in% vocabulary)
   x$token <- factor(x$token, levels = vocabulary)
   doc <- x[["doc"]]
-  doc_set <- unique(doc)
   N <- length(doc_set)
   id <- match(doc, doc_set)
   mat <- methods::as(Matrix::sparse.model.matrix(~ token - 1, data = x),
@@ -201,8 +212,9 @@ cnlp_utils_tfidf <- function(object,
   if (type %in% c("tfidf", "tf", "idf", "all")) {
 
     if (tf_weight == "lognorm") {
-      tf <- 1 + log2(term_counts)
-      tf[term_counts == 0] <- 0
+      tf <- term_counts
+      tf@x <- 1 + log2(tf@x)
+      tf@x[tf@x < 0] <- 0
     } else if (tf_weight == "binary") {
       tf <- term_counts * 1.0
       tf[term_counts != 0] <- 1L
@@ -255,14 +267,19 @@ cnlp_utils_tfidf <- function(object,
   } else if (type == "idf") {
 
     out <- idf
-    rownames(out) <- doc_set
-    colnames(out) <- vocabulary
+    names(out) <- vocabulary
 
   } else if (type == "vocab") {
 
     out <- vocabulary
 
   } else if (type == "all") {
+
+    rownames(tf) <- doc_set
+    colnames(tf) <- vocabulary
+    names(idf) <- vocabulary
+    rownames(tfidf) <- doc_set
+    colnames(tfidf) <- vocabulary
 
     out <- list(tf = tf, idf = idf, tfidf = tfidf, id = doc_set,
                 vocab = vocabulary)
