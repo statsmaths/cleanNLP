@@ -47,7 +47,7 @@ function paths to where the input data sits on the local machine"):
 
 ```{r}
 library(cleanNLP)
-init_spaCy()
+cnlp_init_spaCy()
 obj <- run_annotators(text, as_strings = TRUE)
 ```
 
