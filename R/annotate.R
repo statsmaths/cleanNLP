@@ -77,8 +77,6 @@ cnlp_annotate <- function(input,
       stop(sprintf("text_var variable '%s' not found in input", text_var))
     }
 
-    input <- input[[text_var]]
-
     # grab document ids
     if (!is.null(doc_var)) {
       if (doc_var %in% names(input)) {
@@ -101,6 +99,7 @@ cnlp_annotate <- function(input,
       meta <- input[,-non_meta_cols,drop=FALSE]
     }
 
+    input <- input[[text_var]]
     as_strings <- TRUE
   }
 
@@ -196,6 +195,3 @@ cnlp_quick <- function(input, ...) {
 
   return(df)
 }
-
-
-
