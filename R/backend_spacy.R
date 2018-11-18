@@ -22,7 +22,9 @@
 cnlp_init_spacy <- function(model_name = NULL, entity_flag = TRUE,
                             vector_flag = FALSE) {
   if (is.null(model_name))
-    model_name <- "en_core_web_sm"
+  {
+    model_name <- "en"
+  }
 
   volatiles$spacy$model_name  <- model_name
   volatiles$spacy$entity_flag <- entity_flag

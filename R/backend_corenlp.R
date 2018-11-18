@@ -86,7 +86,7 @@ cnlp_init_corenlp <- function(language, anno_level = 2, lib_location = NULL,
     stop("anno_level must be set to a non-negative integer")
   if (is.null(lib_location))
     lib_location <- file.path(system.file("extdata", package="cleanNLP"),
-                    "/stanford-corenlp-full-2018-02-27")
+                    "/stanford-corenlp-full-2018-10-05")
 
   # set properties that are not "corenlp" properties
   volatiles$corenlp$language <- language
@@ -439,22 +439,22 @@ init_corenlp_backend <- function() {
 
   # Determine if the corenlp files have been loaded correctly
   jar_files <- basename(rJava::.jclassPath())
-  if (!("stanford-corenlp-3.9.1.jar" %in% jar_files))
-    warning("The Stanford corenlp (3.7.0) files were not found ",
+  if (!("stanford-corenlp-3.9.2.jar" %in% jar_files))
+    warning("The Stanford corenlp (3.7.2) files were not found ",
             "as expected. Proceed with caution.")
-  if (lang == "en" && !("stanford-english-corenlp-2018-02-27-models.jar"
+  if (lang == "en" && !("stanford-english-corenlp-2018-10-05-models.jar"
     %in% jar_files))
     warning("English model file has not been downloaded to lib_location.",
             "Proceed with caution.")
-  if (lang == "fr" && !("stanford-french-corenlp-2018-02-27-models.jar"
+  if (lang == "fr" && !("stanford-french-corenlp-2018-10-05-models.jar"
     %in% jar_files))
     warning("French model file has not been downloaded to lib_location.",
       "Proceed with caution.")
-  if (lang == "de" && !("stanford-german-corenlp-2018-02-27-models.jar"
+  if (lang == "de" && !("stanford-german-corenlp-2018-10-05-models.jar"
     %in% jar_files))
     warning("German model file has not been downloaded to lib_location.",
       "Proceed with caution.")
-  if (lang == "es" && !("stanford-spanish-corenlp-2018-02-27-models.jar"
+  if (lang == "es" && !("stanford-spanish-corenlp-2018-10-05-models.jar"
     %in% jar_files))
     warning("Spanish model file has not been downloaded to lib_location.",
       "Proceed with caution.")
@@ -504,7 +504,7 @@ init_corenlp_backend <- function() {
 annotate_with_corenlp <- function(input, as_strings) {
 
   if (!volatiles$corenlp$init) {
-    stop("You must initialize corenlp with: init_corenlp_backend()")
+    stop("You must initialize corenlp with: cnlp_init_corenlp()")
   }
 
   output_dir <- tempfile()   # yes, we want tempfile and not tempdir; the
@@ -544,7 +544,7 @@ annotate_with_corenlp <- function(input, as_strings) {
 
   # rJava is used as a bridge to Python
   if (!requireNamespace("rJava")) {
-    stop("The reticulate package is required to use the spacy backend.")
+    stop("The rJava package is required to use the coreNLP backend.")
   }
 
   # set parameters within the Java class

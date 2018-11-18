@@ -310,8 +310,37 @@ should consult the paper:
 
 > 'A Tidy Data Model for Natural Language Processing Using cleanNLP.' Taylor Arnold. The R Journal, 9.2, 1-20 (2017).
 
+## Testing
+
+The current version of **cleanNLP** was tested using a clean installation of
+R version 3.5.1, Anaconda Python 3.7.0, and Java 10.0.2. The following R
+packages were installed:
+
+```{r}
+install.packages(c("dplyr", "stringi", "udpipe", "reticulate", "rJava",
+                   "RCurl", "knitr", "rmarkdown", "testthat", "covr",
+                   "roxygen2"))
+```
+
+The spacy library was installed and models downloaded with:
+
+```{sh}
+pip install spacy
+python -m spacy download en
+```
+
+And the coreNLP library was downloaded with:
+
+```{r}
+cleanNLP::cnlp_download_corenlp()
+```
+
+All of the tests in the testthat directory were run (setting the CRAN flag to
+false to run all of the tests) on a personal laptop (macOS 10.13.6) as well as
+integrated testing using Travis-CI and AppVeyor.
+
 ## Note
 
-Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
-
-
+Please note that this project is released with a
+[Contributor Code of Conduct](CONDUCT.md). By participating in this project
+you agree to abide by its terms.
