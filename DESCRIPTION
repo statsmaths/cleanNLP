@@ -31,7 +31,7 @@ Suggests:
     rmarkdown (>= 1.4),
     testthat (>= 1.0.1),
     covr (>= 2.2.2)
-SystemRequirements: Python (>= 2.7.0); spaCy <https://spacy.io/> (>= 2.0); Java (>= 7.0); Stanford CoreNLP <http://nlp.stanford.edu/software/corenlp.shtml> (>= 3.7.0)
+SystemRequirements: Python (>= 2.7.0); spaCy <https://spacy.io/> (>= 2.0); Java (>= 7.0); Stanford CoreNLP <http://nlp.stanford.edu/software/corenlp.shtml> (>= 3.9.2)
 License: LGPL-2
 URL: https://statsmaths.github.io/cleanNLP/
 BugReports: http://github.com/statsmaths/cleanNLP/issues

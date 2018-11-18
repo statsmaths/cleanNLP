@@ -31,8 +31,8 @@ test_that("initialize gives error with bad lib_location", {
   skip_on_cran()
   check_corenlp_available()
 
-  expect_error(init_coreNLP(type = "coreNLP",
-    lib_location="/file/not/exists"))
+  expect_error(cnlp_init_corenlp(type = "coreNLP",
+                                 lib_location = "/file/not/exists"))
 })
 
 test_that("coreNLP; anno_level 0", {
