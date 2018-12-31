@@ -102,7 +102,7 @@ cnlp_utils_pca <- function(x, meta = NULL, k = 2, center = TRUE,
 #' @param doc_set       optional character vector of document ids. Useful to
 #'                      create empty rows in the output matrix for documents
 #'                      without data in the input. Most users will want to keep
-#'                      this equal to \code{NULL}, the default, to have the 
+#'                      this equal to \code{NULL}, the default, to have the
 #'                      function compute the document set automatically.
 #' @param ...           other arguments passed to the base method
 #'
@@ -169,7 +169,7 @@ cnlp_utils_tfidf <- function(object,
 
     possible_vocab <- unique(x)
     possible_vocab <- dplyr::group_by_(possible_vocab, "token")
-    possible_vocab <- dplyr::summarize_(possible_vocab, prop = "n()")
+    possible_vocab <- dplyr::summarize_(possible_vocab, prop = "dplyr::n()")
     possible_vocab$prop <- possible_vocab$prop / N
     possible_vocab <- dplyr::filter_(possible_vocab, ~ prop > min_df,
                                      ~ prop < max_df)
@@ -177,7 +177,7 @@ cnlp_utils_tfidf <- function(object,
 
     vocabulary <- dplyr::filter_(x, ~ token %in% possible_vocab)
     vocabulary <- dplyr::group_by_(vocabulary, "token")
-    vocabulary <- dplyr::summarize_(vocabulary, n = "n()")
+    vocabulary <- dplyr::summarize_(vocabulary, n = "dplyr::n()")
     vocabulary <- dplyr::arrange_(vocabulary, "dplyr::desc(n)")
 
     index <- 1:min(c(max_features, nrow(vocabulary)))
