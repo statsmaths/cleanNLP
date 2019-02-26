@@ -83,7 +83,7 @@ init_udpipe_backend <- function() {
 }
 
 
-annotate_with_udpipe <- function(input, as_strings) {
+annotate_with_udpipe <- function(input, as_strings, verbose=verbose) {
 
   if (!volatiles$udpipe$init) {
     stop("You must initialize udpipe with: init_udpipe_backend()")
@@ -103,7 +103,8 @@ annotate_with_udpipe <- function(input, as_strings) {
   # call udpipe over the input
   anno <- udpipe::udpipe_annotate(volatiles$udpipe$model_obj,
                                   input_txt,
-                                  parser = volatiles$udpipe$parser)
+                                  parser = volatiles$udpipe$parser,
+                                  trace = verbose)
 
   # check the output
   if (anno$conllu == "") {

@@ -108,7 +108,7 @@ spacy_check <- function() {
 
 }
 
-annotate_with_spacy <- function(input, as_strings) {
+annotate_with_spacy <- function(input, as_strings, verbose) {
 
   if (!volatiles$spacy$init) {
     stop("You must initialize spacy with: init_spacy_backend()")

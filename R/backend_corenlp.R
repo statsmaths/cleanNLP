@@ -501,7 +501,7 @@ init_corenlp_backend <- function() {
 }
 
 
-annotate_with_corenlp <- function(input, as_strings) {
+annotate_with_corenlp <- function(input, as_strings, verbose) {
 
   if (!volatiles$corenlp$init) {
     stop("You must initialize corenlp with: cnlp_init_corenlp()")

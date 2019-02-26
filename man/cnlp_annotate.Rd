@@ -5,7 +5,7 @@
 \title{Run the annotation pipeline on a set of documents}
 \usage{
 cnlp_annotate(input, as_strings = NULL, doc_ids = NULL, backend = NULL,
-  meta = NULL, doc_var = "doc_id", text_var = "text")
+  meta = NULL, doc_var = "doc_id", text_var = "text", verbose = FALSE)
 }
 \arguments{
 \item{input}{either a vector of file names to parse, a
@@ -36,6 +36,9 @@ force automatic names)}
 
 \item{text_var}{if passing a data frame, which column contains the
 document identifier}
+
+\item{verbose}{logical; should annotation engine print out when it
+finishes each text}
 }
 \value{
 an object of class \code{annotation}

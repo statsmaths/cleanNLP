@@ -29,6 +29,8 @@
 #'                       force automatic names)
 #' @param text_var       if passing a data frame, which column contains the
 #'                       document identifier
+#' @param verbose        logical; should annotation engine print out when it
+#'                       finishes each text
 #'
 #' @return  an object of class \code{annotation}
 #'
@@ -50,12 +52,13 @@
 #'
 #' @export
 cnlp_annotate <- function(input,
-                           as_strings = NULL,
-                           doc_ids = NULL,
-                           backend = NULL,
-                           meta = NULL,
-                           doc_var = "doc_id",
-                           text_var = "text") {
+                          as_strings = NULL,
+                          doc_ids = NULL,
+                          backend = NULL,
+                          meta = NULL,
+                          doc_var = "doc_id",
+                          text_var = "text",
+                          verbose = FALSE) {
 
   # make sure there is a valid backend specified; if not
   # explicit, assume user wants the last initialized
@@ -134,17 +137,21 @@ cnlp_annotate <- function(input,
   # now, pass parameters to the appropriate backend code
   if (backend == "tokenizers") {
     out <- annotate_with_r(input = input,
-                            as_strings = as_strings
+                            as_strings = as_strings,
+                            verbose = verbose
                             )
   } else if (backend == "spacy") {
     out <- annotate_with_spacy(input = input,
-                                as_strings = as_strings)
+                                as_strings = as_strings,
+                                verbose = verbose)
   } else if (backend == "corenlp") {
     out <- annotate_with_corenlp(input = input,
-                                  as_strings = as_strings)
+                                  as_strings = as_strings,
+                                  verbose = verbose)
   } else if (backend == "udpipe") {
     out <- annotate_with_udpipe(input = input,
-                                 as_strings = as_strings)
+                                 as_strings = as_strings,
+                                 verbose = verbose)
   } else {
     stop("Invalid backend specification")
   }

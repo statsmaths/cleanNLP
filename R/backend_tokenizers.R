@@ -38,7 +38,7 @@ init_tokenizers_backend <- function(locale = NULL) {
   return(NULL)
 }
 
-annotate_with_r <- function(input, as_strings) {
+annotate_with_r <- function(input, as_strings, verbose) {
 
   if (!volatiles$tokenizers$init) {
     stop("You must initialize tokenizers with: init_tokenizers_backend()")
@@ -121,6 +121,10 @@ annotate_with_r <- function(input, as_strings) {
                             cid = as.integer(cid),
                             stringsAsFactors = FALSE)
 
+    if (verbose)
+    {
+      cat(sprintf("Processed document %d of %d (%s)\n", i, length(input)))
+    }
   }
 
   anno <- empty_anno()
