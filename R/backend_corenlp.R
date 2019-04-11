@@ -118,7 +118,7 @@ cnlp_init_corenlp <- function(language, anno_level = 2, lib_location = NULL,
     setup_corenlp_backend_raw("pos.model",
       "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger")
     setup_corenlp_backend_raw("ner.model",
-      "edu/stanford/nlp/models/ner/german.conll.hgc_175m_600.crf.ser.gz")
+      "edu/stanford/nlp/models/ner/german.conll.germeval2014.hgc_175m_600.crf.ser.gz")
     setup_corenlp_backend_raw("ner.applyNumericClassifiers", "false")
     setup_corenlp_backend_raw("ner.useSUTime", "false")
     setup_corenlp_backend_raw("parse.model",
