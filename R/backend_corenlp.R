@@ -367,6 +367,8 @@ cnlp_init_corenlp <- function(language, anno_level = 2, lib_location = NULL,
   invisible(init_corenlp_backend())
 }
 
+properties <<- list()
+
 setup_corenlp_backend_raw <- function(keys, values, clear = FALSE) {
   if (length(keys) != length(values))
     stop(sprintf("length of keys (%d) does not match length of values (%d)",
@@ -377,22 +379,13 @@ setup_corenlp_backend_raw <- function(keys, values, clear = FALSE) {
     stop("values must be a character vector")
 
   # read current parameter file
-  if (!clear) {
-    fin <- file.path(system.file("extdata", package="cleanNLP"),
-      "properties.rds")
-    if (file.exists(fin))
-      prop <- readRDS(fin)
-    else
-      prop <- list()
-  } else prop <- list()
+  if (clear) {
+      properties <<- list()
+  }
 
   # insert new keys and values
   for (i in seq_along(keys))
-    prop[[keys[i]]] <- values[i]
-
-  # save new parameter file
-  saveRDS(prop, file.path(system.file("extdata",
-    package="cleanNLP"), "properties.rds"))
+    properties[[keys[i]]] <<- values[i]
 }
 
 init_corenlp_backend <- function() {
@@ -413,12 +406,10 @@ init_corenlp_backend <- function() {
   }
 
   # Parse default parameters
-  fp <- file.path(system.file("extdata",package="cleanNLP"),
-    "properties.rds")
-  if (!file.exists(fp)) {
+  if (length(properties) == 0) {
     setup_corenlp_backend_raw("en")
   }
-  properties <- readRDS(fp)
+
   keys <- names(properties)
   values <- as.character(properties)
   lang <- volatiles$corenlp$language
