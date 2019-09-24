@@ -88,11 +88,16 @@ cnlp_init_corenlp <- function(language, anno_level = 2, lib_location = NULL,
     lib_location <- file.path(system.file("extdata", package="cleanNLP"),
                     "/stanford-corenlp-full-2018-10-05")
 
-  # set properties that are not "corenlp" properties
+  # set properties
   volatiles$corenlp$language <- language
   volatiles$corenlp$lib_location <- lib_location
   volatiles$corenlp$mem <- mem
   volatiles$corenlp$verbose <- verbose
+  volatiles$corenlp$properties <- list()
+
+  fin <- file.path(lib_location, "/properties.rds")
+  if (file.exists(fin))
+    volatiles$corenlp$properties <- readRDS(fin)
 
   # German models
   if (language == "de" & anno_level == 0) {
@@ -367,8 +372,6 @@ cnlp_init_corenlp <- function(language, anno_level = 2, lib_location = NULL,
   invisible(init_corenlp_backend())
 }
 
-properties <<- list()
-
 setup_corenlp_backend_raw <- function(keys, values, clear = FALSE) {
   if (length(keys) != length(values))
     stop(sprintf("length of keys (%d) does not match length of values (%d)",
@@ -380,12 +383,12 @@ setup_corenlp_backend_raw <- function(keys, values, clear = FALSE) {
 
   # read current parameter file
   if (clear) {
-      properties <<- list()
+      volatiles$corenlp$properties <- list()
   }
 
   # insert new keys and values
   for (i in seq_along(keys))
-    properties[[keys[i]]] <<- values[i]
+    volatiles$corenlp$properties[[keys[i]]] <- values[i]
 }
 
 init_corenlp_backend <- function() {
@@ -406,10 +409,11 @@ init_corenlp_backend <- function() {
   }
 
   # Parse default parameters
-  if (length(properties) == 0) {
+  if (length(volatiles$corenlp$properties) == 0) {
     setup_corenlp_backend_raw("en")
   }
-
+  
+  properties <- volatiles$corenlp$properties
   keys <- names(properties)
   values <- as.character(properties)
   lang <- volatiles$corenlp$language
