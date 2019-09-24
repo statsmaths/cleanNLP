@@ -361,14 +361,58 @@ cnlp_init_corenlp <- function(language, anno_level = 2, lib_location = NULL,
   invisible(init_corenlp_backend())
 }
 
+#' Interface for initializing the corenlp backend with custom choices of 
+#' annotators and settings
+#'
+#' As an alternative to cnlp_init_corenlp, this function must be run before
+#' annotating text with the corenlp backend with custom options. It sets the
+#' properties for the corenlp engine and loads the file using rJava interface
+#' provided by reticulate.
+#'
+#' @param language       a character vector describing the desired language;
+#'                       should be one of: "ar", "de", "en", "es", "fr",
+#'                       or "zh".
+#' @param lib_location   a string giving the location of the corenlp java
+#'                       files. This should point to a directory which
+#'                       contains, for example the file
+#'                       "stanford-corenlp-*.jar",
+#'                       where "*" is the version number. If missing, the
+#'                       function will try to find the library in the
+#'                       environment variable corenlp_HOME, and otherwise
+#'                       will fail. (Java model only)
+#' @param mem            a string giving the amount of memory to be assigned
+#'                       to the rJava engine. For example, "6g" assigned 6
+#'                       gigabytes of memory. At least 2 gigabytes are
+#'                       recommended at a minimum for running the corenlp
+#'                       package. On a 32bit machine, where this is not
+#'                       possible, setting "1800m" may also work. This
+#'                       option will only have an effect the first
+#'                       time \code{init_backend} is called for the corenlp
+#'                       backend, and also will not have an effect if the
+#'                       java engine is already started by another process.
+#' @param verbose        boolean. Should messages from the pipeline be
+#'                       written to the console or suppressed?
+#' @param keys           vector string of flags to add to the corenlp calls
+#' @param values         vector string of values paired with the flags.
+#'
+#' The example below shows how to initialise corenlp to run named entity 
+#' recognition (ner) with its respective dependencies (tokenize, ssplit, pos 
+#' and lemma). More details of flag (key) options and their values at 
+#' \url{https://stanfordnlp.github.io/CoreNLP/}
+#'
+#' @examples
+#'\dontrun{
+#' cnlp_init_corenlp_custom(language = "en", mem = "2g",
+#'                          keys="annotators", values="tokenize, ssplit, pos, lemma, ner")
+#'}
+#'
+#' @export
+
 cnlp_init_corenlp_custom <- function(language, lib_location = NULL,
                          mem = "6g", verbose = FALSE, keys, values) {
   if (missing(language)) language <- "en"
   language_list <- c("en", "de", "fr", "es", "ar", "zh")
   language <- match.arg(arg = language, choices = language_list)
-  anno_level <- as.integer(anno_level)[1]
-  if (anno_level < 0)
-    stop("anno_level must be set to a non-negative integer")
   cnlp_init_corenlp_volatiles(language, lib_location, mem, verbose)
   setup_corenlp_backend_raw(keys, values) 
   invisible(init_corenlp_backend())

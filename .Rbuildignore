@@ -8,3 +8,5 @@
 ^cran-comments\.md$
 ^CONTRIBUTING.md$
 ^docs
+^.*\.Rproj$
+^\.Rproj\.user$
