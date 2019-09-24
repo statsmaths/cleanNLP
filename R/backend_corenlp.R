@@ -75,6 +75,7 @@
 #'}
 #'
 #' @export
+
 cnlp_init_corenlp <- function(language, anno_level = 2, lib_location = NULL,
                          mem = "6g", verbose = FALSE) {
 
@@ -84,20 +85,8 @@ cnlp_init_corenlp <- function(language, anno_level = 2, lib_location = NULL,
   anno_level <- as.integer(anno_level)[1]
   if (anno_level < 0)
     stop("anno_level must be set to a non-negative integer")
-  if (is.null(lib_location))
-    lib_location <- file.path(system.file("extdata", package="cleanNLP"),
-                    "/stanford-corenlp-full-2018-10-05")
 
-  # set properties
-  volatiles$corenlp$language <- language
-  volatiles$corenlp$lib_location <- lib_location
-  volatiles$corenlp$mem <- mem
-  volatiles$corenlp$verbose <- verbose
-  volatiles$corenlp$properties <- list()
-
-  fin <- file.path(lib_location, "/properties.rds")
-  if (file.exists(fin))
-    volatiles$corenlp$properties <- readRDS(fin)
+  cnlp_init_corenlp_volatiles(language, lib_location, mem, verbose)
 
   # German models
   if (language == "de" & anno_level == 0) {
@@ -370,6 +359,36 @@ cnlp_init_corenlp <- function(language, anno_level = 2, lib_location = NULL,
   }
 
   invisible(init_corenlp_backend())
+}
+
+cnlp_init_corenlp_custom <- function(language, lib_location = NULL,
+                         mem = "6g", verbose = FALSE, keys, values) {
+  if (missing(language)) language <- "en"
+  language_list <- c("en", "de", "fr", "es", "ar", "zh")
+  language <- match.arg(arg = language, choices = language_list)
+  anno_level <- as.integer(anno_level)[1]
+  if (anno_level < 0)
+    stop("anno_level must be set to a non-negative integer")
+  cnlp_init_corenlp_volatiles(language, lib_location, mem, verbose)
+  setup_corenlp_backend_raw(keys, values) 
+  invisible(init_corenlp_backend())
+}
+
+cnlp_init_corenlp_volatiles <- function(language, lib_location, mem, verbose) {
+  if (is.null(lib_location))
+    lib_location <- file.path(system.file("extdata", package="cleanNLP"),
+                    "/stanford-corenlp-full-2018-10-05")
+
+  # set properties
+  volatiles$corenlp$language <- language
+  volatiles$corenlp$lib_location <- lib_location
+  volatiles$corenlp$mem <- mem
+  volatiles$corenlp$verbose <- verbose
+  volatiles$corenlp$properties <- list()
+
+  fin <- file.path(lib_location, "/properties.rds")
+  if (file.exists(fin))
+    volatiles$corenlp$properties <- readRDS(fin)
 }
 
 setup_corenlp_backend_raw <- function(keys, values, clear = FALSE) {
