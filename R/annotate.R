@@ -202,3 +202,69 @@ cnlp_quick <- function(input, ...) {
 
   return(df)
 }
+
+#' Run the annotation pipeline on a set of documents to extract entities
+#'
+#' Runs the entity detection algorithms from CoreNLP using either the rJava.
+#' It initializes the CoreNLP Java object with the NER annotation parameters
+#' and a path to a temp file that is used for processing using \code{initCoreNLPNER}.
+#' The function returns a \code{data.frame} showing the location in the document 
+#' where the entity occurs andthe entity type. If no entities are detected for a document 
+#' then a row of NA values is returned.
+#'
+#' @param input          a character vector with one document in each
+#'                       element
+#' @param language       The language for CoreNLP to use or detection.
+#' @param lib_location   The path of the CoreNLP Java library on the users system.
+#' @param mem            The amount of memory that the Java CoreNLP call is allocated.
+#'                       Needs to be of the form "2g" for 2GB or "500m" for 500MB.
+#'                       Decimal accuracy not allowed.
+#' @param verbose        A logical value to set if Java output messages are displayed. 
+#' @return  a data.frame with the details of the detected entities.
+#'
+#' @export
+NERAnnotate <- function(input, language = "en", lib_location = NULL, mem = "2g", verbose = FALSE) {
+  tmp.file <- tempfile()
+  
+  file <- file(tmp.file, "wb")
+  writeLines(input, con = file)
+  close(file)
+  
+  initCoreNLPNER(tmp.file, language = language, lib_location = lib_location, mem = mem,
+                 verbose = verbose)
+  
+  rJava::.jcall(volatiles$corenlp$corenlp, "V", "run")
+  # Read conll file and remove non-entities
+  output <- readLines(paste0(tmp.file, ".conll"))
+  # Remove all the entries that aren't entities including any leading or trailing single spaces.
+  entity.output <- gsub("(\\d+\\/\\S+\\/O{1}[^(ORDINAL|ORGANISATION)]\\s*)|(\\d+\\/\\S+\\/O{1}$)", "", output)
+  splitConll <- function(x) {
+    y <- strsplit(x, split = "/")
+    if(any(sapply(y, length) != 3)) {
+      idx <- which(sapply(y, length) != 3)
+      y[idx] <- lapply(y[idx], function(x) {
+        n = length(x)
+        c(x[1], paste0(x[2:(n - 1)], collapse = "/"), x[n])
+      })
+    }
+    y
+  }
+  entity.list <- lapply(entity.output, FUN = function(x) {
+    if(nchar(x) == 0)
+      return(list(rep(NA, 3)))
+    x = trimws(x, which = "right")
+    if(!grepl(" ", x))
+    {
+      splitConll(x)
+    } else 
+    {
+      splitConll(unlist(strsplit(x, split = " ", fixed = TRUE)))
+    }
+  })
+  response.number <- rep(1:length(output), sapply(entity.list, length))
+  entity.list <- unlist(entity.list, recursive = FALSE)
+  tbl <- do.call(rbind.data.frame, entity.list)
+  tbl <- cbind.data.frame(response.number, tbl, deparse.level = 0)
+  colnames(tbl) <- c("response", "entity.position", "entity", "entity.type")
+  return(tbl)
+}

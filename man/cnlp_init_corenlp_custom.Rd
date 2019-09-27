@@ -6,7 +6,7 @@
 annotators and settings}
 \usage{
 cnlp_init_corenlp_custom(language, lib_location = NULL, mem = "6g",
-  verbose = FALSE, keys, values)
+  verbose = FALSE, keys, values, ner.only = TRUE)
 }
 \arguments{
 \item{language}{a character vector describing the desired language;

@@ -1,10 +1,9 @@
 Package: cleanNLP
 Type: Package
 Title: A Tidy Data Model for Natural Language Processing
-Version: 2.4.1
-Authors@R: c(person(given = "Taylor B.", family = "Arnold", email = "taylor.arnold@acm.org", role = c("aut", "cre")))
-Author: Taylor B. Arnold [aut, cre]
-Maintainer: Taylor B. Arnold <taylor.arnold@acm.org>
+Version: 2.4.2
+Authors@R: c(person(given = "Justin", family = "Wishart", email = "justin.wishart@displayr.com", role = "aut"),
+    person(given = "Taylor B.", family = "Arnold", email = "taylor.arnold@acm.org", role = c("aut", "cre")))
 Description: Provides a set of fast tools for converting a textual corpus into a set of normalized
   tables. Users may make use of the 'udpipe' back end with no external dependencies, a Python back
   end with 'spaCy' <https://spacy.io> or the Java back end 'CoreNLP'
@@ -33,8 +32,8 @@ Suggests:
     covr (>= 2.2.2)
 SystemRequirements: Python (>= 2.7.0); spaCy <https://spacy.io/> (>= 2.0); Java (>= 7.0); Stanford CoreNLP <http://nlp.stanford.edu/software/corenlp.shtml> (>= 3.9.2)
 License: LGPL-2
-URL: https://statsmaths.github.io/cleanNLP/
-BugReports: http://github.com/statsmaths/cleanNLP/issues
+BugReports: http://github.com/Displayr/cleanNLP/issues
 LazyData: true
 VignetteBuilder: knitr
+Encoding: UTF-8
 RoxygenNote: 6.1.1

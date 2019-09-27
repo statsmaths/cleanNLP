@@ -408,14 +408,14 @@ cnlp_init_corenlp <- function(language, anno_level = 2, lib_location = NULL,
 #'
 #' @export
 
-cnlp_init_corenlp_custom <- function(language, lib_location = NULL,
-                         mem = "6g", verbose = FALSE, keys, values) {
+cnlp_init_corenlp_custom <- function(language, lib_location = NULL, mem = "6g", verbose = FALSE,
+                                     keys, values, ner.only = FALSE) {
   if (missing(language)) language <- "en"
   language_list <- c("en", "de", "fr", "es", "ar", "zh")
   language <- match.arg(arg = language, choices = language_list)
   cnlp_init_corenlp_volatiles(language, lib_location, mem, verbose)
   setup_corenlp_backend_raw(keys, values) 
-  invisible(init_corenlp_backend())
+  invisible(init_corenlp_backend(ner.only = ner.only))
 }
 
 cnlp_init_corenlp_volatiles <- function(language, lib_location, mem, verbose) {
@@ -429,10 +429,6 @@ cnlp_init_corenlp_volatiles <- function(language, lib_location, mem, verbose) {
   volatiles$corenlp$mem <- mem
   volatiles$corenlp$verbose <- verbose
   volatiles$corenlp$properties <- list()
-
-  fin <- file.path(lib_location, "/properties.rds")
-  if (file.exists(fin))
-    volatiles$corenlp$properties <- readRDS(fin)
 }
 
 setup_corenlp_backend_raw <- function(keys, values, clear = FALSE) {
@@ -454,7 +450,7 @@ setup_corenlp_backend_raw <- function(keys, values, clear = FALSE) {
     volatiles$corenlp$properties[[keys[i]]] <- values[i]
 }
 
-init_corenlp_backend <- function() {
+init_corenlp_backend <- function(ner.only = FALSE) {
 
   if (!requireNamespace("rJava")) {
     stop("The rJava package is required to use the corenlp backend")
@@ -542,8 +538,9 @@ init_corenlp_backend <- function() {
 
   volatiles$corenlp$corenlp <-
     rJava::.jnew("edu.stanford.nlp.pipeline.StanfordCoreNLP", prop)
-  volatiles$corenlp$AnnotationProcessor <-
-    rJava::.jnew("edu.richmond.nlp.AnnotationProcessor")
+  if(!ner.only)
+    volatiles$corenlp$AnnotationProcessor <-
+      rJava::.jnew("edu.richmond.nlp.AnnotationProcessor")
   if (!volatiles$corenlp$verbose)
     rJava::.jcall("java/lang/System", "V", "setErr", err)
 
@@ -626,4 +623,16 @@ annotate_with_corenlp <- function(input, as_strings, verbose) {
   return(out)
 }
 
-
+initCoreNLPNER <- function(file.input, language = "en", lib_location = NULL, mem = "2g", verbose = FALSE) {
+  params = list("annotators" = "tokenize,ssplit,pos,lemma,ner",
+                "ssplit.eolonly" = "true",
+                "outputFormat" = "conll",
+                "outputDirectory" = dirname(file.input),
+                "replaceExtension" = "",
+                "output.columns" = "idx,word,ner",
+                "output.prettyPrint" = "false",
+                "file" = file.input)
+  cnlp_init_corenlp_custom(language = language, lib_location = lib_location, mem = mem,
+                           verbose = verbose, keys = names(params), values = unname(unlist(params)),
+                           ner.only = TRUE)
+}
