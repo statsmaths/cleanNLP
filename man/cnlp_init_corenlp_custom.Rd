@@ -6,7 +6,7 @@
 annotators and settings}
 \usage{
 cnlp_init_corenlp_custom(language, lib_location = NULL, mem = "6g",
-  verbose = FALSE, keys, values, ner.only = TRUE)
+  verbose = FALSE, keys, values, corenlp.only = FALSE)
 }
 \arguments{
 \item{language}{a character vector describing the desired language;
@@ -38,7 +38,10 @@ written to the console or suppressed?}
 
 \item{keys}{vector string of flags to add to the corenlp calls}
 
-\item{values}{vector string of values paired with the flags.
+\item{values}{vector string of values paired with the flags.}
+
+\item{corenlp.only}{Logical to specify if only coreNLP should be initisalised
+                      and not the custom Annotator.
 
 The example below shows how to initialise corenlp to run named entity 
 recognition (ner) with its respective dependencies (tokenize, ssplit, pos 
