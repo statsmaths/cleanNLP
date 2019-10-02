@@ -216,7 +216,8 @@ result <- structure(list(id = c("doc1", "doc8", "doc9", "doc12", "doc14",
 # 
 test_that("get_entity consistency", {
   cnlp_init_corenlp_custom(language = "en", mem = "2g", 
-                           keys="annotators", values="tokenize, ssplit, pos, lemma, ner")
+                           keys="annotators", values="tokenize, ssplit, pos, lemma, ner", 
+                           verbose = TRUE)
   
   annotated <- cnlp_annotate(tom.cruise, as_strings = TRUE, backend = "coreNLP")
   table.output <- cnlp_get_entity(annotated)
