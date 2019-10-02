@@ -10,4 +10,4 @@
 ^docs
 ^.*\.Rproj$
 ^\.Rproj\.user$
-\inst\extdata\stanford-corenlp-full-2018-10-05
+^stanford-corenlp-full-2018-10-05.zip$
