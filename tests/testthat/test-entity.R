@@ -39,7 +39,8 @@ test_that("NERAnnotate consistency", {
   expect_error(NERAnnotate(tmp.file),
                "^Java CoreNLP not initialized. Named Entity Recognition cannot be executed.$")
   
-  cnlp_init_corenlp_custom(language = "en", mem = "2g", keys = keys, values = values)
+  cnlp_init_corenlp_custom(language = "en", mem = "2g", keys = keys, values = values, 
+                           corenlp.only = TRUE)
   
   simple.output <- NERAnnotate(tmp.file)
   expect_identical(simple.output, simple.expected)

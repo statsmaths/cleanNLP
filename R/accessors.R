@@ -105,7 +105,7 @@ cnlp_get_token <- function(annotation, include_root = FALSE,
     res <- res[res$tid > 0,]
 
   if (spaces) {
-    res <- dplyr::group_by_(res, "id")
+    res <- dplyr::group_by(res, "id")
     res <- dplyr::mutate(res,
             spaces = dplyr::lead(cid, default = 0) - cid -
             stringi::stri_length(word))
