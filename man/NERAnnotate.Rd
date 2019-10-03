@@ -7,16 +7,36 @@
 NERAnnotate(input.file)
 }
 \arguments{
-\item{input.file}{a character string showing the path to the file to be processed}
+\item{input.file}{a character string showing the path to the file to be processed. The file should
+have text with Unix style line endings (will throw Nullpointer exception if not)}
 }
 \value{
-a data.frame with the details of the detected entities.
+data.frame with the details of the detected entities. The output data.frame has three
+   columns. \itemize{
+       \item \code{id} integer: the row index of the input file that has an extracted entity.
+       \item \code{entity} character: The extracted entity word (e.g. William)
+       \item \code{entity.tyoe} character: The entity type of the extracted entity (e.g. Person)
+   }
 }
 \description{
-Runs the entity detection algorithms from CoreNLP using either the rJava.
-It initializes the CoreNLP Java object with the NER annotation parameters
-and a path to a temp file that is used for processing using \code{initCoreNLPNER}.
-The function returns a \code{data.frame} showing the location in the document 
-where the entity occurs andthe entity type. If no entities are detected for a document 
-then a row of NA values is returned.
+Runs the entity detection algorithms from CoreNLP using CoreNLP java library via rJava.
+It expects the CoreNLP java object to already be initialised with rJava with a call to 
+\code{cnlp_init_corenlp_custom} with the appropriate annotators setup for named entity
+recognition and a path to an input file that has the input text separately by new lines.
+The input file must have Unix style line endings or will cause the CoreNLP java call to crash
+with a null pointer exception. The function returns a \code{data.frame} showing the location
+in the document whre each entity occurs and the entity type. If no entities are detected for a
+document then an empty data.frame with no rows is returned.
+}
+\examples{
+\dontrun{
+file <- file(input.file, "wb") # need linux style line endings
+writeLines(simple.input.test, con = file)
+close(file)
+keys <- c("ssplit.eolonly", "annotators", "outputFormat", "file", "outputDirectory")
+values <- c("true", "tokenize,ssplit,pos,lemma,ner", "json", input.file, dirname(tmp.file))
+
+cnlp_init_corenlp_custom(language = "en", mem = "2g", keys = keys, values = values)
+simple.output <- NERAnnotate(input.file)
+}
 }
