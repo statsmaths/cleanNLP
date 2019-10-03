@@ -148,7 +148,7 @@ cnlp_utils_tfidf <- function(object,
                       token_var = "lemma",
                       vocabulary = NULL,
                       doc_set = NULL) {
-
+  
   if (inherits(object, "annotation"))
     object <- cnlp_get_token(object)
 
@@ -202,8 +202,15 @@ cnlp_utils_tfidf <- function(object,
                      "dgTMatrix")
 
   df <- dplyr::tibble(id = id[mat@i + 1], lid = mat@j, count = mat@x)
-  df <- dplyr::group_by(df, id, lid)
-  df <- dplyr::summarize(df, count = sum(count))
+  
+  df <- by(df, list(df$id, df$lid), function(x) {
+    c(id = unique(x$id), lid = unique(x$lid), count = sum(x$count))
+  })
+  df = do.call(rbind.data.frame, df)
+  names(df) = c("id", "lid", "count")
+  df = dplyr::as_tibble(df)
+  # df <- dplyr::group_by(df, id, lid)
+  # df <- dplyr::summarize(df, count = sum(count))
 
   term_counts <- Matrix::spMatrix(nrow = length(doc_set), ncol = ncol(mat),
                                   i = df$id, j = df$lid + 1, x = df$count)

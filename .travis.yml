@@ -16,7 +16,7 @@ before_install:
   - wget http://nlp.stanford.edu/software/stanford-corenlp-full-2018-10-05.zip
   - unzip -d $HOME stanford-corenlp-full-2018-10-05.zip
   - export CORENLP=$HOME/stanford-corenlp-full-2018-10-05
-  - wget http://nlp.stanford.edu/software/stanford-english-corenlp-2018-10-05-models.jar -P $HOME/
+  - wget http://nlp.stanford.edu/software/stanford-english-corenlp-2018-10-05-models.jar -P $CORENLP/
   - rcode="tfile <- tempfile(); capture.output(res<-devtools::test(), file = tfile); out <- readLines(tfile); cat(out, sep = '\n'); "
   - rcode+="n.fail <- as.numeric(sub('Failed:[[:space:]]', '', out[grep('Failed:[[:space:]]', out)])); "
   - rcode+="res <- as.data.frame(res); out <- data.frame(file = unlist(res[['file']]), warning = unlist(res[['warning']])); "
@@ -34,7 +34,7 @@ r_github_packages:
 
 script:
   - R CMD build --no-manual --no-build-vignettes --no-resave-data .
-  - R CMD check --as-cran --no-manual --no-build-vignettes --no-tests *.tar.gz
+  - R CMD check --as-cran --no-manual --ignore-vignettes --no-tests *.tar.gz
   - if [ -d tests/testthat ]; then
     Rscript --default-packages='datasets,utils,grDevices,graphics,stats,methods' -e "$rcode";
     fi
