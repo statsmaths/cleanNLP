@@ -2,7 +2,7 @@ Package: cleanNLP
 Type: Package
 Title: A Tidy Data Model for Natural Language Processing
 Version: 2.4.2
-Authors@R: c(person(given = "Justin", family = "Wishart", email = "justin.wishart@displayr.com", role = "aut"),
+Authors@R: c(person(given = "Justin", family = "Wishart", email = "justin.wishart@displayr.com", role = "ctb"),
     person(given = "Taylor B.", family = "Arnold", email = "taylor.arnold@acm.org", role = c("aut", "cre")))
 Description: Provides a set of fast tools for converting a textual corpus into a set of normalized
   tables. Users may make use of the 'udpipe' back end with no external dependencies, a Python back
@@ -16,6 +16,7 @@ Depends:
     R (>= 2.10)
 Imports:
     dplyr (>= 0.7.4),
+    jsonlite,
     rJava (>= 0.9-8),
     Matrix (>= 1.2),
     stringi,

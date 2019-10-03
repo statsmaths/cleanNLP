@@ -1,32 +1,54 @@
 library(testthat)
 
-simple.input.test <- c("There is a person called Julie that went down the lane.", 
-                       "Toys are fine",
-                       "There is trouble brewing in Hong Kong",
-                       "There are two people caled Jane and John")
+# Input has variety of entities
+simple.input.test <- c("There is a person called Julie that went down the lane.",  # Person, Julie,
+                       "Toys are fine", #No entities
+                       "There is trouble brewing in Hong Kong", #Location Hong Kong
+                       "There are two people caled Jane and John") 
+# Last input variable has three entities, the Number two and 2 people, Jane and John
 
-result <- structure(list(id = c("doc1", "doc3", "doc4", "doc4", "doc4"), 
-                         sid = c(0L, 1L, 0L, 0L, 1L), 
-                         tid = c(6L, 6L, 3L, 6L, 8L), 
-                         tid_end = c(6L, 7L, 3L, 6L, 8L),
-                         entity_type = c("PERSON", "CITY", "NUMBER", "PERSON", "PERSON"),
-                         entity = c("Julie","Hong Kong", "two", "Jane", "John"), 
-                         entity_normalized = c(NA, NA, 2, NA, NA)),
-                    class = c("tbl_df", "tbl", "data.frame"),
-                    row.names = c(NA, -5L))
+# Test result when no entities are present
+none.input <- c("There is no entity here",
+                "Nor here")
+
+simple.expected <- structure(list(id = c(1L, 3L, 4L, 4L, 4L), 
+                                  entity = c("Julie", "Hong Kong", "two", "Jane", "John"),
+                                  entity.type = c("PERSON", "CITY", "NUMBER", "PERSON", "PERSON")),
+                             class = "data.frame",
+                             row.names = c(NA, -5L))
+
+none.expected <- data.frame(id = character(), entity = character(), entity.type = character())
 
 # If this is throwing errors that you need to download Core NLP then the way to get testthat to 
 # find CORENLP is to set CORENLP as a system environment variable with the path to CoreNLP
 # CoreNLP directories in the package installation cannot be located by testthat
 # Nor found by R CMD check 
-# E.g. wget
-# 
-test_that("get_entity consistency", {
-  cnlp_init_corenlp_custom(language = "en", mem = "2g", 
-                           keys="annotators", values="tokenize, ssplit, pos, lemma, ner", 
-                           verbose = TRUE)
+# E.g. cleanNLP::cnlp_download_corenlp()
+test_that("NERAnnotate consistency", {
   
-  annotated <- cnlp_annotate(simple.input.test, as_strings = TRUE, backend = "coreNLP")
-  table.output <- cnlp_get_entity(annotated)
-  expect_identical(table.output, result)
+  tmp.file <- tempfile()
+  
+  file <- file(tmp.file, "wb")
+  writeLines(simple.input.test, con = file)
+  close(file)
+  
+  keys <- c("ssplit.eolonly", "annotators", "outputFormat", "file", "outputDirectory")
+  values <- c("true", "tokenize,ssplit,pos,lemma,ner", "json", tmp.file, dirname(tmp.file))
+  
+  # Expect error if NERAnnotate is called before corenlp is initialised.
+  expect_error(NERAnnotate(tmp.file),
+               "^Java CoreNLP not initialized. Named Entity Recognition cannot be executed.$")
+  
+  cnlp_init_corenlp_custom(language = "en", mem = "2g", keys = keys, values = values)
+  
+  simple.output <- NERAnnotate(tmp.file)
+  expect_identical(simple.output, simple.expected)
+  
+  file <- file(tmp.file, "wb")
+  writeLines(none.input, con = file)
+  close(file)
+  
+  none.output <- NERAnnotate(tmp.file)
+  expect_identical(none.output, none.expected)
+  
 })

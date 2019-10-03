@@ -422,7 +422,7 @@ cnlp_init_corenlp_custom <- function(language, lib_location = NULL, mem = "6g", 
 
 cnlp_init_corenlp_volatiles <- function(language, lib_location, mem, verbose) {
   if (is.null(lib_location)) {
-    if(is.null(Sys.getenv("CORENLP"))){
+    if(Sys.getenv("CORENLP") == ""){
       lib_location <- file.path(system.file("extdata", package="cleanNLP"),
                                 "stanford-corenlp-full-2018-10-05")
     } else {
@@ -628,18 +628,4 @@ annotate_with_corenlp <- function(input, as_strings, verbose) {
   out <- cnlp_read_csv(output_dir)
 
   return(out)
-}
-
-initCoreNLPNER <- function(file.input, language = "en", lib_location = NULL, mem = "2g", verbose = FALSE) {
-  params = list("annotators" = "tokenize,ssplit,pos,lemma,ner",
-                "ssplit.eolonly" = "true",
-                "outputFormat" = "conll",
-                "outputDirectory" = dirname(file.input),
-                "replaceExtension" = "",
-                "output.columns" = "idx,word,ner",
-                "output.prettyPrint" = "false",
-                "file" = file.input)
-  cnlp_init_corenlp_custom(language = language, lib_location = lib_location, mem = mem,
-                           verbose = verbose, keys = names(params), values = unname(unlist(params)),
-                           corenlp.only = TRUE)
 }

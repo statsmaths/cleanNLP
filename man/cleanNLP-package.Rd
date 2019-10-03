@@ -62,9 +62,9 @@ Useful links:
 \author{
 \strong{Maintainer}: Taylor B. Arnold \email{taylor.arnold@acm.org}
 
-Authors:
+Other contributors:
 \itemize{
-  \item Justin Wishart \email{justin.wishart@displayr.com}
+  \item Justin Wishart \email{justin.wishart@displayr.com} [contributor]
 }
 
 }
