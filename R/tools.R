@@ -168,17 +168,17 @@ cnlp_utils_tfidf <- function(object,
     N <- length(unique(x$doc))
 
     possible_vocab <- unique(x)
-    possible_vocab <- dplyr::group_by(possible_vocab, "token")
-    possible_vocab <- dplyr::summarize(possible_vocab, prop = "dplyr::n()")
+    possible_vocab <- dplyr::group_by(possible_vocab, token)
+    possible_vocab <- dplyr::summarize(possible_vocab, prop = dplyr::n())
     possible_vocab$prop <- possible_vocab$prop / N
-    possible_vocab <- dplyr::filter(possible_vocab, ~ prop > min_df,
-                                     ~ prop < max_df)
+    possible_vocab <- dplyr::filter(possible_vocab, prop > min_df,
+                                     prop < max_df)
     possible_vocab <- possible_vocab$token
 
-    vocabulary <- dplyr::filter(x, ~ token %in% possible_vocab)
-    vocabulary <- dplyr::group_by(vocabulary, "token")
-    vocabulary <- dplyr::summarize(vocabulary, n = "dplyr::n()")
-    vocabulary <- dplyr::arrange(vocabulary, "dplyr::desc(n)")
+    vocabulary <- dplyr::filter(x, token %in% possible_vocab)
+    vocabulary <- dplyr::group_by(vocabulary, token)
+    vocabulary <- dplyr::summarize(vocabulary, n = dplyr::n())
+    vocabulary <- dplyr::arrange(vocabulary, dplyr::desc(n))
 
     index <- 1:min(c(max_features, nrow(vocabulary)))
     vocabulary <- vocabulary[["token"]][index]
@@ -193,7 +193,7 @@ cnlp_utils_tfidf <- function(object,
   if (is.null(doc_set)) {
     doc_set <- unique(x[["doc"]])
   }
-  x <- dplyr::filter_(x, ~ token %in% vocabulary)
+  x <- dplyr::filter(x, token %in% vocabulary)
   x$token <- factor(x$token, levels = vocabulary)
   doc <- x[["doc"]]
   N <- length(doc_set)
@@ -202,8 +202,8 @@ cnlp_utils_tfidf <- function(object,
                      "dgTMatrix")
 
   df <- dplyr::tibble(id = id[mat@i + 1], lid = mat@j, count = mat@x)
-  df <- dplyr::group_by(df, "id", "lid")
-  df <- dplyr::summarize(df, count = "sum(count)")
+  df <- dplyr::group_by(df, id, lid)
+  df <- dplyr::summarize(df, count = sum(count))
 
   term_counts <- Matrix::spMatrix(nrow = length(doc_set), ncol = ncol(mat),
                                   i = df$id, j = df$lid + 1, x = df$count)
