@@ -177,10 +177,10 @@ cnlp_read_conll <- function(file) {
   source <- x$X7
 
   # create token table
-  token <- dplyr::data_frame(id = id + 1, sid = sid, tid = tid,
-                word = word, lemma = lemma,
-                upos = upos, pos = pos,
-                cid = NA_integer_)
+  token <- dplyr::tibble(id = id + 1, sid = sid, tid = tid,
+                         word = word, lemma = lemma,
+                         upos = upos, pos = pos,
+                         cid = NA_integer_)
 
   roots <- token[tid == 1,]
   roots$tid <- 0L
@@ -191,10 +191,10 @@ cnlp_read_conll <- function(file) {
 
   # create dependency table
   tid_target <- tid
-  dep <- dplyr::data_frame(id = id + 1, sid = sid, tid = source,
-                            tid_target = tid_target,
-                            relation = relation,
-                            relation_full = relation)
+  dep <- dplyr::tibble(id = id + 1, sid = sid, tid = source,
+                       tid_target = tid_target,
+                       relation = relation,
+                       relation_full = relation)
 
   # create annotation object
   anno <- list()

@@ -394,6 +394,8 @@ cnlp_init_corenlp <- function(language, anno_level = 2, lib_location = NULL,
 #'                       written to the console or suppressed?
 #' @param keys           vector string of flags to add to the corenlp calls
 #' @param values         vector string of values paired with the flags.
+#' @param corenlp.only   Logical to specify if only coreNLP should be initisalised
+#'                       and not the custom Annotator.
 #'
 #' The example below shows how to initialise corenlp to run named entity 
 #' recognition (ner) with its respective dependencies (tokenize, ssplit, pos 
@@ -408,20 +410,25 @@ cnlp_init_corenlp <- function(language, anno_level = 2, lib_location = NULL,
 #'
 #' @export
 
-cnlp_init_corenlp_custom <- function(language, lib_location = NULL,
-                         mem = "6g", verbose = FALSE, keys, values) {
+cnlp_init_corenlp_custom <- function(language, lib_location = NULL, mem = "6g", verbose = FALSE,
+                                     keys, values, corenlp.only = FALSE) {
   if (missing(language)) language <- "en"
   language_list <- c("en", "de", "fr", "es", "ar", "zh")
   language <- match.arg(arg = language, choices = language_list)
   cnlp_init_corenlp_volatiles(language, lib_location, mem, verbose)
   setup_corenlp_backend_raw(keys, values) 
-  invisible(init_corenlp_backend())
+  invisible(init_corenlp_backend(corenlp.only = corenlp.only))
 }
 
 cnlp_init_corenlp_volatiles <- function(language, lib_location, mem, verbose) {
-  if (is.null(lib_location))
-    lib_location <- file.path(system.file("extdata", package="cleanNLP"),
-                    "/stanford-corenlp-full-2018-10-05")
+  if (is.null(lib_location)) {
+    if(Sys.getenv("CORENLP") == ""){
+      lib_location <- file.path(system.file("extdata", package="cleanNLP"),
+                                "stanford-corenlp-full-2018-10-05")
+    } else {
+      lib_location <- Sys.getenv("CORENLP")
+    }
+  }
 
   # set properties
   volatiles$corenlp$language <- language
@@ -429,10 +436,6 @@ cnlp_init_corenlp_volatiles <- function(language, lib_location, mem, verbose) {
   volatiles$corenlp$mem <- mem
   volatiles$corenlp$verbose <- verbose
   volatiles$corenlp$properties <- list()
-
-  fin <- file.path(lib_location, "/properties.rds")
-  if (file.exists(fin))
-    volatiles$corenlp$properties <- readRDS(fin)
 }
 
 setup_corenlp_backend_raw <- function(keys, values, clear = FALSE) {
@@ -454,7 +457,7 @@ setup_corenlp_backend_raw <- function(keys, values, clear = FALSE) {
     volatiles$corenlp$properties[[keys[i]]] <- values[i]
 }
 
-init_corenlp_backend <- function() {
+init_corenlp_backend <- function(corenlp.only = FALSE) {
 
   if (!requireNamespace("rJava")) {
     stop("The rJava package is required to use the corenlp backend")
@@ -542,8 +545,9 @@ init_corenlp_backend <- function() {
 
   volatiles$corenlp$corenlp <-
     rJava::.jnew("edu.stanford.nlp.pipeline.StanfordCoreNLP", prop)
-  volatiles$corenlp$AnnotationProcessor <-
-    rJava::.jnew("edu.richmond.nlp.AnnotationProcessor")
+  if(!corenlp.only)
+    volatiles$corenlp$AnnotationProcessor <-
+      rJava::.jnew("edu.richmond.nlp.AnnotationProcessor")
   if (!volatiles$corenlp$verbose)
     rJava::.jcall("java/lang/System", "V", "setErr", err)
 
@@ -625,5 +629,3 @@ annotate_with_corenlp <- function(input, as_strings, verbose) {
 
   return(out)
 }
-
-

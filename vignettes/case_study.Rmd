@@ -269,7 +269,7 @@ It will be necessary to define a response variable ``y`` indicating whether this
 speech made by President Obama as well as a training flag indicating which speeches were
 made in odd numbered years. This is done via a separate table join and a pair of mutations.
 ```{r}
-meta <- data_frame(new_id = mat$doc_) %>%
+meta <- tibble(new_id = mat$doc_) %>%
   left_join(df[!duplicated(df$new_id),]) %>%
   mutate(y = as.numeric(president == "Barack Obama")) %>%
   mutate(train = year %in% seq(2001,2016, by = 2))

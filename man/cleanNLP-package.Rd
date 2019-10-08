@@ -55,12 +55,16 @@ vector <- cnlp_get_vector(annotation)
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://statsmaths.github.io/cleanNLP/}
-  \item Report bugs at \url{http://github.com/statsmaths/cleanNLP/issues}
+  \item Report bugs at \url{http://github.com/Displayr/cleanNLP/issues}
 }
 
 }
 \author{
 \strong{Maintainer}: Taylor B. Arnold \email{taylor.arnold@acm.org}
+
+Other contributors:
+\itemize{
+  \item Justin Wishart \email{justin.wishart@displayr.com} [contributor]
+}
 
 }

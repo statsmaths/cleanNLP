@@ -23,7 +23,7 @@ need to be set to false if any columns in \code{x} are
 constant if \code{center} is also true.}
 }
 \value{
-a \code{data_frame} object containing the top \code{k} principal
+a \code{tibble} object containing the top \code{k} principal
         components of the data in x, with the object \code{meta} appended
         to the front, when it is non-null.
 }

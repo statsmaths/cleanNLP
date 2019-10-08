@@ -15,7 +15,7 @@
 #'                need to be set to false if any columns in \code{x} are
 #'                constant if \code{center} is also true.
 #'
-#' @return a \code{data_frame} object containing the top \code{k} principal
+#' @return a \code{tibble} object containing the top \code{k} principal
 #'         components of the data in x, with the object \code{meta} appended
 #'         to the front, when it is non-null.
 #' @examples
@@ -37,10 +37,10 @@ cnlp_utils_pca <- function(x, meta = NULL, k = 2, center = TRUE,
                            scale = TRUE) {
 
   m <- stats::prcomp(x, center = center, scale. = scale)$x
-  out <- dplyr::as_data_frame(m[,1:k])
+  out <- dplyr::as_tibble(m[,1:k])
 
   if (!is.null(meta) && !is.data.frame(meta))
-    meta <- dplyr::as_data_frame(meta)
+    meta <- dplyr::as_tibble(meta)
 
   dplyr::bind_cols(meta, out)
 }
@@ -148,7 +148,7 @@ cnlp_utils_tfidf <- function(object,
                       token_var = "lemma",
                       vocabulary = NULL,
                       doc_set = NULL) {
-
+  
   if (inherits(object, "annotation"))
     object <- cnlp_get_token(object)
 
@@ -160,25 +160,25 @@ cnlp_utils_tfidf <- function(object,
   type <- match.arg(type)
   tf_weight <- match.arg(tf_weight)
   idf_weight <- match.arg(idf_weight)
-  x <- dplyr::data_frame(doc = object[[doc_var]],
-                         token = object[[token_var]])
+  x <- dplyr::tibble(doc = object[[doc_var]],
+                     token = object[[token_var]])
 
   if (is.null(vocabulary)) {
 
     N <- length(unique(x$doc))
 
     possible_vocab <- unique(x)
-    possible_vocab <- dplyr::group_by_(possible_vocab, "token")
-    possible_vocab <- dplyr::summarize_(possible_vocab, prop = "dplyr::n()")
+    possible_vocab <- dplyr::group_by(possible_vocab, token)
+    possible_vocab <- dplyr::summarize(possible_vocab, prop = dplyr::n())
     possible_vocab$prop <- possible_vocab$prop / N
-    possible_vocab <- dplyr::filter_(possible_vocab, ~ prop > min_df,
-                                     ~ prop < max_df)
+    possible_vocab <- dplyr::filter(possible_vocab, prop > min_df,
+                                     prop < max_df)
     possible_vocab <- possible_vocab$token
 
-    vocabulary <- dplyr::filter_(x, ~ token %in% possible_vocab)
-    vocabulary <- dplyr::group_by_(vocabulary, "token")
-    vocabulary <- dplyr::summarize_(vocabulary, n = "dplyr::n()")
-    vocabulary <- dplyr::arrange_(vocabulary, "dplyr::desc(n)")
+    vocabulary <- dplyr::filter(x, token %in% possible_vocab)
+    vocabulary <- dplyr::group_by(vocabulary, token)
+    vocabulary <- dplyr::summarize(vocabulary, n = dplyr::n())
+    vocabulary <- dplyr::arrange(vocabulary, dplyr::desc(n))
 
     index <- 1:min(c(max_features, nrow(vocabulary)))
     vocabulary <- vocabulary[["token"]][index]
@@ -193,7 +193,7 @@ cnlp_utils_tfidf <- function(object,
   if (is.null(doc_set)) {
     doc_set <- unique(x[["doc"]])
   }
-  x <- dplyr::filter_(x, ~ token %in% vocabulary)
+  x <- dplyr::filter(x, token %in% vocabulary)
   x$token <- factor(x$token, levels = vocabulary)
   doc <- x[["doc"]]
   N <- length(doc_set)
@@ -201,9 +201,16 @@ cnlp_utils_tfidf <- function(object,
   mat <- methods::as(Matrix::sparse.model.matrix(~ token - 1, data = x),
                      "dgTMatrix")
 
-  df <- dplyr::data_frame(id = id[mat@i + 1], lid = mat@j, count = mat@x)
-  df <- dplyr::group_by_(df, "id", "lid")
-  df <- dplyr::summarize_(df, count = "sum(count)")
+  df <- dplyr::tibble(id = id[mat@i + 1], lid = mat@j, count = mat@x)
+  
+  df <- by(df, list(df$id, df$lid), function(x) {
+    c(id = unique(x$id), lid = unique(x$lid), count = sum(x$count))
+  })
+  df = do.call(rbind.data.frame, df)
+  names(df) = c("id", "lid", "count")
+  df = dplyr::as_tibble(df)
+  # df <- dplyr::group_by(df, id, lid)
+  # df <- dplyr::summarize(df, count = sum(count))
 
   term_counts <- Matrix::spMatrix(nrow = length(doc_set), ncol = ncol(mat),
                                   i = df$id, j = df$lid + 1, x = df$count)

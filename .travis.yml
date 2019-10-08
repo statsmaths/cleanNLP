@@ -1,7 +1,56 @@
-# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
-
-language: R
-sudo: false
+language: r
+r:
+  - release
+dist: trusty
+sudo: required
 cache: packages
+warnings_are_errors: false
 
+# install debian libraries to match R-servers
+# update pre-installed packages to latest versions
+before_install:
+  - sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libgdal-dev libproj-dev python-protobuf libprotoc-dev libprotobuf-dev libv8-dev librsvg2-dev libmpfr-dev
+  - sudo apt install default-jdk
+  - wget http://nlp.stanford.edu/software/stanford-corenlp-full-2018-10-05.zip
+  - unzip -d $HOME stanford-corenlp-full-2018-10-05.zip
+  - export CORENLP=$HOME/stanford-corenlp-full-2018-10-05
+  - wget http://nlp.stanford.edu/software/stanford-english-corenlp-2018-10-05-models.jar -P $CORENLP/
+  - rcode="tfile <- tempfile(); capture.output(res<-devtools::test(), file = tfile); out <- readLines(tfile); cat(out, sep = '\n'); "
+  - rcode+="n.fail <- as.numeric(sub('Failed:[[:space:]]', '', out[grep('Failed:[[:space:]]', out)])); "
+  - rcode+="res <- as.data.frame(res); out <- data.frame(file = unlist(res[['file']]), warning = unlist(res[['warning']])); "
+  - rcode+="write.csv(out, file='test_results.csv'); "
+  - rcode+="quit(status = !identical(n.fail, 0), save='no');"
+  - Rscript tools/travis_run_before_install.R
 
+r_packages:
+  - devtools
+  - roxygen2
+  - covr
+
+r_github_packages:
+  - Displayr/flipDevTools
+
+script:
+  - R CMD build --no-manual --no-build-vignettes --no-resave-data .
+  - R CMD check --as-cran --no-manual --ignore-vignettes --no-tests *.tar.gz
+  - if [ -d tests/testthat ]; then
+    Rscript --default-packages='datasets,utils,grDevices,graphics,stats,methods' -e "$rcode";
+    fi
+
+notifications:
+  slack:
+    rooms:
+      - displayr:FTgSTNHC2rpanhJMGTKMwZXM#github-notifications
+    template:
+      - "Build <%{build_url}|#%{build_number}> %{result} in %{repository_name}@%{branch} by %{author}: <%{compare_url}|%{commit_message}>"
+    on_success: change
+    on_failure: always
+
+# Warning notifications and downstream package builds are implemented
+# by calling R functions so they can be updated in this package without
+# committing a new change to .travis.yml in each repository
+after_success: 
+  - Rscript -e "require(flipDevTools); NotifyWarnings(); TriggerDownstreamBuilds()"
+  - travis_wait Rscript -e "flipDevTools::CheckCoverage()"
