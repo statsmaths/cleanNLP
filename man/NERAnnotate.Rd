@@ -4,11 +4,22 @@
 \alias{NERAnnotate}
 \title{Run the annotation pipeline on a set of documents to extract entities}
 \usage{
-NERAnnotate(input.file)
+NERAnnotate(input.file, entity.mentions.only = FALSE)
 }
 \arguments{
 \item{input.file}{a character string showing the path to the file to be processed. The file should
 have text with Unix style line endings (will throw Nullpointer exception if not)}
+
+\item{entity.mentions.only}{Logical to specify if only entity mention output from CoreNLP is used
+in the extraction. If TRUE, this will extract personal pronouns as well as standard entities.
+The benefit of the entity.mention output is it groups words that are from the same entity. E.g.
+'John Smith' is a single person entity and 'New York City' is a single location entity. The 
+entity mention output also classifies personal pronouns as entities and will be extracted.
+If FALSE, the entity.mentions output from CoreNLP is validated against the CoreNLP token output.
+The token output also identifies entities on the single word level and it doesn't classify personal
+pronouns as entities. The net effect if set to FALSE is that entity mentions are extracted but
+personal pronouns and other potential entity mentions that are not entities on the token level
+are not extracted.}
 }
 \value{
 data.frame with the details of the detected entities. The output data.frame has three

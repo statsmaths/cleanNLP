@@ -1,7 +1,7 @@
 library(testthat)
 
-# Input has variety of entities
-simple.input.test <- c("There is a person called Julie that went down the lane.",  # Person, Julie,
+# Input has variety of entities, first entry has person and personal pronoun
+simple.input.test <- c("There is a person called Julie that went down the lane. She likes bubbles", 
                        "Toys are fine", #No entities
                        "There is trouble brewing in Hong Kong", #Location Hong Kong
                        "There are two people caled Jane and John") 
@@ -16,6 +16,14 @@ simple.expected <- structure(list(id = c(1L, 3L, 4L, 4L, 4L),
                                   entity.type = c("PERSON", "CITY", "NUMBER", "PERSON", "PERSON")),
                              class = "data.frame",
                              row.names = c(NA, -5L))
+
+simple.with.pronouns.expected <- structure(list(id = c(1L, 1L, 3L, 4L, 4L, 4L), 
+                                  entity = c("Julie", "She", "Hong Kong", "two", "Jane", "John"),
+                                  entity.type = c("PERSON", "PERSON", "CITY", "NUMBER", "PERSON",
+                                                  "PERSON")),
+                             class = "data.frame",
+                             row.names = c(NA, -6L))
+
 
 none.expected <- data.frame(id = character(), entity = character(), entity.type = character())
 
@@ -42,8 +50,11 @@ test_that("NERAnnotate consistency", {
   cnlp_init_corenlp_custom(language = "en", mem = "2g", keys = keys, values = values, 
                            corenlp.only = TRUE)
   
-  simple.output <- NERAnnotate(tmp.file)
+  expect_error(simple.output <- NERAnnotate(tmp.file), NA)
   expect_identical(simple.output, simple.expected)
+  
+  expect_error(simple.output.with.pronouns <- NERAnnotate(tmp.file, entity.mentions.only = TRUE), NA)
+  expect_identical(simple.output.with.pronouns, simple.with.pronouns.expected)
   
   file <- file(tmp.file, "wb")
   writeLines(none.input, con = file)
