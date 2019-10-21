@@ -102,7 +102,7 @@ $token
 # … with 58 more rows
 
 $document
-                                                                                                                                                                                                                                                                                                                      text
+
 1 The regular early morning yell of horror was the sound of Arthur Dent waking
 up and suddenly remembering where he was. It wasn't just that the cave was cold,
 it wasn't just that it was damp and smelly. It was the fact that the cave was
