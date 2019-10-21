@@ -5,27 +5,19 @@
 \alias{cnlp_utils_tf}
 \title{Construct the TF-IDF Matrix from Annotation or Data Frame}
 \usage{
-cnlp_utils_tfidf(object, type = c("tfidf", "tf", "idf", "vocab", "all"),
-  tf_weight = c("lognorm", "binary", "raw", "dnorm"), idf_weight = c("idf",
-  "smooth", "prob"), min_df = 0.1, max_df = 0.9, max_features = 10000,
-  doc_var = c("doc_id", "id"), token_var = "lemma", vocabulary = NULL,
-  doc_set = NULL)
+cnlp_utils_tfidf(object, tf_weight = c("lognorm", "binary", "raw",
+  "dnorm"), idf_weight = c("idf", "smooth", "prob", "uniform"),
+  min_df = 0.1, max_df = 0.9, max_features = 10000, doc_var = "id",
+  token_var = "lemma", vocabulary = NULL, doc_set = NULL)
 
-cnlp_utils_tf(object, type = "tf", tf_weight = "raw", ...)
+cnlp_utils_tf(object, tf_weight = "raw", idf_weight = "uniform",
+  min_df = 0, max_df = 1, max_features = 10000, doc_var = "id",
+  token_var = "lemma", vocabulary = NULL, doc_set = NULL)
 }
 \arguments{
-\item{object}{either an annotation object or a data frame with
-columns equal to the inputs given to
-\code{doc_var} and \code{token_var}}
-
-\item{type}{the desired return type. The options \code{tfidf},
-\code{tf}, and \code{idf} return a list with
-the desired matrix, the document ids, and the
-vocabulary set. The option \code{all} returns
-a list with all three as well as the ids and
-vocabulary. For consistency, \code{vocab} all
-returns a list but this only contains the ids
-and vocabulary set.}
+\item{object}{a data frame containing an identifier for the document
+(set with \code{doc_var}) and token (set with
+\code{token_var})}
 
 \item{tf_weight}{the weighting scheme for the term frequency matrix.
 The selection \code{lognorm} takes one plus
@@ -41,7 +33,8 @@ logarithm of the simple inverse frequency,
 \code{smooth} gives the logarithm of one plus
 the simple inverse frequency, and \code{prob}
 gives the log odds of the the token occurring
-in a randomly selected document.}
+in a randomly selected document. Set to \code{uniform}
+to return just the term frequencies.}
 
 \item{min_df}{the minimum proportion of documents a token
 should be in to be included in the vocabulary}
@@ -52,17 +45,12 @@ should be in to be included in the vocabulary}
 \item{max_features}{the maximum number of tokens in the vocabulary}
 
 \item{doc_var}{character vector. The name of the column in
-\code{object} that contains the document ids,
-unless \code{object} is an annotation object,
-in which case it's the column of the token
-matrix to use as the document id.}
+\code{object} that contains the document ids. Defaults
+to "id".}
 
 \item{token_var}{character vector. The name of the column in
-\code{object} that contains the tokens,
-unless \code{object} is an annotation object,
-in which case it's the column of the token
-matrix to use as the tokens (generally either
-\code{lemma} or \code{word}).}
+\code{object} that contains the tokens. Defaults to
+"lemma".}
 
 \item{vocabulary}{character vector. The vocabulary set to use in
 constructing the matrices. Will be computed
@@ -79,39 +67,9 @@ function compute the document set automatically.}
 \item{...}{other arguments passed to the base method}
 }
 \value{
-a sparse matrix with dimnames or, if "all", a list with elements
-\itemize{
-\item{tf}{ the term frequency matrix}
-\item{idf}{ the inverse document frequency matrix}
-\item{tfidf}{ the product of the tf and idf matrices}
-\item{vocab}{ a character vector giving the vocabulary used in
-              the function, corresponding to the columns of the
-              matrices}
-\item{id}{ a vector of the doc ids, corresponding to the rows of
-               the matrices}
-}
+a sparse matrix with dimnames giving the documents and vocabular.
 }
 \description{
-Given an annotation object, this function returns the term-frequency
-inverse document frequency (tf-idf) matrix from the extracted lemmas.
-A data frame with a document id column and token column can be also
-be given, which allows the user to preprocess and filter the desired
-tokens to include.
-}
-\examples{
-require(dplyr)
-data(obama)
-
-# Top words in the first Obama S.O.T.U., using all tokens
-tfidf <- cnlp_utils_tfidf(obama)
-vids <- order(tfidf[1,], decreasing = TRUE)[1:10]
-colnames(tfidf)[vids]
-
-# Top words, only using non-proper nouns
-tfidf <- cnlp_get_token(obama) \%>\%
-  filter(pos \%in\% c("NN", "NNS")) \%>\%
-  cnlp_utils_tfidf()
-vids <- order(tfidf[1,], decreasing = TRUE)[1:10]
-colnames(tfidf)[vids]
-
+Given annotations, this function returns the term-frequency inverse
+document frequency (tf-idf) matrix from the extracted lemmas.
 }

@@ -4,66 +4,30 @@
 \alias{cnlp_annotate}
 \title{Run the annotation pipeline on a set of documents}
 \usage{
-cnlp_annotate(input, as_strings = NULL, doc_ids = NULL, backend = NULL,
-  meta = NULL, doc_var = "doc_id", text_var = "text", verbose = FALSE)
+cnlp_annotate(input, backend = NULL, verbose = TRUE)
 }
 \arguments{
-\item{input}{either a vector of file names to parse, a
-character vector with one document in each
-element, or a data frame. If a data frame,
-specify what column names contain the text and
-(optionally) document ids}
+\item{input}{a data frame containing the data to parse. Must
+contain a column called 'text' (with the raw text to
+parse) or a column called 'path' (a path to the file
+that should be parsed). If both are given, the
+function defers to the text column.}
 
-\item{as_strings}{logical. Is the data given to \code{input} the
-actual document text or are they file names?
-If \code{NULL}, the default, will be set to
-\code{FALSE} if the input points to a valid
-file and \code{TRUE} otherwise.}
-
-\item{doc_ids}{optional character vector of document names}
-
-\item{backend}{which backend to use. Will default to the last
+\item{backend}{name of the backend to use. Will default to the last
 model to be initalized.}
 
-\item{meta}{an optional data frame to bind to the document
-table}
-
-\item{doc_var}{if passing a data frame, character description of the
-column containing the document identifier; if this
-this variable does not exist in the dataset,
-automatic names will be given (or set to NULL to
-force automatic names)}
-
-\item{text_var}{if passing a data frame, which column contains the
-document identifier}
-
 \item{verbose}{logical; should annotation engine print out when it
-finishes each text}
+finishes each text? Turned on by default.}
 }
 \value{
 an object of class \code{annotation}
 }
 \description{
 Runs the clean_nlp annotators over a given corpus of text
-using either the R, Java, or Python backend. The details for
-which annotators to run and how to run them are specified
-by using one of: \code{\link{cnlp_init_tokenizers}},
-\code{\link{cnlp_init_spacy}}, \code{\link{cnlp_init_udpipe}},
-or \code{\link{cnlp_init_corenlp}}.
-}
-\examples{
-\dontrun{
-annotation <- cnlp_annotate("path/to/corpus/directory")
-}
-
-}
-\references{
-Manning, Christopher D., Mihai Surdeanu, John Bauer, Jenny Finkel,
-  Steven J. Bethard, and David McClosky. 2014.
-  The Stanford corenlp Natural Language Processing Toolkit.
-  In: \emph{Proceedings of the 52nd Annual Meeting of the Association
-            for Computational Linguistics: System Demonstrations,
-            pp. 55-60.}
+using the desired backend. The details for which annotators to run and
+how to run them are specified by using one of:
+\code{\link{cnlp_init_stringi}}, \code{\link{cnlp_init_spacy}},
+\code{\link{cnlp_init_udpipe}}, or \code{\link{cnlp_init_corenlp}}.
 }
 \author{
 Taylor B. Arnold, \email{taylor.arnold@acm.org}
