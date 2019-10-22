@@ -1,3 +1,42 @@
+# cleanNLP 3.0
+
+Version 3 of the toolkit introduces significant changes to the package,
+largely in response to improvements in the underlying NLP annotators.
+
+* we now use the official Python version of CoreNLP. It supports a much larger
+number of languages, but at the moment only allows for dependency parsing (no
+NER or coreferences). This removes the need for a Java backend and significantly
+simplifies the package.
+
+* we now have a Python packaged, cleannlp, that requires spacy and corenlp.
+This removes the need to include python scripts with the R package and should
+make it easier to install the toolkit.
+
+* all functions work with data in memory. Data are never stored on disk by
+the package. This makes it much easier to work with large collections of small
+documents.
+
+* the tokens and dependency tables are returned pre-combined. While there is
+some academic justification for separating them, because they always have the
+same number of rows, there is no practical reason to do so.
+
+* the annotation object is now returned as a plain, unclassed list. The get
+functions are no longer included or needed (they added a lot of complexity for
+little benefit).
+
+* removed all internal usage of dplyr. Output data frames still include a
+"tibble" class indicator, so if users import dplyr the pretty printing will be
+preserved.
+
+* removed phantom empty columns; only columns with data are returned.
+
+* removed many options that were no longer relevant to the underlying
+algorithms.
+
+Users with scripts based on the previous version of cleanNLP will need to
+modify them to match the new semantics. We believe the small changes required
+will make the toolkit easier to both install and use.
+
 # cleanNLP 2.0
 
 This is a major re-structuring of the cleanNLP package.
@@ -22,7 +61,7 @@ matrix in lieu of a named list
 
 There are also many internal changes, primarily to deal
 with the new spaCy (2.0) version and to make the use of
-udpipe more natural.
+udpipe more naturally.
 
 # cleanNLP 1.10
 
@@ -83,7 +122,3 @@ for whether sentence ROOTS should be returned
 
 * the speed parameter to init_coreNLP() has been
 renamed as anno_level
-
-
-
-

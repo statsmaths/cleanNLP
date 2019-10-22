@@ -1,40 +1,33 @@
 Package: cleanNLP
 Type: Package
 Title: A Tidy Data Model for Natural Language Processing
-Version: 2.4.1
+Version: 3.0.0
 Authors@R: c(person(given = "Taylor B.", family = "Arnold", email = "taylor.arnold@acm.org", role = c("aut", "cre")))
 Author: Taylor B. Arnold [aut, cre]
 Maintainer: Taylor B. Arnold <taylor.arnold@acm.org>
-Description: Provides a set of fast tools for converting a textual corpus into a set of normalized
-  tables. Users may make use of the 'udpipe' back end with no external dependencies, a Python back
-  end with 'spaCy' <https://spacy.io> or the Java back end 'CoreNLP'
-  <http://stanfordnlp.github.io/CoreNLP/>. Exposed annotation tasks include
-  tokenization, part of speech tagging, named entity recognition, entity linking, sentiment
-  analysis, dependency parsing, coreference resolution, and word embeddings. Summary
-  statistics regarding token unigram, part of speech tag, and dependency type frequencies
-  are also included to assist with analyses.
+Description: Provides a set of fast tools for converting a textual corpus into
+  a set of normalized tables. Users may make use of the 'udpipe' back end with
+  no external dependencies, or two Python back ends with 'spaCy'
+  <https://spacy.io> or 'CoreNLP' <http://stanfordnlp.github.io/CoreNLP/>.
+  Exposed annotation tasks include tokenization, part of speech tagging, named
+  entity recognition, and dependency parsing.
 Depends:
-    R (>= 2.10)
+    R (>= 3.5.0)
 Imports:
-    dplyr (>= 0.7.4),
     Matrix (>= 1.2),
+    udpipe,
+    reticulate,
     stringi,
     stats,
-    methods,
-    utils
+    methods
 Suggests:
-    udpipe (>= 0.3),
-    reticulate (>= 1.4),
-    rJava (>= 0.9-8),
-    RCurl (>= 1.95),
     knitr (>= 1.15),
     rmarkdown (>= 1.4),
     testthat (>= 1.0.1),
     covr (>= 2.2.2)
-SystemRequirements: Python (>= 2.7.0); spaCy <https://spacy.io/> (>= 2.0); Java (>= 7.0); Stanford CoreNLP <http://nlp.stanford.edu/software/corenlp.shtml> (>= 3.9.2)
+SystemRequirements: Python (>= 3.6.0)
 License: LGPL-2
 URL: https://statsmaths.github.io/cleanNLP/
 BugReports: http://github.com/statsmaths/cleanNLP/issues
 LazyData: true
-VignetteBuilder: knitr
 RoxygenNote: 6.1.1

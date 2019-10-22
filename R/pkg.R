@@ -1,49 +1,38 @@
 #' cleanNLP: A Tidy Data Model for Natural Language Processing
 #'
 #' Provides a set of fast tools for converting a textual corpus into a set
-#' of normalized tables. The underlying natural language processing pipeline
-#' utilizes either the Python module spaCy or the Java-based Stanford
-#' CoreNLP library. The Python option is faster and generally easier to
-#' install; the Java option has additional annotators that are not available
-#' in spaCy.
+#' of normalized tables. Multiple NLP backends can be used, with the output
+#' standardized into a normalized format. Options include stringi (very fast,
+#' but only provides tokenization), udpipe (fast, many languages, includes
+#' part of speech tags and dependencies), coreNLP (using its Python backend),
+#' and spacy (python backend; includes named entity recognition).
 #'
-#' Once the package is set up, run one of \code{\link{cnlp_init_tokenizers}},
-#' \code{\link{cnlp_init_spacy}}, or \code{\link{cnlp_init_corenlp}} to load the
-#' desired NLP backend. After this function is done running, use
-#' \code{\link{cnlp_annotate}} to run the annotation engine over a corpus
-#' of text. Functions are then available to extract data tables from the
-#' annotation object: \code{\link{cnlp_get_token}}, \code{\link{cnlp_get_dependency}},
-#' \code{\link{cnlp_get_document}}, \code{\link{cnlp_get_coreference}},
-#' \code{\link{cnlp_get_entity}}, \code{\link{cnlp_get_sentence}},
-#' and \code{\link{cnlp_get_vector}}. See their documentation for
-#' further details. The package vignettes provide more detailed set-up
-#' information.
-#'
-#' If loading annotation that have previously been saved to disk, these
-#' can be pulled back into R using \code{\link{cnlp_read_csv}}. This
-#' does not require Java or Python nor does it require initializing the
-#' annotation pipeline.
+#' Once the package is set up, run one of \code{\link{cnlp_init_stringi}},
+#' \code{\link{cnlp_init_spacy}}, \code{\link{cnlp_init_corenlp}}, or
+#' \code{\link{cnlp_init_udpipe}} to load the desired NLP backend.
+#' After this function is done running, use \code{\link{cnlp_annotate}}
+#' to run the annotation engine over a corpus of text. The package vignettes
+#' provide more detailed set-up information.
 #'
 #' @examples
 #'
 #'\dontrun{
-#' # load the annotation engine (can also use spaCy and coreNLP backends)
-#' setup_tokenizers_backend()
-#' init_backend(type = "tokenizers")
+#' library(cleanNLP)
+#'
+#' # load the annotation engine
+#' cnlp_init_stringi()
 #'
 #' # annotate your text
-#' annotation <- run_annotators("path/to/corpus/directory")
-#'
-#' # pull off data tables
-#' token <- cnlp_get_token(annotation)
-#' dependency <- cnlp_get_dependency(annotation)
-#' document <- cnlp_get_document(annotation)
-#' coreference <- cnlp_get_coreference(annotation)
-#' entity <- cnlp_get_entity(annotation)
-#' sentiment <- cnlp_get_sentence(annotation)
-#' vector <- cnlp_get_vector(annotation)
+#' input <- data.frame(
+#'  text=c(
+#'    "This is a sentence.",
+#'    "Here is something else to parse!"
+#'  ),
+#'  stringsAsFactors=FALSE
+#' )
+# anno <- cnlp_annotate(input)
+# anno
 #'}
 #'
 #' @docType package
 "_PACKAGE"
-

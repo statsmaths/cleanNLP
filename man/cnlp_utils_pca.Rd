@@ -4,15 +4,10 @@
 \alias{cnlp_utils_pca}
 \title{Compute Principal Components and store as a Data Frame}
 \usage{
-cnlp_utils_pca(x, meta = NULL, k = 2, center = TRUE, scale = TRUE)
+cnlp_utils_pca(x, k = 2, center = TRUE, scale = TRUE)
 }
 \arguments{
 \item{x}{a matrix object to pass to \code{prcomp}}
-
-\item{meta}{an optional object to append to the front of the
-principal components. Can be a vector or a data frame,
-but must have the same length or number of rows as the
-number of rows in \code{x}}
 
 \item{k}{integer. The number of components to include in the output.}
 
@@ -23,27 +18,11 @@ need to be set to false if any columns in \code{x} are
 constant if \code{center} is also true.}
 }
 \value{
-a \code{data_frame} object containing the top \code{k} principal
-        components of the data in x, with the object \code{meta} appended
-        to the front, when it is non-null.
+a data frame object containing the top \code{k} principal
+        components of the data in x.
 }
 \description{
-Takes a matrix, perhaps from the output of \code{\link{cnlp_utils_tfidf}},
-and returns a data frame with the top principal components extracted. This
-is a simple but powerful technique for visualizing a corpus of documents.
-}
-\examples{
-require(dplyr)
-data(obama)
-
-# Get principal components from the non-proper noun lemmas
-tfidf <- cnlp_get_token(obama) \%>\%
-  filter(pos \%in\% c("NN", "NNS")) \%>\%
-  cnlp_utils_tfidf()
-pca_doc <- cnlp_utils_pca(tfidf, cnlp_get_document(obama))
-
-# Plot speeches using the first two principal components
-plot(pca_doc$PC1, pca_doc$PC2, col = "white")
-text(pca_doc$PC1, pca_doc$PC2, label = 2009:2016)
-
+Takes a matrix and returns a data frame with the top principal components
+extracted. This is a simple but powerful technique for visualizing a corpus
+of documents.
 }
