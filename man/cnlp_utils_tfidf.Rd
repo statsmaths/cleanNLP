@@ -7,11 +7,12 @@
 \usage{
 cnlp_utils_tfidf(object, tf_weight = c("lognorm", "binary", "raw",
   "dnorm"), idf_weight = c("idf", "smooth", "prob", "uniform"),
-  min_df = 0.1, max_df = 0.9, max_features = 10000, doc_var = "id",
-  token_var = "lemma", vocabulary = NULL, doc_set = NULL)
+  min_df = 0.1, max_df = 0.9, max_features = 10000,
+  doc_var = "doc_id", token_var = "lemma", vocabulary = NULL,
+  doc_set = NULL)
 
 cnlp_utils_tf(object, tf_weight = "raw", idf_weight = "uniform",
-  min_df = 0, max_df = 1, max_features = 10000, doc_var = "id",
+  min_df = 0, max_df = 1, max_features = 10000, doc_var = "doc_id",
   token_var = "lemma", vocabulary = NULL, doc_set = NULL)
 }
 \arguments{
@@ -46,7 +47,7 @@ should be in to be included in the vocabulary}
 
 \item{doc_var}{character vector. The name of the column in
 \code{object} that contains the document ids. Defaults
-to "id".}
+to "doc_id".}
 
 \item{token_var}{character vector. The name of the column in
 \code{object} that contains the tokens. Defaults to

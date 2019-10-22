@@ -55,7 +55,7 @@ cnlp_utils_pca <- function(x, k = 2, center = TRUE, scale = TRUE) {
 #' @param max_features  the maximum number of tokens in the vocabulary
 #' @param doc_var       character vector. The name of the column in
 #'                      \code{object} that contains the document ids. Defaults
-#'                      to "id".
+#'                      to "doc_id".
 #' @param token_var     character vector. The name of the column in
 #'                      \code{object} that contains the tokens. Defaults to
 #'                      "lemma".
@@ -82,7 +82,7 @@ cnlp_utils_tfidf <- function(
   min_df=0.1,
   max_df=0.9,
   max_features=1e4,
-  doc_var="id",
+  doc_var="doc_id",
   token_var="lemma",
   vocabulary=NULL,
   doc_set=NULL
@@ -182,7 +182,7 @@ cnlp_utils_tf <- function(
   min_df=0,
   max_df=1,
   max_features=1e4,
-  doc_var="id",
+  doc_var="doc_id",
   token_var="lemma",
   vocabulary=NULL,
   doc_set=NULL

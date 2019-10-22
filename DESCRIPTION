@@ -31,5 +31,4 @@ License: LGPL-2
 URL: https://statsmaths.github.io/cleanNLP/
 BugReports: http://github.com/statsmaths/cleanNLP/issues
 LazyData: true
-VignetteBuilder: knitr
 RoxygenNote: 6.1.1

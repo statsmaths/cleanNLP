@@ -16,10 +16,8 @@ make it easier to install the toolkit.
 the package. This makes it much easier to work with large collections of small
 documents.
 
-* the annotation function requires a data frame input.
-
 * the tokens and dependency tables are returned pre-combined. While there is
-some academic justification for seperating them, because they always have the
+some academic justification for separating them, because they always have the
 same number of rows, there is no practical reason to do so.
 
 * the annotation object is now returned as a plain, unclassed list. The get

@@ -54,7 +54,7 @@ We take as an example the opening lines of Douglas Adam's
 *Life, the Universe and Everything*.
 
 ```{r}
-text <- c("The regular early morning yell of horror was the sound of",
+text <- c("The regular early morning yell of   horror was the sound of",
           "Arthur Dent waking up and suddenly remembering where he",
           "was. It wasn't just that the cave was cold, it wasn't just",
           "that it was damp and smelly. It was the fact that the cave",
@@ -131,6 +131,24 @@ head(obj$token)
 6     1     1     6 of     of     ADP   IN    NA             7          case
 ```
 
+## Citation
+
+If you make use of the toolkit in your work, please cite the following paper.
+
+```
+@article{,
+  title   = "A Tidy Data Model for Natural Language Processing Using cleanNLP",
+  author  = "Arnold, Taylor B",
+  journal = "R Journal",
+  volume  = "9",
+  number  = "2",
+  year    = "2017"
+}
+```
+
+Please, however, note that the library has evolved since the paper was published.
+For specific help with the package's API please check the updated documents
+linked to from this site.
 
 ## Note
 

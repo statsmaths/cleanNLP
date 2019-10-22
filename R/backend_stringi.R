@@ -8,7 +8,7 @@ annotate_with_stringi <- function(input, verbose) {
 
   for (i in seq_len(nrow(input))) {
     x <- input$text[i]
-    doc_id <- input$id[i]
+    doc_id <- input$doc_id[i]
 
     if (stringi::stri_length(x) == 0L) next
 
@@ -41,7 +41,7 @@ annotate_with_stringi <- function(input, verbose) {
     if (length(word) == 0L) next
 
     token[[i]] <- data.frame(
-      id = doc_id,
+      doc_id = doc_id,
       sid = as.integer(sid),
       tid = as.integer(tid),
       token = word,
@@ -55,7 +55,7 @@ annotate_with_stringi <- function(input, verbose) {
   anno <- list()
   anno$token <- structure(do.call("rbind", token),
                           class = c("tbl_df", "tbl", "data.frame"))
-  anno$document <- input
+  anno$document <- input[,!(names(input) == "text"),drop=FALSE]
 
   return(anno)
 }

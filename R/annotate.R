@@ -6,11 +6,15 @@
 #' \code{\link{cnlp_init_stringi}}, \code{\link{cnlp_init_spacy}},
 #' \code{\link{cnlp_init_udpipe}}, or \code{\link{cnlp_init_corenlp}}.
 #'
-#' @param input          a data frame containing the data to parse. Must
-#'                       contain a column called 'text' (with the raw text to
-#'                       parse) or a column called 'path' (a path to the file
-#'                       that should be parsed). If both are given, the
-#'                       function defers to the text column.
+#' @param input          an object containing the data to parse. Either a
+#'                       character vector with the texts (optional names can
+#'                       be given to provide document ids) or a data frame. The
+#'                       data frame must have a column named 'text' containing
+#'                       the raw text to parse; if there is a column named
+#'                       'doc_id', it is treated as a a document identifier.
+#'                       This conforms with corpus objects respecting the Text
+#'                       Interchange Format (TIF), while allowing for some
+#'                       variation.
 #' @param backend        name of the backend to use. Will default to the last
 #'                       model to be initalized.
 #' @param verbose        logical; should annotation engine print out when it
@@ -19,6 +23,10 @@
 #' @return  an object of class \code{annotation}
 #'
 #' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
+#'
+#'@examples
+#'cnlp_init_stringi()
+#'cnlp_annotate(un, verbose=FALSE)
 #'
 #' @export
 cnlp_annotate <- function(input, backend = NULL, verbose = TRUE) {
@@ -29,30 +37,24 @@ cnlp_annotate <- function(input, backend = NULL, verbose = TRUE) {
     backend %in% c("stringi", "spacy", "corenlp", "udpipe"),
     "No initialized backends found."
   )
-  assert(inherits(input, "data.frame"), "'input' must be a data frame object.")
-  assert(
-    "text" %in% names(input) | "path" %in% names(input),
-    "'input' must contain a column named 'text' or 'path'"
+
+  if (!inherits(input, "data.frame")) {
+    assert(is.vector(input), "'input' must be a data frame or vector object.")
+    input <- data.frame(
+      doc_id=ifnull(names(input), seq_len(length(input))),
+      text=as.character(input)
+    )
+  }
+  assert("text" %in% names(input),
+    "'input' data frame must contain a column named 'text'"
   )
 
   # add an identifier to the dataset if not already included
-  if (!("id" %in% names(input)))
+  if (!("doc_id" %in% names(input)))
   {
-    input$id <- seq_len(nrow(input))
+    input$doc_id <- seq_len(nrow(input))
   }
-  assert(all(!duplicated(input$id)), "duplicate values found in 'id'")
-
-  # if there is no text column, construct it from data read in from files
-  if (!("text" %in% names(input)))
-  {
-    input$text <- rep(NA_character_, nrow(input))
-    for (i in seq_len(nrow(input)))
-    {
-      x <- readLines(input$path[i], encoding="UTF-8")
-      x <- iconv(x, sub="")
-      input$text[i] <- paste(x, collapse=" ")
-    }
-  }
+  assert(all(!duplicated(input$doc_id)), "duplicate values found in 'id'")
 
   # pass to the respective backend
   if (backend == "stringi")    anno <- annotate_with_stringi(input, verbose)

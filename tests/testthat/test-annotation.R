@@ -8,6 +8,16 @@ test_that("testing stringi", {
   cnlp_init_stringi()
   anno <- cnlp_annotate(un, verbose=FALSE)
   expect_equal(names(anno), c("token", "document"))
+
+  cnlp_init_stringi()
+  anno <- cnlp_annotate(un$text, verbose=FALSE)
+  expect_equal(names(anno), c("token", "document"))
+
+  cnlp_init_stringi()
+  input <- un$text
+  names(input) <- un$doc_id
+  anno <- cnlp_annotate(input, verbose=FALSE)
+  expect_equal(names(anno), c("token", "document"))
 })
 
 test_that("testing spacy", {
@@ -16,8 +26,7 @@ test_that("testing spacy", {
   cnlp_init_spacy()
   anno <- cnlp_annotate(un, verbose=FALSE)
   expect_equal(names(anno), c("token", "entity", "document"))
-  expect_equal(names(anno$token), c("id", "sid", "tid", "token", "lemma", "upos", "xpos", "tid_source", "relation"))
-
+  expect_equal(names(anno$token), c("doc_id", "sid", "tid", "token", "token_with_ws", "lemma", "upos", "xpos", "tid_source", "relation"))
 })
 
 test_that("testing udpipe", {
@@ -26,8 +35,7 @@ test_that("testing udpipe", {
   cnlp_init_udpipe()
   anno <- cnlp_annotate(un, verbose=FALSE)
   expect_equal(names(anno), c("token", "document"))
-  expect_equal(names(anno$token), c("id", "sid", "tid", "token", "lemma", "upos", "xpos", "feats", "tid_source", "relation"))
-
+  expect_equal(names(anno$token), c("doc_id", "sid", "tid", "token", "lemma", "space_after", "upos", "xpos", "feats", "tid_source", "relation"))
 })
 
 test_that("testing corenlp", {
@@ -36,6 +44,5 @@ test_that("testing corenlp", {
   cnlp_init_corenlp()
   anno <- cnlp_annotate(un, verbose=FALSE)
   expect_equal(names(anno), c("token", "document"))
-  expect_equal(names(anno$token), c("id", "sid", "tid", "token", "lemma", "upos", "xpos", "feats", "tid_source", "relation"))
-
+  expect_equal(names(anno$token), c("doc_id", "sid", "tid", "token", "lemma", "upos", "xpos", "feats", "tid_source", "relation"))
 })

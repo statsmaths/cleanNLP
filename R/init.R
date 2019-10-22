@@ -18,10 +18,20 @@
 #' @export
 cnlp_init_spacy <- function(model_name=NULL) {
 
-  volatiles$spacy$model_name  <-ifnull(model_name, "en")
+  check_python()
+  volatiles$spacy$model_name  <- ifnull(model_name, "en")
 
-  cleannlp <- reticulate::import("cleannlp")
-  volatiles$spacy$obj <- cleannlp$spacy$spacyCleanNLP()
+  volatiles$spacy$obj <- volatiles$cleannlp$spacy$spacyCleanNLP(
+    volatiles$spacy$model_name
+  )
+  assert(
+    !is.null(volatiles$spacy$obj$nlp),
+    sprintf(
+      "model %s not found; use cnlp_download_spacy(\"%s\") to install",
+      volatiles$spacy$model_name,
+      volatiles$spacy$model_name
+    )
+  )
   volatiles$spacy$init <- TRUE
   volatiles$model_init_last <- "spacy"
 }
@@ -110,6 +120,12 @@ cnlp_init_stringi <- function(locale = NULL) {
 #' spacy engine and loads the file using the R to Python
 #' interface provided by reticulate.
 #'
+#' @param lang        string giving the language name for the corenlp backend.
+#'                    Defaults to "en" (English) if set to NULL.
+#' @param models_dir  directory where model files are located. Set to NULL to
+#'                    use the default.
+#'
+#'
 #' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
 #'
 #' @examples
@@ -118,11 +134,58 @@ cnlp_init_stringi <- function(locale = NULL) {
 #'}
 #'
 #' @export
-cnlp_init_corenlp <- function() {
+cnlp_init_corenlp <- function(lang=NULL, models_dir=NULL) {
 
-  cleannlp <- reticulate::import("cleannlp")
-  volatiles$corenlp$obj <- cleannlp$corenlp$corenlpCleanNLP()
+  check_python()
+
+  volatiles$corenlp$lang <- ifnull(lang, "en")
+  volatiles$corenlp$models_dir <- ifnull(
+    models_dir,
+    volatiles$cleannlp$corenlp$default_model_dir()
+  )
+  assert(
+    volatiles$corenlp$lang %in%
+      stringi::stri_sub(dir(volatiles$corenlp$models_dir), 1, 2),
+    sprintf(
+      "model %s not found; use cnlp_download_corenlp(\"%s\") to install",
+      volatiles$corenlp$lang,
+      volatiles$corenlp$lang
+    )
+  )
+
+  volatiles$corenlp$obj <- volatiles$cleannlp$corenlp$corenlpCleanNLP(
+    volatiles$corenlp$lang,
+    volatiles$corenlp$models_dir
+  )
   volatiles$corenlp$init <- TRUE
   volatiles$model_init_last <- "corenlp"
 
+}
+
+check_python <- function() {
+
+  disc <- reticulate::py_discover_config(required_module="cleannlp")
+  assert(
+    !is.null(disc$required_module_path),
+    "Python module 'cleannlp' not found. Install with:\n  pip install cleannlp"
+  )
+
+  assert(
+    reticulate::py_module_available("cleannlp"),
+    paste(c(
+      "The 'cleannlp' appears to be available on your system, however\n",
+      "the reticulate package has selected an alternative version of Python\n",
+      "to the one where you installed the module. Restart R and run:\n\n",
+      "   library(cleanNLP)\n\n",
+      "prior to running any other code. If that still produces this error,\n",
+      "restart R and manually select the version of Python before running\n",
+      "any other functions with:\n\n",
+      sprintf("   use_python(\"%s\")\n\n", disc$python)
+    ), collapse=" ")
+  )
+
+  if (is.null(volatiles$cleannlp))
+  {
+    volatiles$cleannlp <- reticulate::import("cleannlp")
+  }
 }

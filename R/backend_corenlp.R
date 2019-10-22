@@ -8,7 +8,7 @@ annotate_with_corenlp <- function(input, verbose) {
 
   for (i in seq_len(nrow(input))) {
     x <- input$text[i]
-    doc_id <- input$id[i]
+    doc_id <- input$doc_id[i]
 
     z <- volatiles$corenlp$obj$parseDocument(x, doc_id)
     token[[i]] <- as.data.frame(z$token, stringsAsFactors=FALSE)
@@ -19,7 +19,7 @@ annotate_with_corenlp <- function(input, verbose) {
   anno <- list()
   anno$token <- structure(do.call("rbind", token),
                           class = c("tbl_df", "tbl", "data.frame"))
-  anno$document <- input
+  anno$document <- input[,!(names(input) == "text"),drop=FALSE]
 
   return(anno)
 }

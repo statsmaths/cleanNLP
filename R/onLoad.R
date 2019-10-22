@@ -20,7 +20,9 @@ assert <- function(statement, msg="")
 
 ifnull <- function(value, default)
 {
-  return(ifelse(is.null(value), default, value))
+  if (is.null(value)) { return(default) }
+  
+  return(value)
 }
 
 cmsg <- function(verbose, fmt, ...)
