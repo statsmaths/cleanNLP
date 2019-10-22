@@ -10,11 +10,79 @@
 The **cleanNLP** package is designed to make it as painless as possible
 to turn raw text into feature-rich data frames. You can download the
 package from within R directly from CRAN:
+
 ```{r}
 install.packages("cleanNLP")
 ```
-There are four backends available to parse text, each with their own pros and
-cons. They are:
+
+A minimal working example of using **cleanNLP** consists of loading the
+package, setting up the NLP backend, initializing the backend, and running
+the function `cnlp_annotate`. The output is given as a list of data frame
+objects. Here is an example using the udpipe backend:
+
+```{r}
+library(cleanNLP)
+cnlp_init_udpipe()
+
+annotation <- cnlp_annotate(input = c(
+        "Here is the first text. It is short.",
+        "Here's the second. It is short too!",
+        "The third text is the shortest."
+))
+annotation
+```
+```
+$token
+# A tibble: 27 x 11
+   doc_id   sid tid   token lemma space_after upos  xpos  feats tid_source
+ *  <int> <int> <chr> <chr> <chr> <chr>       <chr> <chr> <chr> <chr>
+ 1      1     1 1     Here  here  "\\s"       ADV   RB    Pron… 0
+ 2      1     1 2     is    be    "\\s"       AUX   VBZ   Mood… 1
+ 3      1     1 3     the   the   "\\s"       DET   DT    Defi… 5
+ 4      1     1 4     first first "\\s"       ADJ   JJ    Degr… 5
+ 5      1     1 5     text  text  No          NOUN  NN    Numb… 1
+ 6      1     1 6     .     .     "\\s"       PUNCT .     NA    1
+ 7      1     2 1     It    it    "\\s"       PRON  PRP   Case… 3
+ 8      1     2 2     is    be    "\\s"       AUX   VBZ   Mood… 3
+ 9      1     2 3     short short No          ADJ   JJ    Degr… 0
+10      1     2 4     .     .     "\\n"       PUNCT .     NA    3
+# … with 17 more rows, and 1 more variable: relation <chr>
+
+$document
+  doc_id
+1      1
+2      2
+3      3
+```
+
+The `token` output table breaks the text into tokens, provides lemmatized
+forms of the words, part of speech tags, and dependency relationships. Two
+short case-studies are linked to from the repository to show sample usage of
+the library:
+
+- [State of the Union Addresses](https://statsmaths.github.io/cleanNLP/state-of-union.html)
+- [Exploring Wikipedia Data](https://statsmaths.github.io/cleanNLP/wikipedia.html)
+
+Please see the notes below, and the official package documentation on
+[CRAN](https://cran.r-project.org/web/packages/cleanNLP/), for more options
+to control the way that text is parsed.
+
+## API Overview
+
+### V3
+
+There have been numerous changes to the package in the newly released version 3.0.0.
+These changes, while requiring some changes to existing code, have been carefully
+designed to make the package easier to both install and use. If you are running into
+any issues with the package, first make sure you are using updated materials (mostly 
+available from links within this repository). 
+
+### Backends
+
+The cleanNLP package is designed to allow users to make use of various NLP
+annotation algorithms without having to worry (too much) about the output
+format, which is standardizes at best as possible. There are four backends
+currently available, each with their own pros and cons. They are:
 
 - **stringi**: a fast parser that only requires the stringi package,
 but produces only tokenized text
@@ -29,7 +97,7 @@ who are familiar with Python or plan to make heavy use of the package.
 - **corenlp**: another Python library (formally Java) that is an official
 port of the Java library of the same name.
 
-In order to us the two Python backends, you must install the associated
+In order to use the two Python backends, you must install the associated
 cleanNLP python module. We recommend and support the Python 3.7 version of
 [Anaconda Python](https://www.anaconda.com/distribution/#download-section).
 After obtaining Python, install the module by running pip in a terminal:
@@ -38,98 +106,27 @@ After obtaining Python, install the module by running pip in a terminal:
 pip install cleannlp
 ```
 
-Many function names have changed in the 3.0 release of the package, so
-please look at this file and the documentation for details.
-
-## Basic usage
-
-In order to tokenize text, you need to organize your data as a data frame.
-The raw text to parse should be in a column called "text"; you can optionally
-provide a column named "id" that gives a unique identifier to each document.
-Finally, if the data frame contains a column called "path" (and no "text"
-column), the function will attempt to load text files from the path's prior to
-running the annotations.
-
-We take as an example the opening lines of Douglas Adam's
-*Life, the Universe and Everything*.
+To select the desired backend, simply initilize the model prior to running the
+annotation. 
 
 ```{r}
-text <- c("The regular early morning yell of   horror was the sound of",
-          "Arthur Dent waking up and suddenly remembering where he",
-          "was. It wasn't just that the cave was cold, it wasn't just",
-          "that it was damp and smelly. It was the fact that the cave",
-          "was in the middle of Islington and there wasn't a bus due",
-          "for two million years.")
-input <- data.frame(text=paste(text, collapse = " "), stringsAsFactors=TRUE)
+cnlp_init_stringi(locale="en_GB")
+cnlp_init_udpipe(model_name="english")
+cnlp_init_spacy(model_name="en")
+cnlp_init_corenlp(lang="en")
 ```
 
-A minimal working example of using **cleanNLP** consists of loading the
-package, setting up the NLP backend, initializing the backend, and running
-the function `cnlp_annotate`. We will use the udpipe
+The code above explicitly sets the default/English model. You can use a
+different model/language when starting the model. For udpipe the models will
+be downloaded automatically. For spacy and coreNLP the following helper
+functions are available:
 
 ```{r}
-library(cleanNLP)
-cnlp_init_udpipe()
-obj <- cnlp_annotate(input)
+cnlp_download_spacy(model_name="en") 
+cnlp_download_corenlp(lang="en") 
 ```
 
-Here, we used the udpipe backend, which is the recommended place to start.
-The returned annotation object is nothing more than a list of data frames
-similar to a set of tables within a database. If we load the **tibble** package,
-which is recommended but optional, these data frames will print out in a
-compact way:
-
-```{r}
-library(tibble)
-obj
-```
-```
-> obj
-$token
-# A tibble: 68 x 10
-      id   sid   tid token  lemma upos  xpos  feats          tid_source relation
- * <int> <int> <dbl> <chr>  <chr> <chr> <chr> <chr>          <chr>      <chr>
- 1     1     1     1 The    the   DET   DT    Definite=Def|… 5          det
- 2     1     1     2 regul… regu… ADJ   JJ    Degree=Pos     5          amod
- 3     1     1     3 early  early ADJ   JJ    Degree=Pos     4          amod
- 4     1     1     4 morni… morn… NOUN  NN    Number=Sing    5          compound
- 5     1     1     5 yell   yell  NOUN  NN    Number=Sing    10         nsubj
- 6     1     1     6 of     of    ADP   IN    NA             7          case
- 7     1     1     7 horror horr… NOUN  NN    Number=Sing    5          nmod
- 8     1     1     8 was    be    AUX   VBD   Mood=Ind|Numb… 10         cop
- 9     1     1     9 the    the   DET   DT    Definite=Def|… 10         det
-10     1     1    10 sound  sound NOUN  NN    Number=Sing    0          root
-# … with 58 more rows
-
-$document
-
-1 The regular early morning yell of horror was the sound of Arthur Dent waking
-up and suddenly remembering where he was. It wasn't just that the cave was cold,
-it wasn't just that it was damp and smelly. It was the fact that the cave was
-in the middle of Islington and there wasn't a bus due for two million years.
-  id
-1  1
-```
-
-There are just two tables here. A document table gives metadata about
-each document in the corpus, which here consists of only a single
-document. The tokens table has one row for each word in the input text,
-giving data about each word such as its lemmatized form and its part of speech:
-
-```{r}
-head(obj$token)
-```
-```
-# A tibble: 6 x 10
-     id   sid   tid token  lemma  upos  xpos  feats          tid_source relation
-  <int> <int> <dbl> <chr>  <chr>  <chr> <chr> <chr>          <chr>      <chr>
-1     1     1     1 The    the    DET   DT    Definite=Def|… 5          det
-2     1     1     2 regul… regul… ADJ   JJ    Degree=Pos     5          amod
-3     1     1     3 early  early  ADJ   JJ    Degree=Pos     4          amod
-4     1     1     4 morni… morni… NOUN  NN    Number=Sing    5          compound
-5     1     1     5 yell   yell   NOUN  NN    Number=Sing    10         nsubj
-6     1     1     6 of     of     ADP   IN    NA             7          case
-```
+Simply change the model name or language code to download alternative models.
 
 ## Citation
 
