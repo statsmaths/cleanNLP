@@ -10,8 +10,7 @@ Description: Provides a set of fast tools for converting a textual corpus into
   no external dependencies, or two Python back ends with 'spaCy'
   <https://spacy.io> or 'CoreNLP' <http://stanfordnlp.github.io/CoreNLP/>.
   Exposed annotation tasks include tokenization, part of speech tagging, named
-  entity recognition, entity linking, sentiment analysis, dependency parsing,
-  coreference resolution, and word embeddings.
+  entity recognition, and dependency parsing.
 Depends:
     R (>= 3.5.0)
 Imports:
