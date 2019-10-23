@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -95,7 +96,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -317,7 +318,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb1-6" data-line-number="6">  page_json &lt;-<span class="st"> </span>jsonlite<span class="op">::</span><span class="kw">fromJSON</span>(url)<span class="op">$</span>parse<span class="op">$</span>text<span class="op">$</span><span class="st">&quot;*&quot;</span></a>
 <a class="sourceLine" id="cb1-7" data-line-number="7">  page_xml &lt;-<span class="st"> </span>xml2<span class="op">::</span><span class="kw">read_xml</span>(page_json, <span class="dt">asText=</span><span class="ot">TRUE</span>)</a>
 <a class="sourceLine" id="cb1-8" data-line-number="8">  page_text &lt;-<span class="st"> </span><span class="kw">xml_text</span>(<span class="kw">xml_find_all</span>(page_xml, <span class="st">&quot;//div/p&quot;</span>))</a>
-<a class="sourceLine" id="cb1-9" data-line-number="9">  </a>
+<a class="sourceLine" id="cb1-9" data-line-number="9"></a>
 <a class="sourceLine" id="cb1-10" data-line-number="10">  page_text &lt;-<span class="st"> </span><span class="kw">stri_replace_all</span>(page_text, <span class="st">&quot;&quot;</span>, <span class="dt">regex=</span><span class="st">&quot;</span><span class="ch">\\</span><span class="st">[[0-9]+</span><span class="ch">\\</span><span class="st">]&quot;</span>)</a>
 <a class="sourceLine" id="cb1-11" data-line-number="11">  page_text &lt;-<span class="st"> </span><span class="kw">stri_replace_all</span>(page_text, <span class="st">&quot; &quot;</span>, <span class="dt">regex=</span><span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</a>
 <a class="sourceLine" id="cb1-12" data-line-number="12">  page_text &lt;-<span class="st"> </span><span class="kw">stri_replace_all</span>(page_text, <span class="st">&quot; &quot;</span>, <span class="dt">regex=</span><span class="st">&quot;[ ]+&quot;</span>)</a>
@@ -342,9 +343,11 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <div id="running-the-cleannlp-annotation" class="section level2">
 <h2>Running the cleanNLP annotation</h2>
 <p>Next, we run the udpipe annotation backend over the dataset using <strong>cleanNLP</strong>. Because of the way the data are structured, each paragraph will be treated as its own document.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">cnlp_init_udpipe</span>()</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">anno &lt;-<span class="st"> </span><span class="kw">cnlp_annotate</span>(penguin, <span class="dt">verbose=</span><span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">anno<span class="op">$</span>token</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">cnlp_init_udpipe</span>()</a></code></pre></div>
+<pre><code>## Downloading udpipe model from https://raw.githubusercontent.com/jwijffels/udpipe.models.ud.2.4/master/inst/udpipe-ud-2.4-190531/english-ewt-ud-2.4-190531.udpipe to /Library/Frameworks/R.framework/Versions/3.6/Resources/library/cleanNLP/extdata/english-ewt-ud-2.4-190531.udpipe</code></pre>
+<pre><code>## Visit https://github.com/jwijffels/udpipe.models.ud.2.4 for model license details</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">anno &lt;-<span class="st"> </span><span class="kw">cnlp_annotate</span>(penguin, <span class="dt">verbose=</span><span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">anno<span class="op">$</span>token</a></code></pre></div>
 <pre><code>## # A tibble: 5,457 x 11
 ##    doc_id   sid tid   token lemma space_after upos  xpos  feats tid_source
 ##  *  &lt;int&gt; &lt;int&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;     
@@ -363,100 +366,103 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <div id="reconstructing-the-text" class="section level2">
 <h2>Reconstructing the text</h2>
 <p>Here, we will show how we can recreate the original text, possibly with additional markings. This can be useful when building text-based visualization pipelines. For example, let’s start by replacing all of the proper nouns with an all caps version of each word.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">token &lt;-<span class="st"> </span>anno<span class="op">$</span>token</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2">token<span class="op">$</span>new_token &lt;-<span class="st"> </span>token<span class="op">$</span>token</a>
-<a class="sourceLine" id="cb5-3" data-line-number="3">change_these &lt;-<span class="st"> </span><span class="kw">which</span>(token<span class="op">$</span>xpos <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;NNS&quot;</span>, <span class="st">&quot;NNPS&quot;</span>))</a>
-<a class="sourceLine" id="cb5-4" data-line-number="4">token<span class="op">$</span>new_token[change_these] &lt;-<span class="st"> </span><span class="kw">stri_trans_toupper</span>(token<span class="op">$</span>new_token[change_these])</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">token &lt;-<span class="st"> </span>anno<span class="op">$</span>token</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">token<span class="op">$</span>new_token &lt;-<span class="st"> </span>token<span class="op">$</span>token</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3">change_these &lt;-<span class="st"> </span><span class="kw">which</span>(token<span class="op">$</span>xpos <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;NNP&quot;</span>, <span class="st">&quot;NNPS&quot;</span>))</a>
+<a class="sourceLine" id="cb8-4" data-line-number="4">token<span class="op">$</span>new_token[change_these] &lt;-<span class="st"> </span><span class="kw">stri_trans_toupper</span>(token<span class="op">$</span>new_token[change_these])</a></code></pre></div>
 <p>Okay, now we need to know how to put spaces and other details back into the text. This is made possible by the <strong>space_after</strong> variable:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">table</span>(token<span class="op">$</span>space_after)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">table</span>(token<span class="op">$</span>space_after)</a></code></pre></div>
 <pre><code>## 
 ##           \\n    \\s \\s\\n     No 
 ##     27      1   4588     63    778</code></pre>
 <p>We will put these back into the new tokens:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">token<span class="op">$</span>new_token[token<span class="op">$</span>space_after <span class="op">==</span><span class="st"> &quot;</span><span class="ch">\\</span><span class="st">n&quot;</span>] &lt;-</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span><span class="kw">sprintf</span>(<span class="st">&quot;%s</span><span class="ch">\n</span><span class="st">&quot;</span>, token<span class="op">$</span>new_token[token<span class="op">$</span>space_after <span class="op">==</span><span class="st"> &quot;</span><span class="ch">\\</span><span class="st">n&quot;</span>])</a>
-<a class="sourceLine" id="cb8-3" data-line-number="3">token<span class="op">$</span>new_token[token<span class="op">$</span>space_after <span class="op">==</span><span class="st"> &quot;</span><span class="ch">\\</span><span class="st">s&quot;</span>] &lt;-</a>
-<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="st">  </span><span class="kw">sprintf</span>(<span class="st">&quot;%s &quot;</span>, token<span class="op">$</span>new_token[token<span class="op">$</span>space_after <span class="op">==</span><span class="st"> &quot;</span><span class="ch">\\</span><span class="st">s&quot;</span>])</a>
-<a class="sourceLine" id="cb8-5" data-line-number="5">token<span class="op">$</span>new_token[token<span class="op">$</span>space_after <span class="op">==</span><span class="st"> &quot;</span><span class="ch">\\</span><span class="st">s</span><span class="ch">\\</span><span class="st">n&quot;</span>] &lt;-</a>
-<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="st">  </span><span class="kw">sprintf</span>(<span class="st">&quot;%s </span><span class="ch">\n</span><span class="st">&quot;</span>, token<span class="op">$</span>new_token[token<span class="op">$</span>space_after <span class="op">==</span><span class="st"> &quot;</span><span class="ch">\\</span><span class="st">s</span><span class="ch">\\</span><span class="st">n&quot;</span>])</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">token<span class="op">$</span>new_token[token<span class="op">$</span>space_after <span class="op">==</span><span class="st"> &quot;</span><span class="ch">\\</span><span class="st">n&quot;</span>] &lt;-</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="st">  </span><span class="kw">sprintf</span>(<span class="st">&quot;%s</span><span class="ch">\n</span><span class="st">&quot;</span>, token<span class="op">$</span>new_token[token<span class="op">$</span>space_after <span class="op">==</span><span class="st"> &quot;</span><span class="ch">\\</span><span class="st">n&quot;</span>])</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">token<span class="op">$</span>new_token[token<span class="op">$</span>space_after <span class="op">==</span><span class="st"> &quot;</span><span class="ch">\\</span><span class="st">s&quot;</span>] &lt;-</a>
+<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="st">  </span><span class="kw">sprintf</span>(<span class="st">&quot;%s &quot;</span>, token<span class="op">$</span>new_token[token<span class="op">$</span>space_after <span class="op">==</span><span class="st"> &quot;</span><span class="ch">\\</span><span class="st">s&quot;</span>])</a>
+<a class="sourceLine" id="cb11-5" data-line-number="5">token<span class="op">$</span>new_token[token<span class="op">$</span>space_after <span class="op">==</span><span class="st"> &quot;</span><span class="ch">\\</span><span class="st">s</span><span class="ch">\\</span><span class="st">n&quot;</span>] &lt;-</a>
+<a class="sourceLine" id="cb11-6" data-line-number="6"><span class="st">  </span><span class="kw">sprintf</span>(<span class="st">&quot;%s </span><span class="ch">\n</span><span class="st">&quot;</span>, token<span class="op">$</span>new_token[token<span class="op">$</span>space_after <span class="op">==</span><span class="st"> &quot;</span><span class="ch">\\</span><span class="st">s</span><span class="ch">\\</span><span class="st">n&quot;</span>])</a></code></pre></div>
 <p>Then, push all of the text back together by paragraph (we use the <code>stri_wrap</code> function to print out the text in a nice format for this document):</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">paragraphs &lt;-<span class="st"> </span><span class="kw">tapply</span>(token<span class="op">$</span>new_token, token<span class="op">$</span>doc_id, paste, <span class="dt">collapse=</span><span class="st">&quot;&quot;</span>)[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>]</a>
-<a class="sourceLine" id="cb9-2" data-line-number="2">paragraphs &lt;-<span class="st"> </span><span class="kw">stri_wrap</span>(paragraphs, <span class="dt">simplify=</span><span class="ot">FALSE</span>, <span class="dt">exdent =</span> <span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="kw">cat</span>(<span class="kw">unlist</span>(<span class="kw">lapply</span>(paragraphs, <span class="cf">function</span>(v) <span class="kw">c</span>(v, <span class="st">&quot;&quot;</span>))), <span class="dt">sep=</span><span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</a></code></pre></div>
-<pre><code>## PENGUINS (order SPHENISCIFORMES, family Spheniscidae) are a group
-##  of aquatic flightless BIRDS. They live almost exclusively in the
-##  Southern Hemisphere, with only one SPECIES, the Galapagos penguin,
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">paragraphs &lt;-<span class="st"> </span><span class="kw">tapply</span>(token<span class="op">$</span>new_token, token<span class="op">$</span>doc_id, paste, <span class="dt">collapse=</span><span class="st">&quot;&quot;</span>)[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>]</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">paragraphs &lt;-<span class="st"> </span><span class="kw">stri_wrap</span>(paragraphs, <span class="dt">simplify=</span><span class="ot">FALSE</span>, <span class="dt">exdent =</span> <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="kw">cat</span>(<span class="kw">unlist</span>(<span class="kw">lapply</span>(paragraphs, <span class="cf">function</span>(v) <span class="kw">c</span>(v, <span class="st">&quot;&quot;</span>))), <span class="dt">sep=</span><span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</a></code></pre></div>
+<pre><code>## Penguins (order Sphenisciformes, family Spheniscidae) are a group
+##  of aquatic flightless birds. They live almost exclusively in the
+##  Southern Hemisphere, with only one species, the GALAPAGOS PENGUIN,
 ##  found north of the equator. Highly adapted for life in the water,
-##  PENGUINS have countershaded dark and white plumage, and their WINGS
-##  have evolved into FLIPPERS. Most PENGUINS feed on krill, fish,
-##  squid and other FORMS of sea life which they catch while swimming
-##  underwater. They spend roughly half of their LIVES on land and the
+##  penguins have countershaded dark and white plumage, and their wings
+##  have evolved into flippers. Most penguins feed on krill, fish,
+##  squid and other forms of sea life which they catch while swimming
+##  underwater. They spend roughly half of their lives on land and the
 ##  other half in the sea.
 ## 
-## Although almost all penguin SPECIES are native to the Southern
-##  Hemisphere, they are not found only in cold CLIMATES, such as
-##  Antarctica. In fact, only a few SPECIES of PENGUIN live so far
-##  south. Several SPECIES are found in the temperate zone, and one
-##  SPECIES, the GALÁPAGOS PENGUIN, LIVES near the equator.
+## Although almost all penguin species are native to the Southern
+##  Hemisphere, they are not found only in cold climates, such as
+##  ANTARCTICA. In fact, only a few species of penguin live so far
+##  south. Several species are found in the temperate zone, and one
+##  species, the GALÁPAGOS penguin, lives near the equator.
 ## 
-## The largest living SPECIES is the emperor penguin (APTENODYTES
-##  forsteri): on average, ADULTS are about 1.1m (3FT 7in) tall and
-##  weigh 35KG (77lb). The smallest penguin SPECIES is the little blue
-##  PENGUIN (Eudyptula minor), also known as the fairy penguin, which
-##  stands around 40CM (16in) tall and WEIGHS 1KG (2.2lb). Among extant
-##  PENGUINS, larger PENGUINS inhabit colder REGIONS, while smaller
-##  PENGUINS are generally found in temperate or even tropical CLIMATES
-##  (see also Bergmann's rule). Some prehistoric SPECIES attained
-##  enormous SIZES, becoming as tall or as heavy as an adult human.
-##  These were not restricted to Antarctic REGIONS; on the contrary,
-##  subantarctic REGIONS harboured high diversity, and at least one
-##  giant PENGUIN occurred in a region around 2,000km south of the
+## The largest living species is the emperor penguin (Aptenodytes
+##  forsteri): on average, adults are about 1.1m (3ft 7in) tall and
+##  weigh 35kg (77lb). The smallest penguin species is the little blue
+##  penguin (EUDYPTULA MINOR), also known as the fairy penguin, which
+##  stands around 40cm (16in) tall and weighs 1kg (2.2lb). Among extant
+##  penguins, larger penguins inhabit colder regions, while smaller
+##  penguins are generally found in temperate or even tropical climates
+##  (see also BERGMANN's rule). Some prehistoric species attained
+##  enormous sizes, becoming as tall or as heavy as an adult human.
+##  These were not restricted to Antarctic regions; on the contrary,
+##  subantarctic regions harboured high diversity, and at least one
+##  giant penguin occurred in a region around 2,000km south of the
 ##  equator 35mya, in a climate decidedly warmer than today.[which?]
 ## 
 ## The word penguin first appears in the 16th century as a synonym for
-##  great auk. When European EXPLORERS discovered what are today known
-##  as PENGUINS in the Southern Hemisphere, they noticed their similar
+##  great auk. When European explorers discovered what are today known
+##  as penguins in the SOUTHERN Hemisphere, they noticed their similar
 ##  appearance to the great auk of the Northern Hemisphere, and named
 ##  them after this bird, although they are not closely related.
 ## 
 ## The etymology of the word penguin is still debated. The English
-##  word is not apparently of French, Breton or Spanish origin (the
+##  word is not apparently of FRENCH, BRETON or Spanish origin (the
 ##  latter two are attributed to the French word pingouin &quot;auk&quot;), but
-##  first appears in English or Dutch.
+##  first appears in ENGLISH or DUTCH.
 ## 
-## Some DICTIONARIES suggest a derivation from Welsh pen, &quot;head&quot;
-##  and gwyn, &quot;white&quot;, including the Oxford English Dictionary, the
-##  American Heritage Dictionary, the Century Dictionary and Merriam-
-##  Webster, on the basis that the name was originally applied to the
-##  great auk, either because it was found on White Head Island (Welsh:
-##  Pen Gwyn) in Newfoundland, or because it had white CIRCLES around
-##  its EYES (though the head was black).
+## Some dictionaries suggest a derivation from WELSH PEN, &quot;head&quot;
+##  and gwyn, &quot;white&quot;, including the OXFORD ENGLISH DICTIONARY, the
+##  American Heritage DICTIONARY, the CENTURY DICTIONARY and MERRIAM-
+##  WEBSTER, on the basis that the name was originally applied to the
+##  great auk, either because it was found on WHITE HEAD ISLAND (Welsh:
+##  PEN GWYN) in NEWFOUNDLAND, or because it had white circles around
+##  its eyes (though the head was black).
 ## 
-## An alternative etymology LINKS the word to Latin pinguis, which
+## An alternative etymology links the word to LATIN PINGUIS, which
 ##  means &quot;fat&quot; or &quot;oil&quot;. Support for this etymology can be found in
-##  the alternative Germanic word for PENGUIN, FETTGANS or &quot;fat-goose&quot;,
-##  and the related Dutch word VETGANS.
+##  the alternative Germanic word for penguin, Fettgans or &quot;fat-goose&quot;,
+##  and the related Dutch word vetgans.
 ## 
-## Adult male PENGUINS are called COCKS, FEMALES HENS; a group of
-##  PENGUINS on land is a waddle, and a similar group in the water is a
+## Adult male penguins are called cocks, females hens; a group of
+##  penguins on land is a waddle, and a similar group in the water is a
 ##  raft.
 ## 
-## The number of extant penguin SPECIES is debated. Depending on which
-##  authority is followed, penguin biodiversity VARIES between 17 and
-##  20 living SPECIES, all in the subfamily Spheniscinae. Some SOURCES
-##  consider the white-flippered penguin a separate Eudyptula SPECIES,
-##  while OTHERS treat it as a subspecies of the little penguin; the
+## The number of extant penguin species is debated. Depending on which
+##  authority is followed, penguin biodiversity varies between 17 and
+##  20 living species, all in the subfamily Spheniscinae. Some sources
+##  consider the white-flippered penguin a separate EUDYPTULA species,
+##  while others treat it as a subspecies of the little penguin; the
 ##  actual situation seems to be more complicated. Similarly, it is
 ##  still unclear whether the royal penguin is merely a colour morph of
-##  the macaroni penguin. The status of the rockhopper PENGUINS is also
+##  the macaroni penguin. The status of the rockhopper penguins is also
 ##  unclear.
 ## 
-## Updated after Marples (1962), Acosta Hospitaleche (2004), and
-##  Ksepka et al. (2006).</code></pre>
+## Updated after MARPLES (1962), ACOSTA HOSPITALECHE (2004), and
+##  KSEPKA et al. (2006).</code></pre>
 <p>The <strong>space_after</strong> variable is only provided with the udpipe backend. The spacy library contains a field with the token that <em>includes</em> trailing whitespace. It is currently not possible to accurately put text back together using the other two backends.</p>
 <p>By outputting the text as HTML or XML, there is a lot of interesting visualization and metadata work that can be done with this approach. If you have an interesting use case that might be useful to others, please feel free to make a pull-request to include your work in the package repository.</p>
 </div>
 
+
+
+<!-- code folding -->
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

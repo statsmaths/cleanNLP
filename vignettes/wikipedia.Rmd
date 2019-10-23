@@ -32,7 +32,7 @@ grab_wiki <- function(lang, page) {
   page_json <- jsonlite::fromJSON(url)$parse$text$"*"
   page_xml <- xml2::read_xml(page_json, asText=TRUE)
   page_text <- xml_text(xml_find_all(page_xml, "//div/p"))
-  
+
   page_text <- stri_replace_all(page_text, "", regex="\\[[0-9]+\\]")
   page_text <- stri_replace_all(page_text, " ", regex="\n")
   page_text <- stri_replace_all(page_text, " ", regex="[ ]+")
@@ -65,7 +65,7 @@ by replacing all of the proper nouns with an all caps version of each word.
 ```{r}
 token <- anno$token
 token$new_token <- token$token
-change_these <- which(token$xpos %in% c("NNS", "NNPS"))
+change_these <- which(token$xpos %in% c("NNP", "NNPS"))
 token$new_token[change_these] <- stri_trans_toupper(token$new_token[change_these])
 ```
 
@@ -103,7 +103,6 @@ is currently not possible to accurately put text back together using the other
 two backends.
 
 By outputting the text as HTML or XML, there is a lot of interesting visualization
-and metadata work that can be done with this approach. If you have an interesting 
-use case that might be useful to others, please feel free to make a pull-request 
+and metadata work that can be done with this approach. If you have an interesting
+use case that might be useful to others, please feel free to make a pull-request
 to include your work in the package repository.
-
