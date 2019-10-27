@@ -124,6 +124,8 @@ cnlp_init_stringi <- function(locale = NULL) {
 #'                    Defaults to "en" (English) if set to NULL.
 #' @param models_dir  directory where model files are located. Set to NULL to
 #'                    use the default.
+#' @param config      An optional named list to be converted to a Python
+#'                    dictionary.
 #'
 #'
 #' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
@@ -134,7 +136,7 @@ cnlp_init_stringi <- function(locale = NULL) {
 #'}
 #'
 #' @export
-cnlp_init_corenlp <- function(lang=NULL, models_dir=NULL) {
+cnlp_init_corenlp <- function(lang=NULL, models_dir=NULL, config=NULL) {
 
   check_python()
 
@@ -143,6 +145,7 @@ cnlp_init_corenlp <- function(lang=NULL, models_dir=NULL) {
     models_dir,
     volatiles$cleannlp$corenlp$default_model_dir()
   )
+  volatiles$corenlp$config <- reticulate::dict(config)
   assert(
     volatiles$corenlp$lang %in%
       stringi::stri_sub(dir(volatiles$corenlp$models_dir), 1, 2),
@@ -155,7 +158,8 @@ cnlp_init_corenlp <- function(lang=NULL, models_dir=NULL) {
 
   volatiles$corenlp$obj <- volatiles$cleannlp$corenlp$corenlpCleanNLP(
     volatiles$corenlp$lang,
-    volatiles$corenlp$models_dir
+    volatiles$corenlp$models_dir,
+    volatiles$corenlp$config
   )
   volatiles$corenlp$init <- TRUE
   volatiles$model_init_last <- "corenlp"

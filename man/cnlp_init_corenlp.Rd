@@ -4,7 +4,7 @@
 \alias{cnlp_init_corenlp}
 \title{Interface for initializing the coreNLP backend}
 \usage{
-cnlp_init_corenlp(lang = NULL, models_dir = NULL)
+cnlp_init_corenlp(lang = NULL, models_dir = NULL, config = NULL)
 }
 \arguments{
 \item{lang}{string giving the language name for the corenlp backend.
@@ -12,6 +12,9 @@ Defaults to "en" (English) if set to NULL.}
 
 \item{models_dir}{directory where model files are located. Set to NULL to
 use the default.}
+
+\item{config}{An optional named list to be converted to a Python
+dictionary.}
 }
 \description{
 This function must be run before annotating text with
