@@ -41,11 +41,15 @@ document then an empty data.frame with no rows is returned.
 }
 \examples{
 \dontrun{
+simple.input.test <- c("John is a person", "Google is a company", "This is nothing")
+input.file <- tempfile()
 file <- file(input.file, "wb") # need linux style line endings
 writeLines(simple.input.test, con = file)
 close(file)
-keys <- c("ssplit.eolonly", "annotators", "outputFormat", "file", "outputDirectory")
-values <- c("true", "tokenize,ssplit,pos,lemma,ner", "json", input.file, dirname(tmp.file))
+keys <- c("ssplit.eolonly", "annotators", "outputFormat", "file", "outputDirectory",
+          "output.prettyPrint")
+values <- c("true", "tokenize,ssplit,pos,lemma,ner", "json", input.file, dirname(input.file),
+            "true")
 
 cnlp_init_corenlp_custom(language = "en", mem = "2g", keys = keys, values = values)
 simple.output <- NERAnnotate(input.file)

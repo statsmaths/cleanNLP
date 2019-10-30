@@ -24,6 +24,7 @@ simple.with.pronouns.expected <- structure(list(id = c(1L, 1L, 3L, 4L, 4L, 4L),
                              class = "data.frame",
                              row.names = c(NA, -6L))
 
+pronouns <- c("he's", "hes", "he is", "He is", "He Is", "she's", "She is")
 
 none.expected <- data.frame(id = character(), entity = character(), entity.type = character())
 
@@ -63,4 +64,10 @@ test_that("NERAnnotate consistency", {
   none.output <- NERAnnotate(tmp.file)
   expect_identical(none.output, none.expected)
   
+  file <- file(tmp.file, "wb")
+  writeLines(pronouns, con = file)
+  close(file)
+  
+  expect_error(pronoun.output.after.validation <- NERAnnotate(tmp.file, entity.mentions.only = FALSE), NA)
+  expect_identical(pronoun.output.after.validation, none.expected)
 })

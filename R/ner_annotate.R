@@ -36,8 +36,10 @@
 #' file <- file(input.file, "wb") # need linux style line endings
 #' writeLines(simple.input.test, con = file)
 #' close(file)
-#' keys <- c("ssplit.eolonly", "annotators", "outputFormat", "file", "outputDirectory")
-#' values <- c("true", "tokenize,ssplit,pos,lemma,ner", "json", input.file, dirname(input.file))
+#' keys <- c("ssplit.eolonly", "annotators", "outputFormat", "file", "outputDirectory",
+#'           "output.prettyPrint")
+#' values <- c("true", "tokenize,ssplit,pos,lemma,ner", "json", input.file, dirname(input.file),
+#'             "true")
 #' 
 #' cnlp_init_corenlp_custom(language = "en", mem = "2g", keys = keys, values = values)
 #' simple.output <- NERAnnotate(input.file)
@@ -45,50 +47,51 @@
 #' @export
 NERAnnotate <- function(input.file, entity.mentions.only = FALSE) {
   
-  if(!volatiles$corenlp$init)
-    stop("Java CoreNLP not initialized. Named Entity Recognition cannot be executed.")
+    if(!volatiles$corenlp$init)
+        stop("Java CoreNLP not initialized. Named Entity Recognition cannot be executed.")
   
-  .jcall(volatiles$corenlp$corenlp, "V", "run")
+    .jcall(volatiles$corenlp$corenlp, "V", "run")
   
-  output <- fromJSON(paste0(input.file, ".json"))
-  ner.mentions = output$sentences$entitymentions
-  response = sapply(ner.mentions, function(x) nrow(x))
-  if(all(sapply(response, is.null))) {
-    out <- data.frame(id = character(), entity = character(), entity.type = character())
-  } else {
-    if(!entity.mentions.only) {
-      # Validate ner.mentions against the token output
-      ner.mentions <- mapply(function(x, y) {
-        if(nrow(y) != 0) {
-          idx <- sapply(1:nrow(y), function(i) {
-            z <- y[i, ]
-            ind <- c(z$tokenBegin + 1, z$tokenEnd)
-            all(x[ind, ]$ner != "O")})
-          if(any(idx))
-          {
-            y <- y[idx, ]
-          } else
-          {
-            return(data.frame())
-          }
+    output <- fromJSON(paste0(input.file, ".json"))
+    ner.mentions = output$sentences$entitymentions
+    response = sapply(ner.mentions, nrow)
+    if(all(sapply(response, is.null)))
+        out <- data.frame(id = character(), entity = character(), entity.type = character())
+    else {
+        if(!entity.mentions.only)
+        {
+            # Validate ner.mentions against the token output
+            ner.mentions <- mapply(function(x, y) 
+                {
+                    if(nrow(y) != 0)
+                    {
+                        idx <- sapply(1:nrow(y), function(i)
+                            {
+                                z <- y[i, ]
+                                ind <- c(z$tokenBegin + 1, z$tokenEnd)
+                                all(x[ind, ]$ner != "O")
+                            })
+                    if(any(idx))
+                        y <- y[idx, ]
+                    else
+                        return(data.frame())
+                    }
+                y
+                }, x = output$sentences$tokens, y = ner.mentions)
+            # Check if filtered ner is not empty
+            if(all(sapply(ner.mentions, nrow) == 0))
+                return(data.frame(id = character(), entity = character(), entity.type = character()))
         }
-        y
-      }, x = output$sentences$tokens, y = ner.mentions)
-      response <- sapply(ner.mentions, function(x) nrow(x))
-      # Check if filtered ner is not empty
-      if(all(sapply(response, is.null))) {
-        return(data.frame(id = character(), entity = character(), entity.type = character())) 
-      }
+        response <- sapply(ner.mentions, nrow)
+        response <- rep(1:length(ner.mentions), response)
+        ner.mentions = lapply(ner.mentions, function(x) {
+            if(nrow(x) != 0)
+                subset(x, select = c("text", "ner"))
+        })
+        # Remove the NULL list elements
+        ner.mentions <- Filter(Negate(is.null), ner.mentions)
+        out = cbind(response, do.call(rbind.data.frame, ner.mentions))
+        names(out) <- c("id", "entity", "entity.type")
     }
-    response <- rep(1:length(ner.mentions), response)
-    ner.mentions = lapply(ner.mentions, function(x) {
-      if(nrow(x) != 0) {
-        subset(x, select = c("text", "ner"))
-    }})
-    # Remove the NULL list elements
-    ner.mentions <- Filter(Negate(is.null), ner.mentions)
-    out = cbind(response, do.call(rbind.data.frame, ner.mentions))
-    names(out) <- c("id", "entity", "entity.type")
-  }
-  out
+    out
 }
