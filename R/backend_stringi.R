@@ -12,33 +12,43 @@ annotate_with_stringi <- function(input, verbose) {
 
     if (stringi::stri_length(x) == 0L) next
 
-    sent <- stringi::stri_split_boundaries(
-      x,
-      type = "sentence",
-      skip_word_none = FALSE,
-      locale=volatiles$stringi$locale
+    sent <- stringi::stri_extract_all_boundaries(
+      x, type="sentence", locale=volatiles$stringi$locale
     )[[1]]
 
-    word <- stringi::stri_split_boundaries(
-      sent,
-      type = "word",
-      locale=volatiles$stringi$locale,
-      skip_word_none = FALSE
+    word <- stringi::stri_extract_all_boundaries(
+      sent, type="word", locale=volatiles$stringi$locale
     )
 
-    word_leng <- lapply(word, function(v) cumsum(stringi::stri_length(v)))
-    word_real <- lapply(word, stringi::stri_detect, regex = "^[ ]+$")
-    word <- mapply(function(u, v) u[!v], word, word_real, SIMPLIFY=FALSE)
+    # do we keep the white spaces?
+    if (!volatiles$stringi$include_spaces)
+    {
+      word <- lapply(word, function(v)
+        v[!stringi::stri_detect(
+          v,
+          regex="\\A[\\h\\n\\t\\f]+\\Z",
+          locale=volatiles$stringi$locale
+        )]
+      )
+    }
 
     # create ids
-    sid <- mapply(function(u, v) rep(u, length(v)), seq_along(word), word)
-    tid <- mapply(function(u) seq(length(u)) - 1L, word)
+    sid <- rep(seq_along(word), sapply(word, length))
+    tid <- unlist(lapply(word, seq_along))
 
+    # construct xpos codes
     word <- unlist(word)
-    sid <- as.numeric(unlist(sid))
-    tid <- as.numeric(unlist(tid))
+    upos <- rep("X", length(word))
+    upos[stringi::stri_detect(
+      word, regex="\\A[\\h\\n\\t\\f]+\\Z", locale=volatiles$stringi$locale
+    )] <- "SYM"
+    upos[stringi::stri_detect(
+      word,
+      regex="\\A[\\p{Sentence_Terminal}]+\\Z",
+      locale=volatiles$stringi$locale
+    )] <- "PUNCT"
 
-    if (length(word) == 0L) next
+    if (length(token) == 0L) next
 
     token[[i]] <- data.frame(
       doc_id = doc_id,
@@ -46,6 +56,7 @@ annotate_with_stringi <- function(input, verbose) {
       tid = as.integer(tid),
       token = word,
       lemma = stringi::stri_trans_tolower(word),
+      upos = upos,
       stringsAsFactors = FALSE
     )
 

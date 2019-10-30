@@ -60,31 +60,14 @@ anno$token
 
 Here, we will show how we can recreate the original text, possibly with additional markings.
 This can be useful when building text-based visualization pipelines. For example, let's start
-by replacing all of the proper nouns with an all caps version of each word.
+by replacing all of the proper nouns with an all caps version of each word. This is easy because
+udpipe (and spacy as well) provides a column called `token_with_ws`:
 
 ```{r}
 token <- anno$token
-token$new_token <- token$token
+token$new_token <- token$token_with_ws
 change_these <- which(token$xpos %in% c("NNP", "NNPS"))
 token$new_token[change_these] <- stri_trans_toupper(token$new_token[change_these])
-```
-
-Okay, now we need to know how to put spaces and other details back into the text. This is made possible
-by the **space_after** variable:
-
-```{r}
-table(token$space_after)
-```
-
-We will put these back into the new tokens:
-
-```{r}
-token$new_token[token$space_after == "\\n"] <-
-  sprintf("%s\n", token$new_token[token$space_after == "\\n"])
-token$new_token[token$space_after == "\\s"] <-
-  sprintf("%s ", token$new_token[token$space_after == "\\s"])
-token$new_token[token$space_after == "\\s\\n"] <-
-  sprintf("%s \n", token$new_token[token$space_after == "\\s\\n"])
 ```
 
 Then, push all of the text back together by paragraph (we use the
@@ -96,11 +79,6 @@ paragraphs <- tapply(token$new_token, token$doc_id, paste, collapse="")[1:10]
 paragraphs <- stri_wrap(paragraphs, simplify=FALSE, exdent = 1)
 cat(unlist(lapply(paragraphs, function(v) c(v, ""))), sep="\n")
 ```
-
-The **space_after** variable is only provided with the udpipe backend. The spacy
-library contains a field with the token that *includes* trailing whitespace. It
-is currently not possible to accurately put text back together using the other
-two backends.
 
 By outputting the text as HTML or XML, there is a lot of interesting visualization
 and metadata work that can be done with this approach. If you have an interesting

@@ -58,7 +58,7 @@ of these counts give a quick summary of the distribution.
 
 ```{r}
 anno$token %>%
-  group_by(id, sid) %>%
+  group_by(doc_id, sid) %>%
   summarize(sent_len = n()) %$%
   quantile(sent_len, seq(0,1,0.1))
 ```
@@ -92,9 +92,9 @@ the State of the Union has changed over time.
 
 ```{r, fig.height=6, fig.width=7}
 anno$token %>%
-  group_by(id) %>%
+  group_by(doc_id) %>%
   summarize(n = n()) %>%
-  left_join(anno$document, by="id") %>%
+  left_join(anno$document, by="doc_id") %>%
   ggplot(aes(year, n)) +
     geom_line(color = grey(0.8)) +
     geom_point(aes(color = sotu_type)) +
@@ -142,16 +142,16 @@ by George W. Bush in 2001:
 anno$token %>%
   left_join(
     anno$token,
-    c("id"="id", "sid"="sid", "tid"="tid_source"),
+    c("doc_id"="doc_id", "sid"="sid", "tid"="tid_source"),
     suffix=c("", "_source")
   ) %>%
-  left_join(anno$document, by="id") %>%
+  left_join(anno$document, by="doc_id") %>%
   filter(year == 2001) %>%
   filter(relation == "dobj") %>%
-  select(id = id, start = token, word = token_source) %>%
+  select(doc_id = doc_id, start = token, word = token_source) %>%
   left_join(word_frequency, by="word") %>%
   filter(frequency < 0.001) %>%
-  select(id, start, word) %$%
+  select(doc_id, start, word) %$%
   sprintf("%s => %s", start, word)
 ```
 
@@ -163,16 +163,16 @@ in focus.
 ```{r}
 anno$token %>%
   left_join(
-    anno$token, c("id"="id", "sid"="sid", "tid"="tid_source"),
+    anno$token, c("doc_id"="doc_id", "sid"="sid", "tid"="tid_source"),
     suffix=c("", "_source")
   ) %>%
-  left_join(anno$document, by="id") %>%
+  left_join(anno$document, by="doc_id") %>%
   filter(year == 2002) %>%
   filter(relation == "dobj") %>%
-  select(id = id, start = token, word = token_source) %>%
+  select(doc_id = doc_id, start = token, word = token_source) %>%
   left_join(word_frequency, by="word") %>%
   filter(frequency < 0.001) %>%
-  select(id, start, word) %$%
+  select(doc_id, start, word) %$%
   sprintf("%s => %s", start, word)
 ```
 
@@ -240,9 +240,9 @@ The topics, ordered by approximate time period, are visualized below:
 terms <- posterior(tm)$terms
 topics <- posterior(tm)$topics
 topic_df <- tibble(topic = as.integer(col(topics)),
-                   id = anno$document$id[as.integer(row(topics))],
+                   doc_id = anno$document$doc_id[as.integer(row(topics))],
                    val = as.numeric(topics)) %>%
-              left_join(anno$document, by="id")
+              left_join(anno$document, by="doc_id")
 top_terms <- apply(terms, 1,
                function(v) {
                  paste(colnames(mat)[order(v, decreasing = TRUE)[1:5]], collapse = ", ")
@@ -288,13 +288,13 @@ here for the purpose of illustration.
 
 As a first step, a term-frequency matrix is extracted using the same technique as was used with
 the topic modeling function. However, here the frequency is computed for each sentence in the
-corpus rather than the document as a whole. 
+corpus rather than the document as a whole.
 
 ```{r}
 df <- anno$token %>%
-  left_join(anno$document, by="id") %>%
+  left_join(anno$document, by="doc_id") %>%
   filter(year > 2000) %>%
-  mutate(new_id = paste(id, sid, sep = "-")) %>%
+  mutate(new_id = paste(doc_id, sid, sep = "-")) %>%
   filter(xpos %in% c("NN", "NNS"))
 mat <- cnlp_utils_tf(df, doc_var = "new_id")
 dim(mat)

@@ -8,13 +8,7 @@
 ## Overview
 
 The **cleanNLP** package is designed to make it as painless as possible
-to turn raw text into feature-rich data frames. You can download the
-package from within R directly from CRAN:
-
-```{r}
-install.packages("cleanNLP")
-```
-
+to turn raw text into feature-rich data frames.
 A minimal working example of using **cleanNLP** consists of loading the
 package, setting up the NLP backend, initializing the backend, and running
 the function `cnlp_annotate`. The output is given as a list of data frame
@@ -67,6 +61,30 @@ Please see the notes below, and the official package documentation on
 [CRAN](https://cran.r-project.org/web/packages/cleanNLP/), for more options
 to control the way that text is parsed.
 
+## Installation
+
+You can download the package from within R directly from CRAN:
+
+```{r}
+install.packages("cleanNLP")
+```
+
+After installation, you should be able to use the udpipe backend (as used
+the minimal example and case-studies above; model files will be installed
+automatically) or the stringi backend without any additional setup. **For most
+users, we find that these out-of-the-box solutions are a good starting point.**
+In order to use the two Python backends, you must install the associated
+`cleannlp` python module. We recommend and support the Python 3.7 version of
+[Anaconda Python](https://www.anaconda.com/distribution/#download-section).
+After obtaining Python, install the module by running pip in a terminal:
+
+```{py}
+pip install cleannlp
+```
+
+Once installed, running the respective backend initialization functions will
+provide further instructions for download the required models.
+
 ## API Overview
 
 ### V3
@@ -74,8 +92,8 @@ to control the way that text is parsed.
 There have been numerous changes to the package in the newly released version 3.0.0.
 These changes, while requiring some changes to existing code, have been carefully
 designed to make the package easier to both install and use. If you are running into
-any issues with the package, first make sure you are using updated materials (mostly 
-available from links within this repository). 
+any issues with the package, first make sure you are using updated materials (mostly
+available from links within this repository).
 
 ### Backends
 
@@ -97,17 +115,10 @@ who are familiar with Python or plan to make heavy use of the package.
 - **corenlp**: another Python library (formally Java) that is an official
 port of the Java library of the same name.
 
-In order to use the two Python backends, you must install the associated
-cleanNLP python module. We recommend and support the Python 3.7 version of
-[Anaconda Python](https://www.anaconda.com/distribution/#download-section).
-After obtaining Python, install the module by running pip in a terminal:
-
-```{py}
-pip install cleannlp
-```
-
-To select the desired backend, simply initilize the model prior to running the
-annotation. 
+The second two backends (spacy and corenlp) require some additional setup,
+namely installing Python and the associated Python library, as documented above.
+To select the desired backend, simply initialize the model prior to running the
+annotation.
 
 ```{r}
 cnlp_init_stringi(locale="en_GB")
@@ -122,8 +133,8 @@ be downloaded automatically. For spacy and coreNLP the following helper
 functions are available:
 
 ```{r}
-cnlp_download_spacy(model_name="en") 
-cnlp_download_corenlp(lang="en") 
+cnlp_download_spacy(model_name="en")
+cnlp_download_corenlp(lang="en")
 ```
 
 Simply change the model name or language code to download alternative models.

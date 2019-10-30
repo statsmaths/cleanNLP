@@ -4,13 +4,16 @@
 \alias{cnlp_init_stringi}
 \title{Interface for initializing the standard R backend}
 \usage{
-cnlp_init_stringi(locale = NULL)
+cnlp_init_stringi(locale = NULL, include_spaces = FALSE)
 }
 \arguments{
 \item{locale}{string giving the locale name to
 pass to the stringi functions. If
 \code{NULL}, the default locale is
 selected}
+
+\item{include_spaces}{logical. Should spaces be included as tokens in
+the output. Defaults to FALSE}
 }
 \description{
 This function must be run before annotating text with

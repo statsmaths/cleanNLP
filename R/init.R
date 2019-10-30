@@ -92,10 +92,13 @@ cnlp_init_udpipe <- function(model_name = NULL, model_path = NULL)
 #' This function must be run before annotating text with
 #' the tokenizers backend.
 #'
-#' @param locale   string giving the locale name to
-#'                 pass to the stringi functions. If
-#'                 \code{NULL}, the default locale is
-#'                 selected
+#' @param locale            string giving the locale name to
+#'                          pass to the stringi functions. If
+#'                          \code{NULL}, the default locale is
+#'                          selected
+#'
+#' @param include_spaces    logical. Should spaces be included as tokens in
+#'                          the output. Defaults to FALSE
 #'
 #' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
 #'
@@ -105,11 +108,12 @@ cnlp_init_udpipe <- function(model_name = NULL, model_path = NULL)
 #'}
 #'
 #' @export
-cnlp_init_stringi <- function(locale = NULL) {
+cnlp_init_stringi <- function(locale=NULL, include_spaces=FALSE) {
 
-  volatiles$stringi$locale   <- ifnull(locale, stringi::stri_locale_get())
-  volatiles$stringi$init     <- TRUE
-  volatiles$model_init_last  <- "stringi"
+  volatiles$stringi$locale         <- ifnull(locale, stringi::stri_locale_get())
+  volatiles$stringi$init           <- TRUE
+  volatiles$stringi$include_spaces <- include_spaces
+  volatiles$model_init_last        <- "stringi"
 
 }
 
