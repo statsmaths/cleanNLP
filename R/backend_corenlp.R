@@ -10,8 +10,18 @@ annotate_with_corenlp <- function(input, verbose) {
     x <- input$text[i]
     doc_id <- input$doc_id[i]
 
-    z <- volatiles$corenlp$obj$parseDocument(x, doc_id)
-    token[[i]] <- as.data.frame(z$token, stringsAsFactors=FALSE)
+  if(length(x)!=0){
+            z <- volatiles$corenlp$obj$parseDocument(x, doc_id)
+            token[[i]] <- as.data.frame(z$token, stringsAsFactors=FALSE)
+        } else {
+            ## mimics the structure but removes the text
+            z <- volatiles$corenlp$obj$parseDocument("-", doc_id)
+            token[[i]] <- as.data.frame(z$token, stringsAsFactors=FALSE)[-1,] 
+        }
+
+        cmsg(verbose, "Processed document %d of %d\n", i, nrow(input))
+    }
+
 
     cmsg(verbose, "Processed document %d of %d\n", i, nrow(input))
   }
