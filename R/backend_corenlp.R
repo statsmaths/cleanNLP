@@ -10,7 +10,7 @@ annotate_with_corenlp <- function(input, verbose) {
     x <- input$text[i]
     doc_id <- input$doc_id[i]
 
-  if(length(x)!=0){
+  if(x != ""){
             z <- volatiles$corenlp$obj$parseDocument(x, doc_id)
             token[[i]] <- as.data.frame(z$token, stringsAsFactors=FALSE)
         } else {

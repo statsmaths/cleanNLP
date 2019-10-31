@@ -162,8 +162,7 @@ cnlp_init_corenlp <- function(lang=NULL, models_dir=NULL, config=NULL) {
 
   volatiles$corenlp$obj <- volatiles$cleannlp$corenlp$corenlpCleanNLP(
     volatiles$corenlp$lang,
-    volatiles$corenlp$models_dir,
-    volatiles$corenlp$config
+    volatiles$corenlp$models_dir
   )
   volatiles$corenlp$init <- TRUE
   volatiles$model_init_last <- "corenlp"
