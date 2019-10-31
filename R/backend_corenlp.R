@@ -10,15 +10,20 @@ annotate_with_corenlp <- function(input, verbose) {
     x <- input$text[i]
     doc_id <- input$doc_id[i]
 
-    z <- volatiles$corenlp$obj$parseDocument(x, doc_id)
-    token[[i]] <- as.data.frame(z$token, stringsAsFactors=FALSE)
+    if (stringi::stri_length(x)) {
+      z <- volatiles$corenlp$obj$parseDocument(x, doc_id)
+      token[[i]] <- as.data.frame(z$token, stringsAsFactors=FALSE)
+    }
 
     cmsg(verbose, "Processed document %d of %d\n", i, nrow(input))
   }
 
   anno <- list()
-  anno$token <- structure(do.call("rbind", token),
-                          class = c("tbl_df", "tbl", "data.frame"))
+  if (!all(unlist(lapply(token, is.null))))
+  {
+    anno$token <- structure(do.call("rbind", token),
+                            class = c("tbl_df", "tbl", "data.frame"))
+  }
   anno$document <- input[,!(names(input) == "text"),drop=FALSE]
 
   return(anno)

@@ -10,37 +10,43 @@ annotate_with_udpipe <- function(input, verbose) {
     x <- input$text[i]
     doc_id <- input$doc_id[i]
 
-    anno <- as.data.frame(
-      udpipe::udpipe_annotate(volatiles$udpipe$model_obj, x)
-    )
-    token_with_ws <- udpipe_reconstruct(
-      anno$sentence_id,
-      anno$token,
-      anno$token_id,
-      anno$misc
-    )
+    if (stringi::stri_length(x))
+    {
+        anno <- as.data.frame(
+          udpipe::udpipe_annotate(volatiles$udpipe$model_obj, x)
+        )
+        token_with_ws <- udpipe_reconstruct(
+          anno$sentence_id,
+          anno$token,
+          anno$token_id,
+          anno$misc
+        )
 
-    token[[i]] <- data.frame(
-      doc_id=doc_id,
-      sid=anno$sentence_id,
-      tid=anno$token_id,
-      token=anno$token,
-      token_with_ws=token_with_ws,
-      lemma=anno$lemma,
-      upos=anno$upos,
-      xpos=anno$xpos,
-      feats=anno$feats,
-      tid_source=anno$head_token_id,
-      relation=anno$dep_rel,
-      stringsAsFactors=FALSE
-    )
+        token[[i]] <- data.frame(
+          doc_id=doc_id,
+          sid=anno$sentence_id,
+          tid=anno$token_id,
+          token=anno$token,
+          token_with_ws=token_with_ws,
+          lemma=anno$lemma,
+          upos=anno$upos,
+          xpos=anno$xpos,
+          feats=anno$feats,
+          tid_source=anno$head_token_id,
+          relation=anno$dep_rel,
+          stringsAsFactors=FALSE
+        )
+    }
 
     cmsg(verbose, "Processed document %d of %d\n", i, nrow(input))
   }
 
   anno <- list()
-  anno$token <- structure(do.call("rbind", token),
-                          class = c("tbl_df", "tbl", "data.frame"))
+  if (!all(unlist(lapply(token, is.null))))
+  {
+    anno$token <- structure(do.call("rbind", token),
+                            class = c("tbl_df", "tbl", "data.frame"))
+  }
   anno$document <- input[,!(names(input) == "text"),drop=FALSE]
 
   return(anno)

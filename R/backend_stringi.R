@@ -48,7 +48,7 @@ annotate_with_stringi <- function(input, verbose) {
       locale=volatiles$stringi$locale
     )] <- "PUNCT"
 
-    if (length(token) == 0L) next
+    if (length(word) == 0L) next
 
     token[[i]] <- data.frame(
       doc_id = doc_id,
@@ -64,8 +64,11 @@ annotate_with_stringi <- function(input, verbose) {
   }
 
   anno <- list()
-  anno$token <- structure(do.call("rbind", token),
-                          class = c("tbl_df", "tbl", "data.frame"))
+  if (!all(unlist(lapply(token, is.null))))
+  {
+    anno$token <- structure(do.call("rbind", token),
+                            class = c("tbl_df", "tbl", "data.frame"))
+  }
   anno$document <- input[,!(names(input) == "text"),drop=FALSE]
 
   return(anno)

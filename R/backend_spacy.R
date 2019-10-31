@@ -11,19 +11,27 @@ annotate_with_spacy <- function(input, verbose) {
     x <- input$text[i]
     doc_id <- input$doc_id[i]
 
-    z <- volatiles$spacy$obj$parseDocument(x, doc_id)
-    token[[i]] <- as.data.frame(z$token, stringsAsFactors=FALSE)
-    entity[[i]] <- as.data.frame(z$entity, stringsAsFactors=FALSE)
+    if (stringi::stri_length(x)) {
+      z <- volatiles$spacy$obj$parseDocument(x, doc_id)
+      token[[i]] <- as.data.frame(z$token, stringsAsFactors=FALSE)
+      entity[[i]] <- as.data.frame(z$entity, stringsAsFactors=FALSE)
+    }
 
     cmsg(verbose, "Processed document %d of %d\n", i, nrow(input))
   }
 
   anno <- list()
-  anno$token <- structure(do.call("rbind", token),
-                          class = c("tbl_df", "tbl", "data.frame"))
-  anno$token$relation <- stringi::stri_trans_tolower(anno$token$relation)
-  anno$entity <- structure(do.call("rbind", entity),
-                           class = c("tbl_df", "tbl", "data.frame"))
+  if (!all(unlist(lapply(token, is.null))))
+  {
+    anno$token <- structure(do.call("rbind", token),
+                            class = c("tbl_df", "tbl", "data.frame"))
+    anno$token$relation <- stringi::stri_trans_tolower(anno$token$relation)
+  }
+  if (!all(unlist(lapply(entity, is.null))))
+  {
+    anno$entity <- structure(do.call("rbind", entity),
+                             class = c("tbl_df", "tbl", "data.frame"))
+  }
   anno$document <- input[,!(names(input) == "text"),drop=FALSE]
 
   return(anno)
