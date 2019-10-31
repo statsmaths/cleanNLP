@@ -21,10 +21,7 @@ annotate_with_corenlp <- function(input, verbose) {
 
         cmsg(verbose, "Processed document %d of %d\n", i, nrow(input))
     }
-
-
-    cmsg(verbose, "Processed document %d of %d\n", i, nrow(input))
-  }
+   
 
   anno <- list()
   anno$token <- structure(do.call("rbind", token),

@@ -9,3 +9,5 @@
 ^CONTRIBUTING.md$
 ^docs
 ^vignettes
+^.*\.Rproj$
+^\.Rproj\.user$
