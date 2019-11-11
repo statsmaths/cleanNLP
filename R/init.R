@@ -7,6 +7,7 @@
 #'
 #' @param model_name    string giving the model name for the spacy backend.
 #'                      Defaults to "en" (English) if set to NULL.
+#' @param disable       an optional vector of pipes to disable.
 #'
 #' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
 #'
@@ -16,14 +17,23 @@
 #'}
 #'
 #' @export
-cnlp_init_spacy <- function(model_name=NULL) {
+cnlp_init_spacy <- function(model_name=NULL, disable=NULL) {
 
   check_python()
   volatiles$spacy$model_name  <- ifnull(model_name, "en")
 
-  volatiles$spacy$obj <- volatiles$cleannlp$spacy$spacyCleanNLP(
-    volatiles$spacy$model_name
-  )
+  if (is.null(disable))
+  {
+    volatiles$spacy$obj <- volatiles$cleannlp$spacy$spacyCleanNLP(
+      volatiles$spacy$model_name
+    )
+  } else {
+    volatiles$spacy$obj <- volatiles$cleannlp$spacy$spacyCleanNLP(
+      volatiles$spacy$model_name,
+      disable
+    )
+  }
+
   assert(
     !is.null(volatiles$spacy$obj$nlp),
     sprintf(
@@ -46,6 +56,28 @@ cnlp_init_spacy <- function(model_name=NULL) {
 #'                     Defaults to "english" if NULL.
 #'                     Ignored if \code{model_path} is not NULL.
 #' @param model_path   provide a full path to a model file.
+#' @param tokenizer    a character string of length 1, which is either
+#'                     'tokenizer' (default udpipe tokenisation) or a
+#'                     character string with more
+#'                     complex tokenisation options as specified in <URL:
+#'                     http://ufal.mff.cuni.cz/udpipe/users-manual> in which
+#'                     case tokenizer should be a character string where the
+#'                     options are put after each other using the semicolon as
+#'                     separation.
+#' @param tagger       a character string of length 1, which is either 'default'
+#'                     (default udpipe POS tagging and lemmatisation) or 'none' (no
+#'                     POS tagging and lemmatisation needed) or a character string
+#'                     with more complex tagging options as specified in <URL:
+#'                     http://ufal.mff.cuni.cz/udpipe/users-manual> in which case
+#'                     tagger should be a character string where the options are
+#'                     put after each other using the semicolon as separation.
+#' @param parser       a character string of length 1, which is either 'default'
+#'                     (default udpipe dependency parsing) or 'none' (no dependency
+#'                     parsing needed) or a character string with more complex
+#'                     parsing options as specified in <URL:
+#'                     http://ufal.mff.cuni.cz/udpipe/users-manual> in which case
+#'                     parser should be a character string where the options are
+#'                     put after each other using the semicolon as separation.
 #'
 #' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
 #'
@@ -55,7 +87,13 @@ cnlp_init_spacy <- function(model_name=NULL) {
 #'}
 #'
 #' @export
-cnlp_init_udpipe <- function(model_name = NULL, model_path = NULL)
+cnlp_init_udpipe <- function(
+  model_name = NULL,
+  model_path = NULL,
+  tokenizer = "tokenizer",
+  tagger = "default",
+  parser = "default"
+)
 {
   model_name <- ifnull(model_name, "english")
   model_loc <- system.file("extdata", package="cleanNLP")
@@ -81,6 +119,9 @@ cnlp_init_udpipe <- function(model_name = NULL, model_path = NULL)
   volatiles$udpipe$model_name   <- ifnull(model_name, "english")
   volatiles$udpipe$model_path   <- model_path
   volatiles$udpipe$model_obj    <- udpipe::udpipe_load_model(model_path)
+  volatiles$udpipe$tokenizer    <- tokenizer
+  volatiles$udpipe$tagger       <- tagger
+  volatiles$udpipe$parser       <- parser
 
   volatiles$udpipe$init <- TRUE
   volatiles$model_init_last <- "udpipe"

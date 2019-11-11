@@ -13,7 +13,13 @@ annotate_with_udpipe <- function(input, verbose) {
     if (stringi::stri_length(x))
     {
         anno <- as.data.frame(
-          udpipe::udpipe_annotate(volatiles$udpipe$model_obj, x)
+          udpipe::udpipe_annotate(
+            object=volatiles$udpipe$model_obj,
+            x=x,
+            tokenizer=volatiles$udpipe$tokenizer,
+            tagger=volatiles$udpipe$tagger,
+            parser=volatiles$udpipe$parser,
+          )
         )
         token_with_ws <- udpipe_reconstruct(
           anno$sentence_id,
@@ -52,7 +58,7 @@ annotate_with_udpipe <- function(input, verbose) {
   return(anno)
 }
 
-# taken from udpipe package as it is currenlty not exported
+# taken from udpipe package as it is currently not exported
 udpipe_reconstruct <- function(sentence_id, token, token_id, misc){
 
   rawtxt <- token

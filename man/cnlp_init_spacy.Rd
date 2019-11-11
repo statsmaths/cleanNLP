@@ -4,11 +4,13 @@
 \alias{cnlp_init_spacy}
 \title{Interface for initializing the spacy backend}
 \usage{
-cnlp_init_spacy(model_name = NULL)
+cnlp_init_spacy(model_name = NULL, disable = NULL)
 }
 \arguments{
 \item{model_name}{string giving the model name for the spacy backend.
 Defaults to "en" (English) if set to NULL.}
+
+\item{disable}{an optional vector of pipes to disable.}
 }
 \description{
 This function must be run before annotating text with
