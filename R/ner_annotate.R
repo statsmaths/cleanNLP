@@ -9,8 +9,6 @@
 #' in the document whre each entity occurs and the entity type. If no entities are detected for a
 #' document then an empty data.frame with no rows is returned.
 #'
-#' @param input.file a character string showing the path to the file to be processed. The file should
-#'    have text with Unix style line endings (will throw Nullpointer exception if not)
 #' @param entity.mentions.only Logical to specify if only entity mention output from CoreNLP is used
 #'    in the extraction. If TRUE, this will extract personal pronouns as well as standard entities.
 #'    The benefit of the entity.mention output is it groups words that are from the same entity. E.g.
@@ -42,17 +40,19 @@
 #'             "true")
 #' 
 #' cnlp_init_corenlp_custom(language = "en", mem = "2g", keys = keys, values = values)
-#' simple.output <- NERAnnotate(input.file)
+#' simple.output <- NERAnnotate()
 #' }
 #' @export
-NERAnnotate <- function(input.file, entity.mentions.only = FALSE) {
-  
+NERAnnotate <- function(entity.mentions.only = FALSE)
+{
     if(!volatiles$corenlp$init)
         stop("Java CoreNLP not initialized. Named Entity Recognition cannot be executed.")
-  
+    if(is.null(volatiles$corenlp$properties$file))
+        stop("Java CoreNLP properties doesn't have an input file path.",
+             "Please set the input file path via cnlp_init_corenlp_custom")
     .jcall(volatiles$corenlp$corenlp, "V", "run")
   
-    output <- fromJSON(paste0(input.file, ".json"))
+    output <- fromJSON(paste0(volatiles$corenlp$properties$file, ".json"))
     ner.mentions = output$sentences$entitymentions
     response = sapply(ner.mentions, nrow)
     if(all(sapply(response, is.null)))
@@ -77,7 +77,7 @@ NERAnnotate <- function(input.file, entity.mentions.only = FALSE) {
                         return(data.frame())
                     }
                 y
-                }, x = output$sentences$tokens, y = ner.mentions)
+                }, x = output$sentences$tokens, y = ner.mentions, SIMPLIFY = FALSE)
             # Check if filtered ner is not empty
             if(all(sapply(ner.mentions, nrow) == 0))
                 return(data.frame(id = character(), entity = character(), entity.type = character()))

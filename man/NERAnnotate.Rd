@@ -4,12 +4,9 @@
 \alias{NERAnnotate}
 \title{Run the annotation pipeline on a set of documents to extract entities}
 \usage{
-NERAnnotate(input.file, entity.mentions.only = FALSE)
+NERAnnotate(entity.mentions.only = FALSE)
 }
 \arguments{
-\item{input.file}{a character string showing the path to the file to be processed. The file should
-have text with Unix style line endings (will throw Nullpointer exception if not)}
-
 \item{entity.mentions.only}{Logical to specify if only entity mention output from CoreNLP is used
 in the extraction. If TRUE, this will extract personal pronouns as well as standard entities.
 The benefit of the entity.mention output is it groups words that are from the same entity. E.g.
@@ -52,6 +49,6 @@ values <- c("true", "tokenize,ssplit,pos,lemma,ner", "json", input.file, dirname
             "true")
 
 cnlp_init_corenlp_custom(language = "en", mem = "2g", keys = keys, values = values)
-simple.output <- NERAnnotate(input.file)
+simple.output <- NERAnnotate()
 }
 }
