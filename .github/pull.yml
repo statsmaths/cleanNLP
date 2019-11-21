@@ -1,0 +1,9 @@
+version: "1"
+rules:
+  - base: master
+    upstream: statsmaths:master
+    mergeMethod: none
+    assignees:
+      - jrwishart
+    reviewers:
+      - jfeshe
