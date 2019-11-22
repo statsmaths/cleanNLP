@@ -91,9 +91,18 @@ provide further instructions for download the required models.
 
 There have been numerous changes to the package in the newly released version 3.0.0.
 These changes, while requiring some changes to existing code, have been carefully
-designed to make the package easier to both install and use. If you are running into
-any issues with the package, first make sure you are using updated materials (mostly
-available from links within this repository).
+designed to make the package easier to both install and use. The three most important
+changes include:
+
+- The object returned by `cnlp_annotate` is now a named list. Users can access its
+elements with the dollar sign operator. Functions such as `cnlp_get_token`
+and `cnlp_get_dependency` are no longer needed or included.
+- The dependencies are now attached to the tokens table to make them easier to use.
+- The CoreNLP backend now uses the Python backend. It is simplier to install than the
+Java backend but does is still missing some features.
+
+If you are running into any issues with the package, first make sure you are using
+updated materials (mostly available from links within this repository).
 
 ### Backends
 
