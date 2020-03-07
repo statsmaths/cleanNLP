@@ -6,7 +6,7 @@
 #'
 #' @name un
 #' @docType data
-#' @references \url{http://www.un.org/en/universal-declaration-human-rights/}
+#' @references \url{https://www.un.org/en/universal-declaration-human-rights/}
 #' @keywords data
 NULL
 
@@ -18,6 +18,6 @@ NULL
 #'
 #' @name word_frequency
 #' @docType data
-#' @references \url{http://norvig.com/ngrams/}
+#' @references \url{https://norvig.com/ngrams/}
 #' @keywords data
 NULL

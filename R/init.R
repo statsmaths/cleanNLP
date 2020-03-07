@@ -8,28 +8,35 @@
 #' @param model_name    string giving the model name for the spacy backend.
 #'                      Defaults to "en" (English) if set to NULL.
 #' @param disable       an optional vector of pipes to disable.
+#' @param max_length    amount of temporary memory provided to Spacy, in
+#'                      characters. The default of 1000000 should work for most
+#'                      applications, but can be increased when working with
+#'                      long documents.
 #'
 #' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
 #'
 #' @examples
 #'\dontrun{
-#'cnlp_init_spacy(vector_flag = TRUE)
+#'cnlp_init_spacy(model_name = "en")
 #'}
 #'
 #' @export
-cnlp_init_spacy <- function(model_name=NULL, disable=NULL) {
+cnlp_init_spacy <- function(model_name=NULL, disable=NULL, max_length=NULL) {
 
   check_python()
   volatiles$spacy$model_name  <- ifnull(model_name, "en")
+  volatiles$spacy$max_length  <- ifnull(model_name, 1000000)
 
   if (is.null(disable))
   {
     volatiles$spacy$obj <- volatiles$cleannlp$spacy$spacyCleanNLP(
-      volatiles$spacy$model_name
+      volatiles$spacy$model_name,
+      volatiles$spacy$max_length
     )
   } else {
     volatiles$spacy$obj <- volatiles$cleannlp$spacy$spacyCleanNLP(
       volatiles$spacy$model_name,
+      volatiles$spacy$max_length,
       disable
     )
   }
@@ -125,7 +132,6 @@ cnlp_init_udpipe <- function(
 
   volatiles$udpipe$init <- TRUE
   volatiles$model_init_last <- "udpipe"
-
 }
 
 #' Interface for initializing the standard R backend
@@ -145,7 +151,7 @@ cnlp_init_udpipe <- function(
 #'
 #' @examples
 #'\dontrun{
-#'cnlp_init_tokenizers()
+#'cnlp_init_stringi()
 #'}
 #'
 #' @export
@@ -184,6 +190,14 @@ cnlp_init_stringi <- function(locale=NULL, include_spaces=FALSE) {
 cnlp_init_corenlp <- function(lang=NULL, models_dir=NULL, config=NULL) {
 
   check_python()
+
+  assert(
+    volatiles$cleannlp$corenlp$STANFORD_AVAILABLE,
+    paste(c(
+    "The Python module 'stanfordnlp' not found. Install with:\n",
+    "  pip install stanfordnlp"
+    ))
+  )
 
   volatiles$corenlp$lang <- ifnull(lang, "en")
   volatiles$corenlp$models_dir <- ifnull(
@@ -237,4 +251,13 @@ check_python <- function() {
   {
     volatiles$cleannlp <- reticulate::import("cleannlp")
   }
+
+  version_num_required <- "1.0.3"
+  assert(
+    volatiles$cleannlp$VERSION >= "1.0.3",
+    paste(c(
+      "Python module 'cleannlp' was found, but is out of date.",
+      "Upgrade with:\n  pip install -U cleannlp"
+    ), collapse=" ")
+  )
 }

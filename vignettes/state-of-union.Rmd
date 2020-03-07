@@ -3,9 +3,18 @@ title: "Exploring the State of the Union Addresses: A Case Study with cleanNLP"
 author: Taylor Arnold
 output:
   rmarkdown::html_vignette: default
+  vignette: >
+    %\VignetteIndexEntry{Exploring the State of the Union Addresses: A Case Study with cleanNLP}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
 ---
 
 **This vignette shows the updated version 3 of the package, now available on CRAN**
+
+```{r setup, include=FALSE}
+# CRAN will not have spaCy installed, so create static vignette
+knitr::opts_chunk$set(eval = FALSE)
+```
 
 In this vignette, the utility of the package is illustrated by showing how it can be
 used to study a corpus consisting of every
@@ -44,10 +53,11 @@ input$text <- sotu_text
 Then, extract annotations from the dataset:
 
 ```{r}
-anno <- cnlp_annotate(input, verbose=FALSE)
+anno <- cnlp_annotate(input)
 ```
 
-You can switch the verbose argument to `TRUE` (the default) in order to have the function print a short message as it processes each document.å
+When running the code above on your own, you will see a progress message every
+time a nex set of 10 documents are processed.
 
 ## Exploratory Analysis
 
@@ -61,6 +71,10 @@ anno$token %>%
   group_by(doc_id, sid) %>%
   summarize(sent_len = n()) %$%
   quantile(sent_len, seq(0,1,0.1))
+```
+```
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+ 1    9   14   18   22   26   30   35   42   55  398
 ```
 
 The median sentence has 26 tokens, whereas at least one has over 600 (this is
@@ -78,6 +92,19 @@ anno$token %>%
   top_n(n = 42, count) %>%
   arrange(desc(count)) %>%
   use_series(lemma)
+```
+```
+[1] "year"          "country"       "people"        "law"
+[5] "nation"        "time"          "government"    "power"
+[9] "interest"      "world"         "war"           "citizen"
+[13] "service"       "part"          "duty"          "system"
+[17] "peace"         "right"         "state"         "man"
+[21] "program"       "policy"        "work"          "condition"
+[25] "legislation"   "act"           "force"         "subject"
+[29] "effort"        "purpose"       "treaty"        "business"
+[33] "land"          "action"        "measure"       "way"
+[37] "question"      "relation"      "consideration" "attention"
+[41] "report"        "life"
 ```
 
 The result is generally as would be expected from a corpus of government speeches, with
@@ -102,6 +129,8 @@ anno$token %>%
     theme_minimal()
 ```
 
+<img src="img/fig1.png" style="width:100%"/>
+
 Here, color is used to represent whether the address was given as an oral address or a written
 document. The output shows that their are certainly time trends
 to the address length, with the form of the address (written versus spoken) also having a large
@@ -119,6 +148,24 @@ anno$entity %>%
   top_n(n = 44, count) %>%
   arrange(desc(count)) %>%
   use_series(entity)
+```
+```
+[1] "Europe"                 "Pacific"                "Asia"
+[4] "Atlantic"               "Africa"                 "Territories"
+[7] "the Middle East"        "Central America"        "South"
+[10] "West"                   "earth"                  "Mississippi"
+[13] "Earth"                  "Latin America"          "South America"
+[16] "East"                   "Mediterranean"          "the Gulf of Mexico"
+[19] "the Southern States"    "Western Europe"         "North"
+[22] "the Pacific Ocean"      "the Rocky Mountains"    "Americas"
+[25] "the Western Hemisphere" "the Far East"           "the Mississippi River"
+[28] "Gulf"                   "the Persian Gulf"       "Middle East"
+[31] "Prussia"                "Caribbean"              "Eastern Europe"
+[34] "Southeast Asia"         "Lake Erie"              "North America"
+[37] "the Pacific Coast"      "the Northern States"    "Bering Sea"
+[40] "District"               "the Near East"          "the west coast"
+[43] "the West Indies"        "South Asia"             "Southwest Asia"
+[46] "the Bering Sea"         "West Point"
 ```
 
 The ability to redo analyses from a slightly different perspective is a direct consequence of
@@ -154,8 +201,18 @@ anno$token %>%
   select(doc_id, start, word) %$%
   sprintf("%s => %s", start, word)
 ```
+```
+[1] "signs => layoffs"        "amount => unprecedented"
+[3] "effort => recruit"       "care => lawsuits"
+[5] "approach => hopeful"     "poor => disadvantaged"
+[7] "meal => mentor"          "action => compassionate"
+[9] "dollars => trillion"     "marriage => discourage"
+[11] "strategy => confront"    "people => allies"
+[13] "defenses => missile"     "ourselves => allies"
+[15] "ability => negotiate"
+```
 
-Most of these phrases correspond with the ``compassionate conservatism" that George W. Bush ran
+Most of these phrases correspond with the "compassionate conservatism" that George W. Bush ran
 under in the preceding 2000 election. Applying the same analysis to the 2002 State of the Union,
 which came under the shadow of the September 11th terrorist attacks, shows a drastic shift
 in focus.
@@ -174,6 +231,18 @@ anno$token %>%
   filter(frequency < 0.001) %>%
   select(doc_id, start, word) %$%
   sprintf("%s => %s", start, word)
+```
+```
+[1] "dangers => unprecedented" "debt => owe"
+[3] "terrorists => regimes"    "terrorists => plotting"
+[5] "parasites => threaten"    "gas => poison"
+[7] "defenses => missile"      "America => allies"
+[9] "America => allies"        "police => heroic"
+[11] "police => firefighters"   "arrivals => departures"
+[13] "neighborhoods => safer"   "package => stimulus"
+[15] "ethic => creed"           "best => emerged"
+[17] "doctors => mobilized"     "efforts => recruit"
+[19] "peace => prosperity"      "freedom => dignity"
 ```
 
 Here the topics have almost entirely shifted to counter-terrorism and national security efforts.
@@ -198,6 +267,22 @@ pca <- anno$token %>%
 pca <- bind_cols(anno$document, pca)
 pca
 ```
+```
+# A tibble: 236 x 8
+   president          year years_active party      sotu_type doc_id    PC1   PC2
+   <chr>             <int> <chr>        <chr>      <chr>      <int>  <dbl> <dbl>
+ 1 George Washington  1790 1789-1793    Nonpartis… speech         1  -2.30  13.0
+ 2 George Washington  1790 1789-1793    Nonpartis… speech         2  -4.37  16.5
+ 3 George Washington  1791 1789-1793    Nonpartis… speech         3  -5.48  12.8
+ 4 George Washington  1792 1789-1793    Nonpartis… speech         4  -3.54  12.1
+ 5 George Washington  1793 1793-1797    Nonpartis… speech         5 -16.8   18.8
+ 6 George Washington  1794 1793-1797    Nonpartis… speech         6  -5.98  13.6
+ 7 George Washington  1795 1793-1797    Nonpartis… speech         7 -12.7   20.6
+ 8 George Washington  1796 1793-1797    Nonpartis… speech         8  -8.98  12.6
+ 9 John Adams         1797 1797-1801    Federalist speech         9  -1.19  10.9
+10 John Adams         1798 1797-1801    Federalist speech        10  -5.54  13.0
+# … with 226 more rows
+```
 
 In this example only non-proper nouns have been included in order to minimize the
 stylistic attributes of the speeches in order to focus more on their content.
@@ -218,6 +303,8 @@ ggplot(pca, aes(PC1, PC2)) +
         axis.text.y = element_blank()) +
   theme_void()
 ```
+
+<img src="img/fig2.png" style="width:100%"/>
 
 ### Topic Models (LDA)
 
@@ -273,6 +360,8 @@ ggplot(topic_df, aes(year, topic_new)) +
   guides(colour = FALSE)
 ```
 
+<img src="img/fig3.png" style="width:100%"/>
+
 Most topics persist for a few decades and then largely disappear, though some persist over
 non-contiguous periods of the presidency. The Energy topic, for example, appears during the
 1950s and crops up again during the energy crisis of the 1970s. The "world, man, freedom,
@@ -298,6 +387,9 @@ df <- anno$token %>%
   filter(xpos %in% c("NN", "NNS"))
 mat <- cnlp_utils_tf(df, doc_var = "new_id")
 dim(mat)
+```
+```
+[1] 4938 2349
 ```
 
 It will be necessary to define a response variable ``y`` indicating whether this is a
@@ -340,6 +432,8 @@ ggplot(meta, aes(factor(year),pred)) +
   xlab("Year")
 ```
 
+<img src="img/fig4.png" style="width:100%"/>
+
 The algorithm does a very good job of separating the speeches. Looking
 at the odd years versus even years (the training and testing sets, respectively)
 indicates that the model has not been over-fit.
@@ -351,6 +445,18 @@ coded as whether the have a positive (more Obama) or negative (more Bush) sign:
 ```{r}
 beta <- coef(model, s = model[["lambda"]][11])[-1]
 sprintf("%s (%d)", colnames(mat), sign(beta))[beta != 0]
+```
+```
+[1] "job (1)"          "business (1)"     "family (1)"       "citizen (-1)"
+[5] "terrorist (-1)"   "freedom (-1)"     "education (1)"    "home (1)"
+[9] "college (1)"      "weapon (-1)"      "deficit (1)"      "company (1)"
+[13] "enemy (-1)"       "peace (-1)"       "terror (-1)"      "hope (-1)"
+[17] "income (-1)"      "drug (-1)"        "kid (1)"          "regime (-1)"
+[21] "class (1)"        "crisis (1)"       "industry (1)"     "need (-1)"
+[25] "fact (1)"         "relief (-1)"      "bank (1)"         "liberty (-1)"
+[29] "funding (-1)"     "society (-1)"     "account (-1)"     "cause (-1)"
+[33] "folk (1)"         "duty (-1)"        "compassion (-1)"  "supply (-1)"
+[37] "environment (-1)" "inspector (-1)"
 ```
 
 These generally seem as expected given the main policy topics of focus under

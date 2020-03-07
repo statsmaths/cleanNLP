@@ -1,7 +1,7 @@
 Package: cleanNLP
 Type: Package
 Title: A Tidy Data Model for Natural Language Processing
-Version: 3.0.1
+Version: 3.0.2
 Authors@R: c(person(given = "Taylor B.", family = "Arnold", email = "taylor.arnold@acm.org", role = c("aut", "cre")))
 Author: Taylor B. Arnold [aut, cre]
 Maintainer: Taylor B. Arnold <taylor.arnold@acm.org>
@@ -25,9 +25,10 @@ Suggests:
     rmarkdown (>= 1.4),
     testthat (>= 1.0.1),
     covr (>= 2.2.2)
-SystemRequirements: Python (>= 3.6.0)
+SystemRequirements: Python (>= 3.7.0)
 License: LGPL-2
 URL: https://statsmaths.github.io/cleanNLP/
 BugReports: http://github.com/statsmaths/cleanNLP/issues
 LazyData: true
-RoxygenNote: 6.1.1
+VignetteBuilder: knitr
+RoxygenNote: 7.0.2

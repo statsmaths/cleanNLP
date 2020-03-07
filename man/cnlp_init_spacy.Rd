@@ -4,13 +4,18 @@
 \alias{cnlp_init_spacy}
 \title{Interface for initializing the spacy backend}
 \usage{
-cnlp_init_spacy(model_name = NULL, disable = NULL)
+cnlp_init_spacy(model_name = NULL, disable = NULL, max_length = NULL)
 }
 \arguments{
 \item{model_name}{string giving the model name for the spacy backend.
 Defaults to "en" (English) if set to NULL.}
 
 \item{disable}{an optional vector of pipes to disable.}
+
+\item{max_length}{amount of temporary memory provided to Spacy, in
+characters. The default of 1000000 should work for most
+applications, but can be increased when working with
+long documents.}
 }
 \description{
 This function must be run before annotating text with
@@ -20,7 +25,7 @@ interface provided by reticulate.
 }
 \examples{
 \dontrun{
-cnlp_init_spacy(vector_flag = TRUE)
+cnlp_init_spacy(model_name = "en")
 }
 
 }

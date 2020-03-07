@@ -4,8 +4,13 @@
 \alias{cnlp_init_udpipe}
 \title{Interface for initializing the udpipe backend}
 \usage{
-cnlp_init_udpipe(model_name = NULL, model_path = NULL,
-  tokenizer = "tokenizer", tagger = "default", parser = "default")
+cnlp_init_udpipe(
+  model_name = NULL,
+  model_path = NULL,
+  tokenizer = "tokenizer",
+  tagger = "default",
+  parser = "default"
+)
 }
 \arguments{
 \item{model_name}{string giving the model namel.

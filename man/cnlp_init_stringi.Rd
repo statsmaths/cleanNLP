@@ -21,7 +21,7 @@ the tokenizers backend.
 }
 \examples{
 \dontrun{
-cnlp_init_tokenizers()
+cnlp_init_stringi()
 }
 
 }

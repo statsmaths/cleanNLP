@@ -69,7 +69,6 @@ cnlp_utils_pca <- function(x, k = 2, center = TRUE, scale = TRUE) {
 #'                      without data in the input. Most users will want to keep
 #'                      this equal to \code{NULL}, the default, to have the
 #'                      function compute the document set automatically.
-#' @param ...           other arguments passed to the base method
 #'
 #' @return  a sparse matrix with dimnames giving the documents and vocabular.
 #'

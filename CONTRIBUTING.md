@@ -20,4 +20,3 @@ all your interactions with the project.
    you would like to be listed as a contributor in the
    DESCRIPTION, please discuss this prior to submitting the
    pull request.
-

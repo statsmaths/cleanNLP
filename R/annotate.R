@@ -9,27 +9,79 @@
 #' @param input          an object containing the data to parse. Either a
 #'                       character vector with the texts (optional names can
 #'                       be given to provide document ids) or a data frame. The
-#'                       data frame must have a column named 'text' containing
+#'                       data frame should have a column named 'text' containing
 #'                       the raw text to parse; if there is a column named
 #'                       'doc_id', it is treated as a a document identifier.
+#'                       The name of the text and document id columns can be
+#'                       changed by setting \code{text_name} and \code{doc_name}
 #'                       This conforms with corpus objects respecting the Text
 #'                       Interchange Format (TIF), while allowing for some
 #'                       variation.
 #' @param backend        name of the backend to use. Will default to the last
 #'                       model to be initalized.
-#' @param verbose        logical; should annotation engine print out when it
-#'                       finishes each text? Turned on by default.
+#' @param verbose        set to a positive integer n to display a progress
+#'                       message to display every n'th record. The default is
+#'                       10. Set to a non-positive integer to turn off messages.
+#'                       Logical input is converted to an integer, so it also
+#'                       possible to set to TRUE (1) to display a message for
+#'                       every document and FALSE (0) to turn off messages.
+#' @param text_name      column name containing the text input. The default
+#'                       is 'text'. This parameter is ignored when \code{input}
+#'                       is a character vector.
+#' @param doc_name       column name containing the document ids. The default
+#'                       is 'doc_id'. This parameter is ignored when
+#'                       \code{input} is a character vector.
 #'
-#' @return  an object of class \code{annotation}
+#' @return  a named list with components "token", "document" and (when
+#'          running spacy with NER) "entity".
+#'
+#' @details
+#'  The returned object is a named list where each element containing a data
+#'  frame. The document table contains one row for each document, along with
+#'  with all of the metadata that was passed as an input. The tokens table
+#'  has one row for each token detected in the input. The first three columns
+#'  are always "doc_id" (to index the input document), "sid" (an integer index
+#'  for the sentence number), and "tid" (an integer index to the specific
+#'  token). Together, these are a primary key for each row.
+#'
+#'  Other columns provide extracted data about each token, which differ slightly
+#'  based on which backend, language, and options are supplied.
+#'  \itemize{
+#'    \item \bold{token}: detected token, as given in the original input
+#'    \item \bold{token_with_ws}: detected token along with white space; in,
+#'         theory, collapsing this field through an entire document will yield
+#'         the original text
+#'    \item \bold{lemma}: lemmatised version of the token; the exact form
+#'         depends on the choosen language and backend
+#'    \item \bold{upos}: the universal part of speech code; see
+#'         \url{https://universaldependencies.org/u/pos/all.html}
+#'         for more information
+#'    \item \bold{xpos}: language dependent part of speech code; the specific
+#'         categories and their meaning depend on the choosen backend, model
+#'         and language
+#'    \item \bold{feats}: other extracted linguistic features, typically given
+#'         as Universal Dependencies
+#'         (\url{https://universaldependencies.org/u/feat/index.html}), but can
+#'         be model dependent; currently only provided by the udpipe backend
+#'    \item \bold{tid_source}: the token id (tid) of the head word for the
+#'         dependency relationship starting from this token; for the token
+#'         attached to the root, this will be given as zero
+#'    \item \bold{relation}: the dependency relation, usually provided using
+#'         Universal Dependencies (more information available here
+#'         \url{https://universaldependencies.org/}
+#'         ), but could be different for a specific model
+#'  }
 #'
 #' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
 #'
 #'@examples
 #'cnlp_init_stringi()
-#'cnlp_annotate(un, verbose=FALSE)
+#'cnlp_annotate(un)
 #'
 #' @export
-cnlp_annotate <- function(input, backend = NULL, verbose = TRUE) {
+cnlp_annotate <- function(
+  input, backend = NULL, verbose = 10, text_name = 'text', doc_name = 'doc_id'
+) {
 
   # validate input variables
   backend <- ifnull(backend, volatiles$model_init_last)
@@ -45,15 +97,17 @@ cnlp_annotate <- function(input, backend = NULL, verbose = TRUE) {
       text=as.character(input)
     )
   }
-  assert("text" %in% names(input),
-    "'input' data frame must contain a column named 'text'"
+  assert(text_name %in% names(input),
+    sprintf("'input' data frame must contain a column named '%s'", text_name)
   )
+  names(input)[names(input) == text_name] <- "text"
 
   # add an identifier to the dataset if not already included
-  if (!("doc_id" %in% names(input)))
+  if (!(doc_name %in% names(input)))
   {
     input$doc_id <- seq_len(nrow(input))
   }
+  names(input)[names(input) == doc_name] <- "doc_id"
   assert(all(!duplicated(input$doc_id)), "duplicate values found in 'id'")
 
   # pass to the respective backend

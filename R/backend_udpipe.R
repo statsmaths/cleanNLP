@@ -44,7 +44,13 @@ annotate_with_udpipe <- function(input, verbose) {
         )
     }
 
-    cmsg(verbose, "Processed document %d of %d\n", i, nrow(input))
+    if (verbose > 0)
+    {
+      if ((i %% verbose) == 0)
+      {
+        cmsg(verbose, "Processed document %d of %d\n", i, nrow(input))
+      }
+    }
   }
 
   anno <- list()
