@@ -25,7 +25,7 @@ cnlp_init_spacy <- function(model_name=NULL, disable=NULL, max_length=NULL) {
 
   check_python()
   volatiles$spacy$model_name  <- ifnull(model_name, "en")
-  volatiles$spacy$max_length  <- ifnull(model_name, 1000000)
+  volatiles$spacy$max_length  <- ifnull(max_length, 1000000)
 
   if (is.null(disable))
   {

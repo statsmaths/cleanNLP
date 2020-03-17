@@ -80,8 +80,6 @@ create empty rows in the output matrix for documents
 without data in the input. Most users will want to keep
 this equal to \code{NULL}, the default, to have the
 function compute the document set automatically.}
-
-\item{...}{other arguments passed to the base method}
 }
 \value{
 a sparse matrix with dimnames giving the documents and vocabular.

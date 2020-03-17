@@ -21,7 +21,7 @@ assert <- function(statement, msg="")
 ifnull <- function(value, default)
 {
   if (is.null(value)) { return(default) }
-  
+
   return(value)
 }
 

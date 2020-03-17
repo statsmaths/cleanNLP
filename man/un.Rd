@@ -10,6 +10,6 @@ Universal Declaration of Human Rights, ratified on 10 December 1948
 in Paris, France.
 }
 \references{
-\url{http://www.un.org/en/universal-declaration-human-rights/}
+\url{https://www.un.org/en/universal-declaration-human-rights/}
 }
 \keyword{data}

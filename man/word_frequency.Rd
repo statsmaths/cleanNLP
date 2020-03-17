@@ -10,6 +10,6 @@ Peter Norvig from the Google Web Trillion Word Corpus. Frequencies are
 multiplied by 100.
 }
 \references{
-\url{http://norvig.com/ngrams/}
+\url{https://norvig.com/ngrams/}
 }
 \keyword{data}
