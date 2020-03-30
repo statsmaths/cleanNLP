@@ -3,7 +3,7 @@
 **Author:** Taylor B. Arnold<br/>
 **License:** [LGPL-2](https://opensource.org/licenses/LGPL-2.1)
 
-[![CRAN Version](http://www.r-pkg.org/badges/version/cleanNLP)](https://CRAN.R-project.org/package=cleanNLP) [![Travis-CI Build Status](https://travis-ci.org/statsmaths/cleanNLP.svg?branch=master)](https://travis-ci.org/statsmaths/cleanNLP) ![Downloads](http://cranlogs.r-pkg.org/badges/cleanNLP)
+[![CRAN Version](http://www.r-pkg.org/badges/version-ago/cleanNLP)](https://CRAN.R-project.org/package=cleanNLP) [![Travis-CI Build Status](https://travis-ci.org/statsmaths/cleanNLP.svg?branch=master)](https://travis-ci.org/statsmaths/cleanNLP) ![Downloads](http://cranlogs.r-pkg.org/badges/cleanNLP)
 
 ## Overview
 
