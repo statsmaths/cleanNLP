@@ -4,8 +4,13 @@
 \alias{cnlp_init_corenlp}
 \title{Interface for initializing the corenlp backend}
 \usage{
-cnlp_init_corenlp(language, anno_level = 2, lib_location = NULL,
-  mem = "6g", verbose = FALSE)
+cnlp_init_corenlp(
+  language,
+  anno_level = 2,
+  lib_location = NULL,
+  mem = "6g",
+  verbose = FALSE
+)
 }
 \arguments{
 \item{language}{a character vector describing the desired language;

@@ -4,8 +4,7 @@
 \alias{cnlp_init_spacy}
 \title{Interface for initializing the spacy backend}
 \usage{
-cnlp_init_spacy(model_name = NULL, entity_flag = TRUE,
-  vector_flag = FALSE)
+cnlp_init_spacy(model_name = NULL, entity_flag = TRUE, vector_flag = FALSE)
 }
 \arguments{
 \item{model_name}{string giving the model name for the Python/spacy

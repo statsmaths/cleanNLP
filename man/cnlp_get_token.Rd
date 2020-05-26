@@ -4,8 +4,13 @@
 \alias{cnlp_get_token}
 \title{Access tokens from an annotation object}
 \usage{
-cnlp_get_token(annotation, include_root = FALSE, combine = FALSE,
-  remove_na = combine, spaces = FALSE)
+cnlp_get_token(
+  annotation,
+  include_root = FALSE,
+  combine = FALSE,
+  remove_na = combine,
+  spaces = FALSE
+)
 }
 \arguments{
 \item{annotation}{an annotation object}

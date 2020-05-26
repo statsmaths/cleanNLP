@@ -4,9 +4,16 @@
 \alias{cnlp_annotate}
 \title{Run the annotation pipeline on a set of documents}
 \usage{
-cnlp_annotate(input, as_strings = NULL, doc_ids = NULL,
-  backend = NULL, meta = NULL, doc_var = "doc_id",
-  text_var = "text", verbose = FALSE)
+cnlp_annotate(
+  input,
+  as_strings = NULL,
+  doc_ids = NULL,
+  backend = NULL,
+  meta = NULL,
+  doc_var = "doc_id",
+  text_var = "text",
+  verbose = FALSE
+)
 }
 \arguments{
 \item{input}{either a vector of file names to parse, a

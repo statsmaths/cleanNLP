@@ -5,8 +5,15 @@
 \title{Interface for initializing the corenlp backend with custom choices of 
 annotators and settings}
 \usage{
-cnlp_init_corenlp_custom(language, lib_location = NULL, mem = "6g",
-  verbose = FALSE, keys, values, corenlp.only = FALSE)
+cnlp_init_corenlp_custom(
+  language,
+  lib_location = NULL,
+  mem = "6g",
+  verbose = FALSE,
+  keys,
+  values,
+  corenlp.only = FALSE
+)
 }
 \arguments{
 \item{language}{a character vector describing the desired language;
