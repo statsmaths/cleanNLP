@@ -18,7 +18,7 @@ before_install:
   - VER=$(unzip -v stanford-corenlp-latest.zip | sed -n 4p | awk '{print $8}')
   - export CORENLP=$HOME/$VER
   - VER=${VER%/}
-  - wget http://nlp.stanford.edu/software/$VERA-models-english.jar -P $CORENLP/
+  - wget http://nlp.stanford.edu/software/$VER-models-english.jar -P $CORENLP/
   - rcode="tfile <- tempfile(); capture.output(res<-devtools::test(), file = tfile); out <- readLines(tfile); cat(out, sep = '\n'); "
   - rcode+="n.fail <- as.numeric(sub('Failed:[[:space:]]', '', out[grep('Failed:[[:space:]]', out)])); "
   - rcode+="res <- as.data.frame(res); out <- data.frame(file = unlist(res[['file']]), warning = unlist(res[['warning']])); "
