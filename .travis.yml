@@ -1,7 +1,7 @@
 language: r
 r:
   - release
-dist: trusty
+dist: bionic
 sudo: required
 cache: packages
 warnings_are_errors: false
