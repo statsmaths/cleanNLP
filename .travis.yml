@@ -15,7 +15,7 @@ before_install:
   - sudo apt install default-jdk
   - wget http://nlp.stanford.edu/software/stanford-corenlp-latest.zip
   - unzip -d $HOME stanford-corenlp-latest.zip
-  - VER=unzip -qql stanford-corenlp-latest.zip | head -n1 | awk '{print $4}'
+  - VER=unzip -v stanford-corenlp-latest.zip | sed -n 4p | awk '{print $8}'
   - export CORENLP=$HOME/$VER
   - VER=${VER%/}
   - wget http://nlp.stanford.edu/software/$VERA-models-english.jar -P $CORENLP/

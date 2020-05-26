@@ -1,7 +1,7 @@
 Package: cleanNLP
 Type: Package
 Title: A Tidy Data Model for Natural Language Processing
-Version: 2.4.4
+Version: 2.4.5
 Authors@R: c(person(given = "Justin", family = "Wishart", email = "justin.wishart@displayr.com", role = "ctb"),
     person(given = "Taylor B.", family = "Arnold", email = "taylor.arnold@acm.org", role = c("aut", "cre")))
 Description: Provides a set of fast tools for converting a textual corpus into a set of normalized
