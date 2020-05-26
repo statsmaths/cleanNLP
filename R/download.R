@@ -91,9 +91,9 @@ cnlp_download_corenlp <- function(
   # otherwise, determine what file types should be downloaded
   type <- match.arg(type)
   elements <- dir(output_loc)
-  coreFile <- elements[grepl("^stanford-corenlp-", dir(output_loc))]
+  core.version <- elements[grepl("^stanford-corenlp-", dir(output_loc))]
   if (type %in% c("default", "base")) {
-    if (!dir.exists(file.path(output_loc, coreFile))) {
+    if (length(core.version) == 0) {
       fp <- check_file_exists(file.path(output_loc, paste0(coreFile, ".zip")),
                                force = force)
       f <- RCurl::CFILE(fp, mode="wb")
@@ -106,16 +106,22 @@ cnlp_download_corenlp <- function(
                    exdir = output_loc)
       file.remove(file.path(output_loc, paste0(coreFile, ".zip")))
       ret <- 0L
+      core.version <- dir(output_loc)[grepl("^stanford-corenlp-", dir(output_loc))]
+    } else {
+      message("Core NLP version found: ", core.version, ". If a newer version is desired ",
+              "remove the installation directory ", file.path(output_loc, core.version),
+              " and re-run 'cnlp_download_corenlp()'")
     }
   }
+  
 
   if (!file.exists(file.path(output_loc)))
     stop("Must download base files to this location first!",
          "Set type='base'.")
   
   if (type %in% c("default", "en")) {
-    model.file <- paste0(coreFile, "-models-english.jar")
-    fp <- check_file_exists(file.path(output_loc, coreFile, model.file),
+    model.file <- paste0(core.version, "-models-english.jar")
+    fp <- check_file_exists(file.path(output_loc, core.version, model.file),
                             force = force)
     f <- RCurl::CFILE(fp, mode="wb")
     ret <- RCurl::curlPerform(url = file.path(baseURL, model.file),
@@ -124,8 +130,8 @@ cnlp_download_corenlp <- function(
   }
 
   if (type %in% c("fr")) {
-    model.file <- paste0(coreFile, "-models-french.jar")
-    fp <- check_file_exists(file.path(output_loc, coreFile, model.file),
+    model.file <- paste0(core.version, "-models-french.jar")
+    fp <- check_file_exists(file.path(output_loc, core.version, model.file),
                             force = force)
     f <- RCurl::CFILE(fp, mode="wb")
     ret <- RCurl::curlPerform(url = file.path(baseURL, model.file),
@@ -134,8 +140,8 @@ cnlp_download_corenlp <- function(
   }
 
   if (type %in% c("de")) {
-    model.file <- paste0(coreFile, "-models-german.jar")
-    fp <- check_file_exists(file.path(output_loc, coreFile, model.file),
+    model.file <- paste0(core.version, "-models-german.jar")
+    fp <- check_file_exists(file.path(output_loc, core.version, model.file),
                             force = force)
     f <- RCurl::CFILE(fp, mode="wb")
     ret <- RCurl::curlPerform(url = file.path(baseURL, model.file),
@@ -144,8 +150,8 @@ cnlp_download_corenlp <- function(
   }
 
   if (type %in% c("es")) {
-    model.file <- paste0(coreFile, "-models-spanish.jar")
-    fp <- check_file_exists(file.path(output_loc, coreFile, model.file),
+    model.file <- paste0(core.version, "-models-spanish.jar")
+    fp <- check_file_exists(file.path(output_loc, core.version, model.file),
                             force = force)
     f <- RCurl::CFILE(fp, mode="wb")
     ret <- RCurl::curlPerform(url = file.path(baseURL, model.file),
@@ -154,8 +160,8 @@ cnlp_download_corenlp <- function(
   }
 
   if (type %in% c("ar")) {
-    model.file <- paste0(coreFile, "-models-arabic.jar")
-    fp <- check_file_exists(file.path(output_loc, coreFile, model.file),
+    model.file <- paste0(core.version, "-models-arabic.jar")
+    fp <- check_file_exists(file.path(output_loc, core.version, model.file),
                             force = force)
     f <- RCurl::CFILE(fp, mode="wb")
     ret <- RCurl::curlPerform(url = file.path(baseURL, model.file),
@@ -164,8 +170,8 @@ cnlp_download_corenlp <- function(
   }
 
   if (type %in% c("zh")) {
-    model.file <- paste0(coreFile, "-models-chinese.jar")
-    fp <- check_file_exists(file.path(output_loc, coreFile, model.file),
+    model.file <- paste0(core.version, "-models-chinese.jar")
+    fp <- check_file_exists(file.path(output_loc, core.version, model.file),
                             force = force)
     f <- RCurl::CFILE(fp, mode="wb")
     ret <- RCurl::curlPerform(url = file.path(baseURL, model.file),
