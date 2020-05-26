@@ -13,10 +13,12 @@ before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y libgdal-dev libproj-dev python-protobuf libprotoc-dev libprotobuf-dev libv8-dev librsvg2-dev libmpfr-dev
   - sudo apt install default-jdk
-  - wget http://nlp.stanford.edu/software/stanford-corenlp-full-2018-10-05.zip
-  - unzip -d $HOME stanford-corenlp-full-2018-10-05.zip
-  - export CORENLP=$HOME/stanford-corenlp-full-2018-10-05
-  - wget http://nlp.stanford.edu/software/stanford-english-corenlp-2018-10-05-models.jar -P $CORENLP/
+  - wget http://nlp.stanford.edu/software/stanford-corenlp-latest.zip
+  - unzip -d $HOME stanford-corenlp-latest.zip
+  - VER=unzip -qql stanford-corenlp-latest.zip | head -n1 | awk '{print $4}'
+  - export CORENLP=$HOME/$VER
+  - VER=${VER%/}
+  - wget http://nlp.stanford.edu/software/$VERA-models-english.jar -P $CORENLP/
   - rcode="tfile <- tempfile(); capture.output(res<-devtools::test(), file = tfile); out <- readLines(tfile); cat(out, sep = '\n'); "
   - rcode+="n.fail <- as.numeric(sub('Failed:[[:space:]]', '', out[grep('Failed:[[:space:]]', out)])); "
   - rcode+="res <- as.data.frame(res); out <- data.frame(file = unlist(res[['file']]), warning = unlist(res[['warning']])); "
