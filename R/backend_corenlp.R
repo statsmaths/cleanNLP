@@ -421,13 +421,10 @@ cnlp_init_corenlp_custom <- function(language, lib_location = NULL, mem = "6g", 
 }
 
 cnlp_init_corenlp_volatiles <- function(language, lib_location, mem, verbose) {
-  
   if (is.null(lib_location)) {
     if(Sys.getenv("CORENLP") == ""){
-      default.install.path <- file.path(system.file("extdata", package="cleanNLP"))
-      elements <- dir(default.install.path)
-      coreFile <- elements[grepl("^stanford-corenlp-", dir(default.install.path))]
-      lib_location <- file.path(default.install.path, coreFile)
+      lib_location <- file.path(system.file("extdata", package="cleanNLP"),
+                                "stanford-corenlp-full-2018-10-05")
     } else {
       lib_location <- Sys.getenv("CORENLP")
     }
@@ -503,25 +500,23 @@ init_corenlp_backend <- function(corenlp.only = FALSE) {
 
   # Determine if the corenlp files have been loaded correctly
   jar_files <- basename(rJava::.jclassPath())
-  library.path <- volatiles$corenlp$lib_location
-  version <- regmatches(library.path, regexpr(r"{(\d+\.)(\d+\.)(\d+)}", library.path))
-  if (!(paste0("stanford-corenlp-", version, ".jar") %in% jar_files))
-    warning("The Stanford corenlp (", version, ") files were not found ",
+  if (!("stanford-corenlp-3.9.2.jar" %in% jar_files))
+    warning("The Stanford corenlp (3.7.2) files were not found ",
             "as expected. Proceed with caution.")
-  if (lang == "en" && !paste0("stanford-corenlp-", version, "-models-english.jar")
-                              %in% jar_files)
+  if (lang == "en" && !("stanford-english-corenlp-2018-10-05-models.jar"
+    %in% jar_files))
     warning("English model file has not been downloaded to lib_location.",
             "Proceed with caution.")
-  if (lang == "fr" && !paste0("stanford-corenlp-", version, "-models-french.jar")
-      %in% jar_files)
+  if (lang == "fr" && !("stanford-french-corenlp-2018-10-05-models.jar"
+    %in% jar_files))
     warning("French model file has not been downloaded to lib_location.",
       "Proceed with caution.")
-  if (lang == "de" && !paste0("stanford-corenlp-", version, "-models-german.jar")
-      %in% jar_files)
+  if (lang == "de" && !("stanford-german-corenlp-2018-10-05-models.jar"
+    %in% jar_files))
     warning("German model file has not been downloaded to lib_location.",
       "Proceed with caution.")
-  if (lang == "es" && !!paste0("stanford-corenlp-", version, "-models-spanish.jar")
-      %in% jar_files)
+  if (lang == "es" && !("stanford-spanish-corenlp-2018-10-05-models.jar"
+    %in% jar_files))
     warning("Spanish model file has not been downloaded to lib_location.",
       "Proceed with caution.")
 

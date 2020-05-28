@@ -45,7 +45,7 @@ cnlp_download_corenlp <- function(
 
   # set defaults and determine where files should be saved
   baseURL <- "https://nlp.stanford.edu/software/"
-  coreFile <- "/stanford-corenlp-latest"
+  coreFile <- "/stanford-corenlp-full-2018-10-05"
   if (missing(output_loc)) {
     output_loc <- system.file("extdata", package="cleanNLP")
     if (file.access(output_loc, "6") == -1)
@@ -90,10 +90,9 @@ cnlp_download_corenlp <- function(
 
   # otherwise, determine what file types should be downloaded
   type <- match.arg(type)
-  elements <- dir(output_loc)
-  core.version <- elements[grepl("^stanford-corenlp-", dir(output_loc))]
+
   if (type %in% c("default", "base")) {
-    if (length(core.version) == 0) {
+    if (!dir.exists(file.path(output_loc, coreFile))) {
       fp <- check_file_exists(file.path(output_loc, paste0(coreFile, ".zip")),
                                force = force)
       f <- RCurl::CFILE(fp, mode="wb")
@@ -106,76 +105,76 @@ cnlp_download_corenlp <- function(
                    exdir = output_loc)
       file.remove(file.path(output_loc, paste0(coreFile, ".zip")))
       ret <- 0L
-      core.version <- dir(output_loc)[grepl("^stanford-corenlp-", dir(output_loc))]
-    } else {
-      message("Core NLP version found: ", core.version, ". If a newer version is desired ",
-              "remove the installation directory ", file.path(output_loc, core.version),
-              " and re-run 'cnlp_download_corenlp()'")
     }
   }
-  
 
   if (!file.exists(file.path(output_loc)))
     stop("Must download base files to this location first!",
          "Set type='base'.")
-  
+
   if (type %in% c("default", "en")) {
-    model.file <- paste0(core.version, "-models-english.jar")
-    fp <- check_file_exists(file.path(output_loc, core.version, model.file),
-                            force = force)
+    fp <- check_file_exists(file.path(output_loc, coreFile,
+             "/stanford-english-corenlp-2018-10-05-models.jar"),
+             force = force)
     f <- RCurl::CFILE(fp, mode="wb")
-    ret <- RCurl::curlPerform(url = file.path(baseURL, model.file),
-                              writedata = f@ref, noprogress=FALSE)
+    ret <- RCurl::curlPerform(url = paste0(baseURL,
+                  "/stanford-english-corenlp-2018-10-05-models.jar"),
+                  writedata = f@ref, noprogress=FALSE)
     RCurl::close(f)
   }
 
   if (type %in% c("fr")) {
-    model.file <- paste0(core.version, "-models-french.jar")
-    fp <- check_file_exists(file.path(output_loc, core.version, model.file),
-                            force = force)
+    fp <- check_file_exists(file.path(output_loc, coreFile,
+             "/stanford-french-corenlp-2018-10-05-models.jar"),
+             force = force)
     f <- RCurl::CFILE(fp, mode="wb")
-    ret <- RCurl::curlPerform(url = file.path(baseURL, model.file),
-                              writedata = f@ref, noprogress=FALSE)
+    ret <- RCurl::curlPerform(url = paste0(baseURL,
+             "/stanford-french-corenlp-2018-10-05-models.jar"),
+             writedata = f@ref, noprogress=FALSE)
     RCurl::close(f)
   }
 
   if (type %in% c("de")) {
-    model.file <- paste0(core.version, "-models-german.jar")
-    fp <- check_file_exists(file.path(output_loc, core.version, model.file),
-                            force = force)
+    fp <- check_file_exists(file.path(output_loc, coreFile,
+             "/stanford-german-corenlp-2018-10-05-models.jar"),
+             force = force)
     f <- RCurl::CFILE(fp, mode="wb")
-    ret <- RCurl::curlPerform(url = file.path(baseURL, model.file),
-                              writedata = f@ref, noprogress=FALSE)
+    ret <- RCurl::curlPerform(url = paste0(baseURL,
+             "/stanford-german-corenlp-2018-10-05-models.jar"),
+             writedata = f@ref, noprogress=FALSE)
     RCurl::close(f)
   }
 
   if (type %in% c("es")) {
-    model.file <- paste0(core.version, "-models-spanish.jar")
-    fp <- check_file_exists(file.path(output_loc, core.version, model.file),
-                            force = force)
+    fp <- check_file_exists(file.path(output_loc, coreFile,
+             "/stanford-spanish-corenlp-2018-10-05-models.jar"),
+             force = force)
     f <- RCurl::CFILE(fp, mode="wb")
-    ret <- RCurl::curlPerform(url = file.path(baseURL, model.file),
-                              writedata = f@ref, noprogress=FALSE)
+    ret <- RCurl::curlPerform(url = paste0(baseURL,
+             "/stanford-spanish-corenlp-2018-10-05-models.jar"),
+             writedata = f@ref, noprogress=FALSE)
     RCurl::close(f)
   }
 
   if (type %in% c("ar")) {
-    model.file <- paste0(core.version, "-models-arabic.jar")
-    fp <- check_file_exists(file.path(output_loc, core.version, model.file),
-                            force = force)
+    fp <- check_file_exists(file.path(output_loc, coreFile,
+             "/stanford-arabic-corenlp-2018-10-05-models.jar"),
+             force = force)
     f <- RCurl::CFILE(fp, mode="wb")
-    ret <- RCurl::curlPerform(url = file.path(baseURL, model.file),
-                              writedata = f@ref, noprogress=FALSE)
+    ret <- RCurl::curlPerform(url = paste0(baseURL,
+             "/stanford-arabic-corenlp-2018-10-05-models.jar"),
+             writedata = f@ref, noprogress=FALSE)
     RCurl::close(f)
   }
 
   if (type %in% c("zh")) {
-    model.file <- paste0(core.version, "-models-chinese.jar")
-    fp <- check_file_exists(file.path(output_loc, core.version, model.file),
-                            force = force)
+    fp <- check_file_exists(file.path(output_loc, coreFile,
+             "/stanford-chinese-corenlp-2018-10-05-models.jar"),
+             force = force)
     f <- RCurl::CFILE(fp, mode="wb")
-    ret <- RCurl::curlPerform(url = file.path(baseURL, model.file),
-                              writedata = f@ref, noprogress=FALSE)
+    ret <- RCurl::curlPerform(url = paste0(baseURL,
+             "/stanford-chinese-corenlp-2018-10-05-models.jar"),
+             writedata = f@ref, noprogress=FALSE)
     RCurl::close(f)
   }
 
