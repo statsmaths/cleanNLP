@@ -44,7 +44,7 @@ annotate_with_stringi <- function(input, verbose) {
     )] <- "SYM"
     upos[stringi::stri_detect(
       word,
-      regex="\\A[\\p{Sentence_Terminal}]+\\Z",
+      regex="\\A[\\p{Terminal_Punctuation}]+\\Z",
       locale=volatiles$stringi$locale
     )] <- "PUNCT"
 
