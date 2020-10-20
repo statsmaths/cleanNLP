@@ -12,7 +12,8 @@ to turn raw text into feature-rich data frames.
 A minimal working example of using **cleanNLP** consists of loading the
 package, setting up the NLP backend, initializing the backend, and running
 the function `cnlp_annotate`. The output is given as a list of data frame
-objects. Here is an example using the udpipe backend:
+objects (classed as an "cnlp_annotation"). Here is an example using the udpipe
+backend:
 
 ```{r}
 library(cleanNLP)
@@ -23,24 +24,24 @@ annotation <- cnlp_annotate(input = c(
         "Here's the second. It is short too!",
         "The third text is the shortest."
 ))
-annotation
+lapply(annotation, head)
 ```
 ```
 $token
-# A tibble: 27 x 11
-   doc_id   sid tid   token lemma space_after upos  xpos  feats tid_source
- *  <int> <int> <chr> <chr> <chr> <chr>       <chr> <chr> <chr> <chr>
- 1      1     1 1     Here  here  "\\s"       ADV   RB    Pron… 0
- 2      1     1 2     is    be    "\\s"       AUX   VBZ   Mood… 1
- 3      1     1 3     the   the   "\\s"       DET   DT    Defi… 5
- 4      1     1 4     first first "\\s"       ADJ   JJ    Degr… 5
- 5      1     1 5     text  text  No          NOUN  NN    Numb… 1
- 6      1     1 6     .     .     "\\s"       PUNCT .     NA    1
- 7      1     2 1     It    it    "\\s"       PRON  PRP   Case… 3
- 8      1     2 2     is    be    "\\s"       AUX   VBZ   Mood… 3
- 9      1     2 3     short short No          ADJ   JJ    Degr… 0
-10      1     2 4     .     .     "\\n"       PUNCT .     NA    3
-# … with 17 more rows, and 1 more variable: relation <chr>
+  doc_id sid tid token token_with_ws lemma  upos xpos
+1      1   1   1  Here         Here   here   ADV   RB
+2      1   1   2    is           is     be   AUX  VBZ
+3      1   1   3   the          the    the   DET   DT
+4      1   1   4 first        first  first   ADJ   JJ
+5      1   1   5  text          text  text  NOUN   NN
+6      1   1   6     .            .      . PUNCT    .
+                                                  feats tid_source relation
+1                                          PronType=Dem          0     root
+2 Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin          1      cop
+3                             Definite=Def|PronType=Art          5      det
+4                                Degree=Pos|NumType=Ord          5     amod
+5                                           Number=Sing          1    nsubj
+6                                                  <NA>          1    punct
 
 $document
   doc_id

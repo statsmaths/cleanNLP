@@ -116,5 +116,6 @@ cnlp_annotate <- function(
   if (backend == "corenlp")    anno <- annotate_with_corenlp(input, verbose)
   if (backend == "udpipe")     anno <- annotate_with_udpipe(input, verbose)
 
+  class(anno) <- c("cnlp_annotation", "list")
   return(anno)
 }

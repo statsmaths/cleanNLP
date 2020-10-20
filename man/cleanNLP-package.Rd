@@ -44,7 +44,7 @@ input <- data.frame(
 Useful links:
 \itemize{
   \item \url{https://statsmaths.github.io/cleanNLP/}
-  \item Report bugs at \url{http://github.com/statsmaths/cleanNLP/issues}
+  \item Report bugs at \url{https://github.com/statsmaths/cleanNLP/issues}
 }
 
 }
