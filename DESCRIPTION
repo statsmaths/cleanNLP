@@ -1,7 +1,7 @@
 Package: cleanNLP
 Type: Package
 Title: A Tidy Data Model for Natural Language Processing
-Version: 2.4.7
+Version: 2.4.8
 Authors@R: c(person(given = "Justin", family = "Wishart", email = "justin.wishart@displayr.com", role = "ctb"),
     person(given = "Taylor B.", family = "Arnold", email = "taylor.arnold@acm.org", role = c("aut", "cre")))
 Description: Provides a set of fast tools for converting a textual corpus into a set of normalized
@@ -26,7 +26,6 @@ Imports:
 Suggests:
     udpipe (>= 0.3),
     reticulate (>= 1.4),
-    RCurl (>= 1.95),
     knitr (>= 1.15),
     rmarkdown (>= 1.4),
     testthat (>= 1.0.1),
@@ -37,4 +36,4 @@ BugReports: http://github.com/Displayr/cleanNLP/issues
 LazyData: true
 VignetteBuilder: knitr
 Encoding: UTF-8
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1

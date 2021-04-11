@@ -5,7 +5,7 @@
 \title{Download java files needed for CoreNLP}
 \usage{
 cnlp_download_corenlp(
-  type = c("default", "base", "en", "fr", "de", "es", "ar", "zh"),
+  type = c("default", "base", "en"),
   output_loc,
   url = NULL,
   url_core = TRUE,
@@ -14,9 +14,7 @@ cnlp_download_corenlp(
 }
 \arguments{
 \item{type}{type of files to download. The base package
-Other jars include model files for French, German,
-and Spanish. These can be installed in addition to
-the base package. By default, the function downloads
+By default, the function downloads
 the base package and English model files.}
 
 \item{output_loc}{a string showing where the files are to be
