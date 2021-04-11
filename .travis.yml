@@ -17,8 +17,11 @@ before_install:
   - unzip -d $HOME stanford-corenlp-full-2018-10-05.zip
   - export CORENLP=$HOME/stanford-corenlp-full-2018-10-05
   - wget https://downloads.cs.stanford.edu/nlp/software/stanford-english-corenlp-2018-10-05-models.jar -P $CORENLP/
-  - rcode="tfile <- tempfile(); capture.output(res<-devtools::test(), file = tfile); out <- readLines(tfile); cat(out, sep = '\n'); "
-  - rcode+="n.fail <- as.numeric(sub('Failed:[[:space:]]', '', out[grep('Failed:[[:space:]]', out)])); "
+  - rcode="options('testthat.progress.max_fails' = Inf); "
+  - rcode+="tfile <- tempfile(); capture.output(res<-devtools::test(), file = tfile); out <- readLines(tfile); cat(out, sep = '\n');"
+  - rcode+="line.fail <- max(grep('FAIL', out)); "
+  - rcode+="tmp <- unlist(strsplit(split='[[:space:]]+', out[line.fail])); "
+  - rcode+="pos.fail <- grep('FAIL', tmp); n.fail <- as.numeric(tmp[pos.fail+1]); "
   - rcode+="res <- as.data.frame(res); out <- data.frame(file = unlist(res[['file']]), warning = unlist(res[['warning']])); "
   - rcode+="write.csv(out, file='test_results.csv'); "
   - rcode+="quit(status = !identical(n.fail, 0), save='no');"
