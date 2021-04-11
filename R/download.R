@@ -43,7 +43,7 @@ cnlp_download_corenlp <- function(
   on.exit(options(op))
   
   # set defaults and determine where files should be saved
-  baseURL <- "https://nlp.stanford.edu/software"
+  baseURL <- "https://downloads.cs.stanford.edu/nlp/software"
   coreFile <- "stanford-corenlp-full-2018-10-05"
   if (missing(output_loc)) {
     output_loc <- system.file("extdata", package="cleanNLP")
