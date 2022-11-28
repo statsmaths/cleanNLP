@@ -124,7 +124,7 @@ cnlp_utils_tfidf <- function(
   id <- match(doc, doc_set)
   mat <- methods::as(
     Matrix::sparse.model.matrix(~ token - 1,data = x),
-    "dgTMatrix"
+    "TsparseMatrix"
   )
 
   df <- data.frame(
