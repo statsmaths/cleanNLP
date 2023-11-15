@@ -26,8 +26,7 @@ annotate_with_stringi <- function(input, verbose) {
       word <- lapply(word, function(v)
         v[!stringi::stri_detect(
           v,
-          regex="\\A[\\h\\n\\t\\f]+\\Z",
-          locale=volatiles$stringi$locale
+          regex="\\A[\\h\\n\\t\\f]+\\Z"
         )]
       )
     }
@@ -40,12 +39,11 @@ annotate_with_stringi <- function(input, verbose) {
     word <- unlist(word)
     upos <- rep("X", length(word))
     upos[stringi::stri_detect(
-      word, regex="\\A[\\h\\n\\t\\f]+\\Z", locale=volatiles$stringi$locale
+      word, regex="\\A[\\h\\n\\t\\f]+\\Z"
     )] <- "SYM"
     upos[stringi::stri_detect(
       word,
-      regex="\\A[\\p{Terminal_Punctuation}]+\\Z",
-      locale=volatiles$stringi$locale
+      regex="\\A[\\p{Terminal_Punctuation}]+\\Z"
     )] <- "PUNCT"
 
     if (length(word) == 0L) next

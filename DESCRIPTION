@@ -1,7 +1,7 @@
 Package: cleanNLP
 Type: Package
 Title: A Tidy Data Model for Natural Language Processing
-Version: 3.0.4
+Version: 3.0.6
 Authors@R: c(person(given = "Taylor B.", family = "Arnold", email = "tarnold2@richmond.edu", role = c("aut", "cre")))
 Author: Taylor B. Arnold [aut, cre]
 Maintainer: Taylor B. Arnold <tarnold2@richmond.edu>
