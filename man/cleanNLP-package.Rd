@@ -48,7 +48,3 @@ Useful links:
 }
 
 }
-\author{
-\strong{Maintainer}: Taylor B. Arnold \email{taylor.arnold@acm.org}
-
-}

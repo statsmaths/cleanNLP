@@ -1,8 +1,9 @@
 citHeader("To cite cleanNLP in publications use:")
 
-citEntry(entry = "Article",
+bibentry(
+  "Article",
   title        = "A Tidy Data Model for Natural Language Processing using cleanNLP",
-  author       = personList(as.person("Taylor Arnold")),
+  author       = "Taylor Arnold",
   journal      = "The R Journal",
   year         = "2017",
   volume       = "9",
