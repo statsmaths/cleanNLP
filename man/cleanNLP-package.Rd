@@ -10,16 +10,15 @@ Provides a set of fast tools for converting a textual corpus into a set
 of normalized tables. Multiple NLP backends can be used, with the output
 standardized into a normalized format. Options include stringi (very fast,
 but only provides tokenization), udpipe (fast, many languages, includes
-part of speech tags and dependencies), coreNLP (using its Python backend),
-and spacy (python backend; includes named entity recognition).
+part of speech tags and dependencies), and spacy (python backend; includes
+named entity recognition).
 }
 \details{
 Once the package is set up, run one of \code{\link{cnlp_init_stringi}},
-\code{\link{cnlp_init_spacy}}, \code{\link{cnlp_init_corenlp}}, or
-\code{\link{cnlp_init_udpipe}} to load the desired NLP backend.
-After this function is done running, use \code{\link{cnlp_annotate}}
-to run the annotation engine over a corpus of text. The package vignettes
-provide more detailed set-up information.
+\code{\link{cnlp_init_spacy}}, or \code{\link{cnlp_init_udpipe}} to load
+the desired NLP backend. After this function is done running, use
+\code{\link{cnlp_annotate}} to run the annotation engine over a corpus of
+text. The package vignettes provide more detailed set-up information.
 }
 \examples{
 

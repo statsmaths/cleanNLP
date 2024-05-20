@@ -51,8 +51,8 @@ a named list with components "token", "document" and (when
 Runs the clean_nlp annotators over a given corpus of text
 using the desired backend. The details for which annotators to run and
 how to run them are specified by using one of:
-\code{\link{cnlp_init_stringi}}, \code{\link{cnlp_init_spacy}},
-\code{\link{cnlp_init_udpipe}}, or \code{\link{cnlp_init_corenlp}}.
+\code{\link{cnlp_init_stringi}}, \code{\link{cnlp_init_spacy}}, or
+\code{\link{cnlp_init_udpipe}}.
 }
 \details{
 The returned object is a named list where each element containing a data

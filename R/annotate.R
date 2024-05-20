@@ -3,8 +3,8 @@
 #' Runs the clean_nlp annotators over a given corpus of text
 #' using the desired backend. The details for which annotators to run and
 #' how to run them are specified by using one of:
-#' \code{\link{cnlp_init_stringi}}, \code{\link{cnlp_init_spacy}},
-#' \code{\link{cnlp_init_udpipe}}, or \code{\link{cnlp_init_corenlp}}.
+#' \code{\link{cnlp_init_stringi}}, \code{\link{cnlp_init_spacy}}, or
+#' \code{\link{cnlp_init_udpipe}}.
 #'
 #' @param input          an object containing the data to parse. Either a
 #'                       character vector with the texts (optional names can
@@ -86,7 +86,7 @@ cnlp_annotate <- function(
   # validate input variables
   backend <- ifnull(backend, volatiles$model_init_last)
   assert(
-    backend %in% c("stringi", "spacy", "corenlp", "udpipe"),
+    backend %in% c("stringi", "spacy", "udpipe"),
     "No initialized backends found."
   )
 
@@ -113,7 +113,6 @@ cnlp_annotate <- function(
   # pass to the respective backend
   if (backend == "stringi")    anno <- annotate_with_stringi(input, verbose)
   if (backend == "spacy")      anno <- annotate_with_spacy(input, verbose)
-  if (backend == "corenlp")    anno <- annotate_with_corenlp(input, verbose)
   if (backend == "udpipe")     anno <- annotate_with_udpipe(input, verbose)
 
   class(anno) <- c("cnlp_annotation", "list")

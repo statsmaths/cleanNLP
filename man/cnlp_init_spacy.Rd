@@ -8,7 +8,7 @@ cnlp_init_spacy(model_name = NULL, disable = NULL, max_length = NULL)
 }
 \arguments{
 \item{model_name}{string giving the model name for the spacy backend.
-Defaults to "en" (English) if set to NULL.}
+Defaults to "en_core_web_sm" (English) if set to NULL.}
 
 \item{disable}{an optional vector of pipes to disable.}
 
@@ -25,7 +25,7 @@ interface provided by reticulate.
 }
 \examples{
 \dontrun{
-cnlp_init_spacy(model_name = "en")
+cnlp_init_spacy(model_name = "en_core_web_sm")
 }
 
 }

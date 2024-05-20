@@ -3,17 +3,16 @@
 **Author:** Taylor B. Arnold<br/>
 **License:** [LGPL-2](https://opensource.org/licenses/LGPL-2.1)
 
-[![CRAN Version](http://www.r-pkg.org/badges/version-ago/cleanNLP)](https://CRAN.R-project.org/package=cleanNLP) [![Travis-CI Build Status](https://travis-ci.org/statsmaths/cleanNLP.svg?branch=master)](https://travis-ci.org/statsmaths/cleanNLP) ![Downloads](http://cranlogs.r-pkg.org/badges/cleanNLP)
+[![CRAN Version](http://www.r-pkg.org/badges/version-ago/cleanNLP)](https://CRAN.R-project.org/package=cleanNLP) 
 
 ## Overview
 
 The **cleanNLP** package is designed to make it as painless as possible
-to turn raw text into feature-rich data frames.
-A minimal working example of using **cleanNLP** consists of loading the
-package, setting up the NLP backend, initializing the backend, and running
-the function `cnlp_annotate`. The output is given as a list of data frame
-objects (classed as an "cnlp_annotation"). Here is an example using the udpipe
-backend:
+to turn raw text into feature-rich data frames. A minimal working example
+of using **cleanNLP** consists of loading the package, setting up the NLP
+backend, initializing the backend, and running the function `cnlp_annotate`.
+The output is given as a list of data frame objects (classed as an
+"cnlp_annotation"). Here is an example using the udpipe backend:
 
 ```{r}
 library(cleanNLP)
@@ -99,8 +98,6 @@ changes include:
 elements with the dollar sign operator. Functions such as `cnlp_get_token`
 and `cnlp_get_dependency` are no longer needed or included.
 - The dependencies are now attached to the tokens table to make them easier to use.
-- The CoreNLP backend now uses the Python backend. It is simplier to install than the
-Java backend but does is still missing some features.
 
 If you are running into any issues with the package, first make sure you are using
 updated materials (mostly available from links within this repository).
@@ -109,7 +106,7 @@ updated materials (mostly available from links within this repository).
 
 The cleanNLP package is designed to allow users to make use of various NLP
 annotation algorithms without having to worry (too much) about the output
-format, which is standardizes at best as possible. There are four backends
+format, which is standardizes at best as possible. There are three backends
 currently available, each with their own pros and cons. They are:
 
 - **stringi**: a fast parser that only requires the stringi package,
@@ -122,10 +119,8 @@ functionality. It also supports the widest range of natural languages.
 that included named entity recognition and word embeddings. It does require
 a working Python installation and some other set-up. Recommended for users
 who are familiar with Python or plan to make heavy use of the package.
-- **corenlp**: another Python library (formally Java) that is an official
-port of the Java library of the same name.
 
-The second two backends (spacy and corenlp) require some additional setup,
+The final backend (spacy) require some additional setup,
 namely installing Python and the associated Python library, as documented above.
 To select the desired backend, simply initialize the model prior to running the
 annotation.
@@ -134,17 +129,15 @@ annotation.
 cnlp_init_stringi(locale="en_GB")
 cnlp_init_udpipe(model_name="english")
 cnlp_init_spacy(model_name="en")
-cnlp_init_corenlp(lang="en")
 ```
 
 The code above explicitly sets the default/English model. You can use a
 different model/language when starting the model. For udpipe the models will
-be downloaded automatically. For spacy and coreNLP the following helper
+be downloaded automatically. For spacy the following helper
 functions are available:
 
 ```{r}
 cnlp_download_spacy(model_name="en")
-cnlp_download_corenlp(lang="en")
 ```
 
 Simply change the model name or language code to download alternative models.

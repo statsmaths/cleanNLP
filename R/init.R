@@ -6,7 +6,7 @@
 #' interface provided by reticulate.
 #'
 #' @param model_name    string giving the model name for the spacy backend.
-#'                      Defaults to "en" (English) if set to NULL.
+#'                      Defaults to "en_core_web_sm" (English) if set to NULL.
 #' @param disable       an optional vector of pipes to disable.
 #' @param max_length    amount of temporary memory provided to Spacy, in
 #'                      characters. The default of 1000000 should work for most
@@ -17,14 +17,14 @@
 #'
 #' @examples
 #'\dontrun{
-#'cnlp_init_spacy(model_name = "en")
+#'cnlp_init_spacy(model_name = "en_core_web_sm")
 #'}
 #'
 #' @export
 cnlp_init_spacy <- function(model_name=NULL, disable=NULL, max_length=NULL) {
 
   check_python()
-  volatiles$spacy$model_name  <- ifnull(model_name, "en")
+  volatiles$spacy$model_name  <- ifnull(model_name, "en_core_web_sm")
   volatiles$spacy$max_length  <- ifnull(max_length, 1000000)
 
   if (is.null(disable))
@@ -161,67 +161,6 @@ cnlp_init_stringi <- function(locale=NULL, include_spaces=FALSE) {
   volatiles$stringi$init           <- TRUE
   volatiles$stringi$include_spaces <- include_spaces
   volatiles$model_init_last        <- "stringi"
-
-}
-
-#' Interface for initializing the coreNLP backend
-#'
-#' This function must be run before annotating text with
-#' the coreNLP backend. It sets the properties for the
-#' spacy engine and loads the file using the R to Python
-#' interface provided by reticulate.
-#'
-#' @param lang        string giving the language name for the corenlp backend.
-#'                    Defaults to "en" (English) if set to NULL.
-#' @param models_dir  directory where model files are located. Set to NULL to
-#'                    use the default.
-#' @param config      An optional named list to be converted to a Python
-#'                    dictionary.
-#'
-#'
-#' @author Taylor B. Arnold, \email{taylor.arnold@@acm.org}
-#'
-#' @examples
-#'\dontrun{
-#'cnlp_init_corenlp()
-#'}
-#'
-#' @export
-cnlp_init_corenlp <- function(lang=NULL, models_dir=NULL, config=NULL) {
-
-  check_python()
-
-  assert(
-    volatiles$cleannlp$corenlp$STANFORD_AVAILABLE,
-    paste(c(
-    "The Python module 'stanfordnlp' not found. Install with:\n",
-    "  pip install stanfordnlp"
-    ))
-  )
-
-  volatiles$corenlp$lang <- ifnull(lang, "en")
-  volatiles$corenlp$models_dir <- ifnull(
-    models_dir,
-    volatiles$cleannlp$corenlp$default_model_dir()
-  )
-  volatiles$corenlp$config <- reticulate::dict(config)
-  assert(
-    volatiles$corenlp$lang %in%
-      stringi::stri_sub(dir(volatiles$corenlp$models_dir), 1, 2),
-    sprintf(
-      "model %s not found; use cnlp_download_corenlp(\"%s\") to install",
-      volatiles$corenlp$lang,
-      volatiles$corenlp$lang
-    )
-  )
-
-  volatiles$corenlp$obj <- volatiles$cleannlp$corenlp$corenlpCleanNLP(
-    volatiles$corenlp$lang,
-    volatiles$corenlp$models_dir,
-    volatiles$corenlp$config
-  )
-  volatiles$corenlp$init <- TRUE
-  volatiles$model_init_last <- "corenlp"
 
 }
 

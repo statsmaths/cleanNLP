@@ -37,12 +37,3 @@ test_that("testing udpipe", {
   expect_equal(names(anno), c("token", "document"))
   expect_equal(names(anno$token), c("doc_id", "sid", "tid", "token", "token_with_ws", "lemma", "upos", "xpos", "feats", "tid_source", "relation"))
 })
-
-test_that("testing corenlp", {
-  testthat::skip_on_cran()
-
-  cnlp_init_corenlp()
-  anno <- cnlp_annotate(un, verbose=FALSE)
-  expect_equal(names(anno), c("token", "document"))
-  expect_equal(names(anno$token), c("doc_id", "sid", "tid", "token", "lemma", "upos", "xpos", "feats", "tid_source", "relation"))
-})

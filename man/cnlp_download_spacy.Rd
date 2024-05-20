@@ -4,11 +4,11 @@
 \alias{cnlp_download_spacy}
 \title{Download model files needed for spacy}
 \usage{
-cnlp_download_spacy(model_name = "en")
+cnlp_download_spacy(model_name = "en_core_web_sm")
 }
 \arguments{
 \item{model_name}{string giving the model namel.
-Defaults to "en".}
+Defaults to "en_core_web_sm".}
 }
 \description{
 The cleanNLP package does not supply the model files required
@@ -18,7 +18,6 @@ Python.
 }
 \examples{
 \dontrun{
-cnlp_download_spacy(model_name="en")
-cnlp_download_spacy(model_name="de")
+cnlp_download_spacy(model_name="en_core_web_sm")
 }
 }
